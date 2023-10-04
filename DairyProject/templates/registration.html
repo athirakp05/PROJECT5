@@ -1,0 +1,223 @@
+{% extends 'layout/main.html' %}
+{% load static %}
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register here!</title>
+    {% block body %}        
+
+    <style>
+        /* Reset some default styles for consistency */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Apply styles to the body element */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+
+        }
+
+        /* Style the container */
+        .container {
+            background-color:whitesmoke;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 30%;
+        }
+
+        /* Style form fields and buttons */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            width: 200%;
+            padding: 8px;
+            border: 1px solid gray;
+            border-radius: 5px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+            border: 1px darkcyan;
+            border-radius: 2px;
+            cursor: pointer;
+            padding: 5px 20px;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .error-message {
+            color: crimson;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Registration</h1>
+    <form action="#" id="userregistrationform" method="POST" onsubmit="return validateRegistrationForm()">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="username"></label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Username" required oninput="validateUsername()">
+                    <div class="error-message" id="username-error"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="firstname" class="form-label"></label>
+                    <input type="text" class="form-control" id="firstname" name="firstname"placeholder="FirstName" required oninput="validateName(this, 'firstNameError')">
+                    <div class="error-message" id="firstNameError"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="lastname" class="form-label"></label>
+                    <input type="text" class="form-control" id="lastname" name="lastname"placeholder="LastName" required oninput="validateName(this, 'lastNameError')">
+                    <div class="error-message" id="lastNameError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="email"></label>
+                    <input type="email" class="form-control" id="email" name="email"placeholder="Email" required oninput="validateEmail()">
+                    <div class="error-message" id="email-error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="password"></label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password"required oninput="validatePassword()">
+                    <div class="error-message" id="password-error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="ConfirmPassword"></label>
+                    <input type="password" class="form-control" id="confirmpassword" name="confirmpassword"placeholder="Confirm Password" required oninput="confirmPassword()">
+                    <div class="error-message" id="confirmPassword-error"></div>
+                </div>
+            </div>
+        </div>
+        <input type="checkbox" id="show-password"> Show Password
+
+        <div class="form-group">
+
+            <button type="submit
+            " class="btn btn-lg btn-primary text-uppercase fw-bold mb-2">SignUp</button>
+        </div>
+    </form>
+{% for messages in messages %}
+<h6  style="color:red;","text-align:justify;"></h6>
+
+    {{messages}}</h6>
+{% endfor %}
+    <p class="login">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+    <script>
+        function togglePassword() {
+            var passwordInput = document.getElementById("password");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+            } else {
+                passwordInput.type = "password";
+            }
+        }
+        document.getElementById("show-password").addEventListener("change", togglePassword);
+
+        function validateUsername() {
+            const usernameInput = document.getElementById("username");
+            const usernameError = document.getElementById("username-error");
+
+            // Validation for username
+            // Example: Username should be alphanumeric and have at least 5 characters.
+            const isValid = /^[a-zA-Z0-9]{5,}$/.test(usernameInput.value);
+
+            if (!isValid) {
+                usernameError.textContent = "Username should be alphanumeric and have at least 5 characters.";
+            } else {
+                usernameError.textContent = "";
+            }
+        }
+        
+
+        function validateName(inputElement, errorId) {
+            const namePattern = /^[A-Z][a-zA-Z\s]*$/; // First letter capital, alphabetic characters, and spaces
+            const inputValue = inputElement.value.trim();
+            const errorElement = document.getElementById(errorId);
+
+            if (inputValue === "") {
+                errorElement.textContent = "This field should not be blank";
+            } else if (!namePattern.test(inputValue)) {
+                errorElement.textContent = "Only alphabetic characters and spaces are allowed, and the first letter should be capital";
+            } else {
+                errorElement.textContent = "";
+            }
+        }
+
+        function validateEmail() {
+            const emailInput = document.getElementById("email");
+            const emailError = document.getElementById("email-error");
+
+            // Validation for email
+            // Example: Validate email format.
+            const isValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(emailInput.value);
+
+            if (!isValid) {
+                emailError.textContent = "Please enter a valid email address.";
+            } else {
+                emailError.textContent = "";
+            }
+        }
+
+        function validatePassword() {
+            const passwordInput = document.getElementById("password");
+            const passwordError = document.getElementById("password-error");
+
+            // Validation for password
+            // Example: Password should have at least 8 characters.
+            const isValid = passwordInput.value.length >= 8;
+
+            if (!isValid) {
+                passwordError.textContent = "Password should have at least 8 characters.";
+            } else {
+                passwordError.textContent = "";
+            }
+        }
+
+        function confirmPassword() {
+            const passwordInput = document.getElementById("password");
+            const confirmPasswordInput = document.getElementById("confirmpassword");
+            const confirmPasswordError = document.getElementById("confirmpassword-error");
+
+            // Validation for confirming password
+            // Example: Check if passwords match.
+            const isValid = passwordInput.value === confirmPasswordInput.value;
+
+            if (!isValid) {
+                confirmPasswordError.textContent = "Passwords do not match.";
+            } else {
+                confirmPasswordError.textContent = "";
+            }
+        }
+        // Function to validate the registration form
+        function validateRegistrationForm() {
+            // Call individual validation functions here and return true if all are valid
+            validateUsername();
+            validateName(document.getElementById("firstname"), 'firstNameError');
+            validateName(document.getElementById("lastname"), 'lastNameError');
+            validateEmail();
+            validatePassword();
+            confirmPassword();
+            const errorMessages = document.querySelectorAll(".error-message");
+            for (const errorMessage of errorMessages) {
+                if (errorMessage.textContent !== "") {
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
+</div>
+
+{% endblock body %}

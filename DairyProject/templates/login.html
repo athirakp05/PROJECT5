@@ -1,0 +1,96 @@
+{% extends 'layout/main.html' %}
+
+{% load static %}
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    {% block body %}     
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-size:cover;
+            
+        }
+        /* Style the login container */
+        .login-container {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 400px;
+            text-align: center;
+        }
+        /* Style the login form */
+        .login-form {
+            margin-bottom: 20px;
+        }
+        .login-form input[type="text"],
+        .login-form input[type="password"] {
+            width: 70%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .login-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .login-form button:hover
+         {
+            background-color: #0056b3;
+        }
+    
+      
+    </style>
+</head>
+
+<body>
+    <!-- ... Your existing HTML content ... -->
+    <div class="login-container">
+        <h1>Login</h1>
+        <form method="POST" class="login-form" action="#" onsubmit="return validateForm();">
+            {% csrf_token %}
+            Username <input type="text" name="username" id="username" placeholder="Username" >
+            <span id="username-error" class="error-message"></span>
+            <br>
+            Password <input type="password" name="password" id="password" placeholder="Password">
+            <span id="password-error" class="error-message"></span>
+            <button type="submit">Login</button>
+        </form>
+        <p class="forgot-password"><a href="#">Forgot your password?</a></p>
+        <p class="signup"><a href="#">Don't have an account?</a></p>
+    </div>
+    <script>
+        function validateForm() {
+            // Get form inputs
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            // Reset error messages
+            document.getElementById("username-error").textContent = "";
+            document.getElementById("password-error").textContent = "";
+            // Perform validation (you can add more complex validation as needed)
+            if (username.trim() === "") {
+                document.getElementById("username-error").textContent = "Username is required";
+                return false;
+            }
+            if (password.trim() === "") {
+                document.getElementById("password-error").textContent = "Password is required";
+                return false;
+            }
+            // If all validations pass, allow form submission
+            return true;
+        }
+
+    </script>
+
+
+{% endblock body %}
