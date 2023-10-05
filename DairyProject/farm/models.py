@@ -1,17 +1,19 @@
-from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission, Group
 from django.db import models
+from django.contrib.auth.models import AbstractUser, BaseUserManager,Permission
+from .custom_models import CustomGroup  # Import your custom models from custom_models.py
+
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, username, password=None, role=None, **extra_fields):
-        if not username:
+    def create_user(self, email, password=None, role=None, phone=None, **extra_fields):
+        if not email:
             raise ValueError('The Email field must be set')
-        username = self.normalize_email(username)
-        user = self.model(username=username, role=role, **extra_fields)
+        email = self.normalize_email(email)
+        user = self.model(email=email, role=role, phone=phone, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, password=None, role='Admin', **extra_fields):
+    def create_superuser(self, email, password=None, role='Admin', phone=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -20,53 +22,33 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 
-        return self.create_user(username, password, role=role, **extra_fields)
-
+        return self.create_user(email, password, role=role, phone=phone, **extra_fields)
 class CustomUser(AbstractUser):
-    ADMIN = 'Admin'
     CUSTOMER = 'Customer'
     SELLER = 'Seller'
+    ADMIN = 'Admin'
+    
     ROLE_CHOICES = [
-        (ADMIN, 'Admin'),
         (CUSTOMER, 'Customer'),
         (SELLER, 'Seller'),
+        (ADMIN, 'Admin'),
     ]
 
+    # Fields for custom user roles
     role = models.CharField(max_length=15, choices=ROLE_CHOICES, default=CUSTOMER)
+    forget_password_token = models.UUIDField(null=True, blank=True)
     email = models.EmailField(unique=True)
-    
-    # Add fields for first name and last name
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    
     objects = CustomUserManager()
-    
-    # Define boolean fields for specific roles
+    username = models.CharField(max_length=150, unique=True)
+    phone = models.CharField(max_length=15, default='')  # You can choose an appropriate default value
+    # Define boolean fields for specific roles (customize these as needed)
     is_customer = models.BooleanField(default=True)
     is_seller = models.BooleanField(default=False)
-
-    # Specify a related_name for groups
-    groups = models.ManyToManyField(
-        Group,
-        verbose_name=('groups'),
-        blank=True,
-        help_text=(
-            'The groups this user belongs to. A user will get all permissions '
-            'granted to each of their groups.'
-        ),
-        related_name='customuser_set',
-        related_query_name='user',
-    )
-
-    # Specify a related_name for user_permissions
-    user_permissions = models.ManyToManyField(
-        Permission,
-        verbose_name=('permissions'),
-        blank=True,
-        help_text=('Specific permissions for this user.'),
-        related_name='customuser_set',
-        related_query_name='user',
-    )
+    is_admin = models.BooleanField(default=False)
+    
+    # Use custom Group model
+    groups = models.ManyToManyField(CustomGroup, blank=True, related_name='custom_user_groups')
+    user_permissions = models.ManyToManyField(Permission, blank=True, related_name='custom_user_permissions')
 
     def __str__(self):
-        return self.username
+        return self.email

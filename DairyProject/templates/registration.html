@@ -87,6 +87,12 @@
                     <label for="email"></label>
                     <input type="email" class="form-control" id="email" name="email"placeholder="Email" required oninput="validateEmail()">
                     <div class="error-message" id="email-error"></div>
+                    <div class="form-group">
+    <label for="phone"></label>
+    <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone Number" required oninput="validatePhoneNumber()">
+    <div class="error-message" id="phone-error"></div>
+</div>
+
                 </div>
                 <div class="form-group">
                     <label for="password"></label>
@@ -140,7 +146,20 @@
             }
         }
         
-
+        function validatePhoneNumber() {
+            const phoneInput = document.getElementById("phone");
+            const phoneError = document.getElementById("phone-error");
+        
+            // Validation for phone number with country code +91
+            const isValid = /^(\+91-)?[6-9]\d{9}$/.test(phoneInput.value);
+        
+            if (!isValid) {
+                phoneError.textContent = "Please enter a valid Indian phone number with +91 country code (optional).";
+            } else {
+                phoneError.textContent = "";
+            }
+        }
+        
         function validateName(inputElement, errorId) {
             const namePattern = /^[A-Z][a-zA-Z\s]*$/; // First letter capital, alphabetic characters, and spaces
             const inputValue = inputElement.value.trim();
@@ -173,17 +192,20 @@
         function validatePassword() {
             const passwordInput = document.getElementById("password");
             const passwordError = document.getElementById("password-error");
-
+        
             // Validation for password
-            // Example: Password should have at least 8 characters.
-            const isValid = passwordInput.value.length >= 8;
-
-            if (!isValid) {
-                passwordError.textContent = "Password should have at least 8 characters.";
+            const password = passwordInput.value;
+            const hasSpecialSymbol = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]/.test(password); // Check for special symbol
+            const hasLetter = /[a-zA-Z]/.test(password); // Check for alphabet
+            const hasNumber = /[0-9]/.test(password); // Check for number
+        
+            if (password.length < 8 || !(hasSpecialSymbol && hasLetter && hasNumber)) {
+                passwordError.textContent = "Password should have at least 8 characters and include at least one special symbol, one alphabet, and one number.";
             } else {
                 passwordError.textContent = "";
             }
         }
+        
 
         function confirmPassword() {
             const passwordInput = document.getElementById("password");
