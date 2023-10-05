@@ -119,16 +119,24 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# Define the directory where your static files are located
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'static')
-#     ]
+#Define the directory where your static files are located
+STATICFILES_DIRS = [
+       os.path.join(BASE_DIR, 'static')
+       ]
 AUTH_USER_MODEL = 'farm.CustomUser'
 # settings.py
 
 # settings.py
-
-
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+SESSION_COOKIE_NAME = "sessionid"
+SESSION_COOKIE_AGE = 600
+LOGIN_URL = 'login'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'athirakp808@gmail.com'
+EMAIL_HOST_PASSWORD = 'jyyt gxnj qmbc yogf'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

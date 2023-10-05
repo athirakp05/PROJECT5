@@ -88,10 +88,18 @@
                     <input type="email" class="form-control" id="email" name="email"placeholder="Email" required oninput="validateEmail()">
                     <div class="error-message" id="email-error"></div>
                     <div class="form-group">
-    <label for="phone"></label>
-    <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone Number" required oninput="validatePhoneNumber()">
-    <div class="error-message" id="phone-error"></div>
-</div>
+                        <label for="mobile" placeholder="MObile"></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <select id="country-code" class="custom-select">
+                                    <option value="+91">+91 (India)</option>
+                                    <!-- Add more country codes and names as needed -->
+                                </select>
+                            </div>
+                            <input type="text" id="mobile" name="mobile" class="form-control" placeholder="Enter your mobile number" required>
+                        </div>
+                    </div>
+                    
 
                 </div>
                 <div class="form-group">
@@ -146,19 +154,13 @@
             }
         }
         
-        function validatePhoneNumber() {
-            const phoneInput = document.getElementById("phone");
-            const phoneError = document.getElementById("phone-error");
-        
-            // Validation for phone number with country code +91
-            const isValid = /^(\+91-)?[6-9]\d{9}$/.test(phoneInput.value);
-        
-            if (!isValid) {
-                phoneError.textContent = "Please enter a valid Indian phone number with +91 country code (optional).";
-            } else {
-                phoneError.textContent = "";
-            }
-        }
+            document.getElementById('country-code').addEventListener('change', function () {
+                var selectedCountryCode = this.value;
+                var mobileInput = document.getElementById('mobile');
+                // Add the selected country code to the mobile input value
+                mobileInput.value = selectedCountryCode;
+            });
+            
         
         function validateName(inputElement, errorId) {
             const namePattern = /^[A-Z][a-zA-Z\s]*$/; // First letter capital, alphabetic characters, and spaces

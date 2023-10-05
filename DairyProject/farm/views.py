@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from .models import CustomUser
+from django.http import JsonResponse
+from django.urls import reverse
 
 # from .helpers import send_forget_password_mail
 # from .forms import PatientProfileForm
@@ -20,15 +22,19 @@ def loginn(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        # Authenticate the user
         user = authenticate(request, username=username, password=password)
+
         if user is not None:
             auth_login(request, user)
-            return redirect('c_dashboard')
+            request.session['username'] = username
+            messages.success(request, "Login successful!")
+            return redirect("c_dashboard")  # Replace 'phome' with the name of your home page URL
         else:
-                 messages.error(request, "Invalid login credentials")
-    return render(request, 'login.html')
+            messages.error(request, "Invalid login credentials")
 
+    response = render(request, 'login.html')
+    response['Cache-Control'] = 'no-store, must-revalidate'
+    return response
 def registration(request):
     if request.method == "POST":
         firstname=request.POST.get('firstname') 
@@ -38,7 +44,7 @@ def registration(request):
         phone=request.POST.get('phone')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirmpassword')
-      
+    
         
 
         if (CustomUser.objects.filter(email=email).exists()):
@@ -57,13 +63,23 @@ def registration(request):
     return render(request,'registration.html')
 
 def logout(request):
-    try:
-        del request.session['username']
-    except:
-        return redirect('login')
-    return redirect('login')
-@login_required
-def c_dashboard(request):
-    return render(request,'c_dashboard.html')
+    auth_logout(request) # Use the logout function to log the user out
+    return redirect('home')  # Redirect to the confirmation page
+# @login_required
+# def c_dashboard(request):
+#     if 'username' in request.session:
+#          response = render(request, 'c_dashboard.html')
+#          response['Cache-Control'] = 'no-store, must-revalidate'
+#          return response
+#     else:
+#          return redirect('login')
 # def s_dashboard(request):
-    #return render(request,'c_dashboard.html')
+#     return render(request,'c_dashboard.html')
+
+def c_dashboard(request):
+   if 'username' in request.session:
+       response = render(request, 'c_dashboard.html')
+       response['Cache-Control'] = 'no-store, must-revalidate'
+       return response
+   else:
+       return redirect('home')
