@@ -40,7 +40,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     objects = CustomUserManager()
     username = models.CharField(max_length=150, unique=True)
-    phone = models.CharField(max_length=15, default='')  # You can choose an appropriate default value
+    phone = models.CharField(max_length=15, default='True')  # You can choose an appropriate default value
     # Define boolean fields for specific roles (customize these as needed)
     is_customer = models.BooleanField(default=True)
     is_seller = models.BooleanField(default=False)

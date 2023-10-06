@@ -45,8 +45,6 @@ def registration(request):
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirmpassword')
     
-        
-
         if (CustomUser.objects.filter(email=email).exists()):
             messages.error(request, "Email already exists")
             return render(request,'login.html')
