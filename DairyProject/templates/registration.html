@@ -88,10 +88,10 @@
     <form action="#" id="userregistrationform" method="POST" oninput="return validateRegistrationForm()">
         {% csrf_token %}
         <div class="form-group">
-            <input type="text" class="form-control" id="username" name="username" placeholder="Username" required
-                   oninput="validateUsername()">
+            <input type="text" class="form-control" id="username" name="username" placeholder="Username" required readonly>
             <div class="error-message" id="username-error"></div>
         </div>
+        
         <div class="form-group">
             <input type="text" class="form-control" id="firstname" name="firstname" placeholder="First Name" required
                    oninput="capitalizeFirstLetter(this)">
@@ -134,53 +134,76 @@
     </form>
     <p class="login">Already have an account? <a href="{% url 'login' %}">Login</a></p>
     <script>
-    function validateUsername() {
-        const usernameInput = document.getElementById("username");
-        const usernameError = document.getElementById("username-error");
+    function generateUsername() {
+            const firstName = document.getElementById('firstname').value.toLowerCase();
+            const usernameField = document.getElementById('username');
+            
+            // Replace spaces with underscores and set as the username
+            const username = firstName.replace(/\s+/g, '_');
+            usernameField.value = username;
+        }
+    
+        // Add an event listener to the 'firstname' input field
+        document.getElementById('firstname').addEventListener('input', generateUsername);
 
-        // Validation for username: Should contain at least one letter, one number, and one special character, and be at least 6 characters long
-        const isValid = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/.test(usernameInput.value);
+       // Function to validate if the input only contains alphabetic characters
+    function validateAlphabeticInput(inputElement, errorElement) {
+        const value = inputElement.value;
+        const isValid = /^[A-Za-z]+$/.test(value);  // Regular expression to match alphabetic characters
 
         if (!isValid) {
-            usernameError.textContent = "Username should contain at least one letter, one number, one special character, and be at least 6 characters long.";
+            errorElement.textContent = "First name should only contain alphabetic characters.";
         } else {
-            usernameError.textContent = "";
+            errorElement.textContent = "";
         }
     }
 
     function capitalizeFirstLetter(inputElement) {
-        const inputValue = inputElement.value;
-        inputElement.value = inputValue.charAt(0).toUpperCase() + inputValue.slice(1);
+        inputElement.value = inputElement.value.charAt(0).toUpperCase() + inputElement.value.slice(1);
     }
+
+    const firstnameInput = document.getElementById("firstname");
+    const firstnameError = document.getElementById("firstNameError");
+
+    firstnameInput.addEventListener("input", function() {
+        capitalizeFirstLetter(this);
+        validateAlphabeticInput(this, firstnameError);
+    });
 
     function validateEmail() {
         const emailInput = document.getElementById("email");
         const emailError = document.getElementById("email-error");
 
-        // Validation for email: Should match the format abc123@gmail.com
         const isValid = /^\S+@\S+\.\S+$/.test(emailInput.value);
 
         if (!isValid) {
-            emailError.textContent = "Email is not in the correct format.";
+            emailError.textContent = "Email should be valid";
         } else {
             emailError.textContent = "";
         }
     }
 
-    function validatePhone() {
-        const phoneInput = document.getElementById("phone");
-        const phoneerror = document.getElementById("phone-error");
-
-        // Validation for mobile: Should start with 9, 8, 7, or 6 and be exactly 10 digits long
-        const isValid = /^[6789]\d{9}$/.test(phoneInput.value);
-
-        if (!isValid) {
-            phoneerror.textContent = "Mobile number is not valid.";
-        } else {
-            phoneerror.textContent = "";
+        function validatePhone() {
+            const phoneInput = document.getElementById("phone");
+            const phoneError = document.getElementById("phone-error");
+    
+            const isValid = /^(\+91|0)?[6789]\d{9}$/.test(phoneInput.value);
+    
+            if (!isValid) {
+                phoneError.textContent = "Invalid phone number";
+            } else {
+                phoneError.textContent = "";               
+                if (phoneInput.value.length === 10) {
+                    phoneInput.value = "0" + phoneInput.value;
+                }
+            }
         }
-    }
+    
         document.getElementById("phone").addEventListener("input", validatePhone);
+    
+
+    document.getElementById("phone").addEventListener("input", validatePhone);
+
 
 
     function validatePassword() {
@@ -211,7 +234,6 @@
             confirmPasswordError.textContent = "";
         }
     }
-
     function validateRegistrationForm() {
         // Perform all individual validations here and return true if all validations pass
         validateUsername();
@@ -220,15 +242,14 @@
         validatePassword();
         confirmPassword();
 
-        // Check if any error messages are displayed
         const errorMessages = document.querySelectorAll(".error-message");
         for (const errorMessage of errorMessages) {
             if (errorMessage.textContent !== "") {
-                return false; // Return false if there are validation errors
+                return false; 
             }
         }
 
-        return true; // Return true if all validations pass
+        return true; 
     }
     function togglePasswordVisibility() {
         const passwordInput = document.getElementById("password");
@@ -243,8 +264,6 @@
             confirmPasswordInput.type = "password";
         }
     }
-
-    // Add an event listener to the "Show Password" checkbox
     document.getElementById("show-password").addEventListener("change", togglePasswordVisibility);
 </script>
 

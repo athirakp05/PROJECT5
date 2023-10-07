@@ -19,14 +19,14 @@ def index(request):
 
 def loginn(request):
     if request.method == "POST":
-        username = request.POST.get('username')
+        email = request.POST.get('email')
         password = request.POST.get('password')
 
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, email=email, password=password)
 
         if user is not None:
             auth_login(request, user)
-            request.session['username'] = username
+            request.session['email'] = email
             messages.success(request, "Login successful!")
             return redirect("c_dashboard")  # Replace 'phome' with the name of your home page URL
         else:
@@ -63,19 +63,9 @@ def registration(request):
 def logout(request):
     auth_logout(request) # Use the logout function to log the user out
     return redirect('home')  # Redirect to the confirmation page
-# @login_required
-# def c_dashboard(request):
-#     if 'username' in request.session:
-#          response = render(request, 'c_dashboard.html')
-#          response['Cache-Control'] = 'no-store, must-revalidate'
-#          return response
-#     else:
-#          return redirect('login')
-# def s_dashboard(request):
-#     return render(request,'c_dashboard.html')
 
 def c_dashboard(request):
-   if 'username' in request.session:
+   if 'email' in request.session:
        response = render(request, 'c_dashboard.html')
        response['Cache-Control'] = 'no-store, must-revalidate'
        return response
