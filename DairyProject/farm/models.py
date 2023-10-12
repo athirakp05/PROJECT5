@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager,Permission
+from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
 from .custom_models import CustomGroup  # Import your custom models from custom_models.py
 
 
@@ -23,11 +23,13 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('Superuser must have is_superuser=True.')
 
         return self.create_user(email, password, role=role, phone=phone, **extra_fields)
+
+
 class CustomUser(AbstractUser):
     CUSTOMER = 'Customer'
     SELLER = 'Seller'
     ADMIN = 'Admin'
-    
+
     ROLE_CHOICES = [
         (CUSTOMER, 'Customer'),
         (SELLER, 'Seller'),
@@ -45,7 +47,7 @@ class CustomUser(AbstractUser):
     is_customer = models.BooleanField(default=True)
     is_seller = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
-    
+
     # Use custom Group model
     groups = models.ManyToManyField(CustomGroup, blank=True, related_name='custom_user_groups')
     user_permissions = models.ManyToManyField(Permission, blank=True, related_name='custom_user_permissions')
