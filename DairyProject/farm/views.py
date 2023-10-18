@@ -53,6 +53,7 @@ def registration(request):
     return render(request, 'registration.html')
 
 def logout(request):
+<<<<<<< HEAD
     auth_logout(request)
     return redirect('home')
 
@@ -63,3 +64,15 @@ def c_dashboard(request):
         return response
     else:
         return redirect('home')
+=======
+    auth_logout(request) # Use the logout function to log the user out
+    return redirect('home')  # Redirect to the confirmation page
+
+def c_dashboard(request):
+   if 'email' in request.session:
+       response = render(request, 'c_dashboard.html')
+       response['Cache-Control'] = 'no-store, must-revalidate'
+       return response
+   else:
+       return redirect('home')
+>>>>>>> 794ba300c528a4b98b3a16f83aa9149b06a52cf1
