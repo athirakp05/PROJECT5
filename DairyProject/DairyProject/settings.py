@@ -138,6 +138,13 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'athirakp808@gmail.com'
 EMAIL_HOST_PASSWORD = 'jyyt gxnj qmbc yogf'
 
+
+AUTHENTICATION_BACKENDS = [
+   'farm.auth.EmailBackend',  # Replace 'your_app_name' with the actual name of your app
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 

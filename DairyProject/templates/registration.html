@@ -85,16 +85,10 @@
 <body>
 <div class="container">
     <h1>Registration</h1>
-    <form action="#" id="userregistrationform" method="POST" oninput="return validateRegistrationForm()">
+    <form action="#" id="userregistrationform" method="POST">
         {% csrf_token %}
         <div class="form-group">
-            <input type="text" class="form-control" id="username" name="username" placeholder="Username" required
-                   oninput="validateUsername()">
-            <div class="error-message" id="username-error"></div>
-        </div>
-        <div class="form-group">
-            <input type="text" class="form-control" id="firstname" name="firstname" placeholder="First Name" required
-                   oninput="capitalizeFirstLetter(this)">
+            <input type="text" class="form-control" id="firstname" name="firstname" placeholder="First Name" required>
             <div class="error-message" id="firstNameError"></div>
         </div>
         <div class="form-group">
@@ -102,8 +96,7 @@
             <div class="error-message" id="lastNameError"></div>
         </div>
         <div class="form-group">
-            <input type="text" class="form-control" id="email" name="email" placeholder="Email" required
-                   oninput="validateEmail()">
+            <input type="text" class="form-control" id="email" name="email" placeholder="Email" required>
             <div class="error-message" id="email-error"></div>
         </div>
         <div class="form-group">
@@ -112,19 +105,16 @@
                     <option value="+91">+91 (India)</option>
                     <!-- Add more country codes and names as needed -->
                 </select>
-                <input type="text" class="form-control" id="phone" name="phone"
-                       placeholder="Mobile (e.g., 9876543210)" required oninput="validatePhone()">
+                <input type="text" class="form-control" id="phone" name="phone" placeholder="Mobile (e.g., 9876543210)" required>
             </div>
             <div class="error-message" id="phone-error"></div>
         </div>
         <div class="form-group">
-            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required
-                   oninput="validatePassword()">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
             <div class="error-message" id="password-error"></div>
         </div>
         <div class="form-group">
-            <input type="password" class="form-control" id="confirmpassword" name="confirmpassword"
-                   placeholder="Confirm Password" required oninput="confirmPassword()">
+            <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" placeholder="Confirm Password" required>
             <div class="error-message" id="confirmPassword-error"></div>
         </div>
         <input type="checkbox" id="show-password"> Show Password
@@ -133,121 +123,6 @@
         </div>
     </form>
     <p class="login">Already have an account? <a href="{% url 'login' %}">Login</a></p>
-    <script>
-    function validateUsername() {
-        const usernameInput = document.getElementById("username");
-        const usernameError = document.getElementById("username-error");
-
-        // Validation for username: Should contain at least one letter, one number, and one special character, and be at least 6 characters long
-        const isValid = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/.test(usernameInput.value);
-
-        if (!isValid) {
-            usernameError.textContent = "Username should contain at least one letter, one number, one special character, and be at least 6 characters long.";
-        } else {
-            usernameError.textContent = "";
-        }
-    }
-
-    function capitalizeFirstLetter(inputElement) {
-        const inputValue = inputElement.value;
-        inputElement.value = inputValue.charAt(0).toUpperCase() + inputValue.slice(1);
-    }
-
-    function validateEmail() {
-        const emailInput = document.getElementById("email");
-        const emailError = document.getElementById("email-error");
-
-        // Validation for email: Should match the format abc123@gmail.com
-        const isValid = /^\S+@\S+\.\S+$/.test(emailInput.value);
-
-        if (!isValid) {
-            emailError.textContent = "Email is not in the correct format.";
-        } else {
-            emailError.textContent = "";
-        }
-    }
-
-    function validatePhone() {
-        const phoneInput = document.getElementById("phone");
-        const phoneerror = document.getElementById("phone-error");
-
-        // Validation for mobile: Should start with 9, 8, 7, or 6 and be exactly 10 digits long
-        const isValid = /^[6789]\d{9}$/.test(phoneInput.value);
-
-        if (!isValid) {
-            phoneerror.textContent = "Mobile number is not valid.";
-        } else {
-            phoneerror.textContent = "";
-        }
-    }
-        document.getElementById("phone").addEventListener("input", validatePhone);
-
-
-    function validatePassword() {
-        const passwordInput = document.getElementById("password");
-        const passwordError = document.getElementById("password-error");
-
-        // Validation for password: Should have at least 8 characters, one special character, one alphabet, and one number
-        const isValid = /^(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\-])(?=.*[a-zA-Z])(?=.*\d).{8,}$/.test(passwordInput.value);
-
-        if (!isValid) {
-            passwordError.textContent = "Password should have at least 8 characters, one special character, one alphabet, and one number.";
-        } else {
-            passwordError.textContent = "";
-        }
-    }
-
-    function confirmPassword() {
-        const passwordInput = document.getElementById("password");
-        const confirmPasswordInput = document.getElementById("confirmpassword");
-        const confirmPasswordError = document.getElementById("confirmpassword-error");
-
-        // Validation for confirming password: Should match the password
-        const isValid = passwordInput.value === confirmPasswordInput.value;
-
-        if (!isValid) {
-            confirmPasswordError.textContent = "Passwords do not match.";
-        } else {
-            confirmPasswordError.textContent = "";
-        }
-    }
-
-    function validateRegistrationForm() {
-        // Perform all individual validations here and return true if all validations pass
-        validateUsername();
-        validateEmail();
-        validatePhone();
-        validatePassword();
-        confirmPassword();
-
-        // Check if any error messages are displayed
-        const errorMessages = document.querySelectorAll(".error-message");
-        for (const errorMessage of errorMessages) {
-            if (errorMessage.textContent !== "") {
-                return false; // Return false if there are validation errors
-            }
-        }
-
-        return true; // Return true if all validations pass
-    }
-    function togglePasswordVisibility() {
-        const passwordInput = document.getElementById("password");
-        const confirmPasswordInput = document.getElementById("confirmpassword");
-        const showPasswordCheckbox = document.getElementById("show-password");
-
-        if (showPasswordCheckbox.checked) {
-            passwordInput.type = "text";
-            confirmPasswordInput.type = "text";
-        } else {
-            passwordInput.type = "password";
-            confirmPasswordInput.type = "password";
-        }
-    }
-
-    // Add an event listener to the "Show Password" checkbox
-    document.getElementById("show-password").addEventListener("change", togglePasswordVisibility);
-</script>
-
 </div>
 {% endblock body %}
 </body>

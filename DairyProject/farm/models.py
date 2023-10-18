@@ -13,6 +13,7 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+
     def create_superuser(self, email, password=None, role='Admin', phone=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
@@ -26,6 +27,7 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractUser):
+
     CUSTOMER = 'Customer'
     SELLER = 'Seller'
     ADMIN = 'Admin'
@@ -35,14 +37,21 @@ class CustomUser(AbstractUser):
         (SELLER, 'Seller'),
         (ADMIN, 'Admin'),
     ]
+        
+    
+    
+    
 
     # Fields for custom user roles
     role = models.CharField(max_length=15, choices=ROLE_CHOICES, default=CUSTOMER)
     forget_password_token = models.UUIDField(null=True, blank=True)
     email = models.EmailField(unique=True)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
     objects = CustomUserManager()
-    username = models.CharField(max_length=150, unique=True)
-    phone = models.CharField(max_length=15, default='True')  # You can choose an appropriate default value
+    username= None
+    phone = models.CharField(max_length=15, null=True, blank=True)
     # Define boolean fields for specific roles (customize these as needed)
     is_customer = models.BooleanField(default=True)
     is_seller = models.BooleanField(default=False)
@@ -51,6 +60,7 @@ class CustomUser(AbstractUser):
     # Use custom Group model
     groups = models.ManyToManyField(CustomGroup, blank=True, related_name='custom_user_groups')
     user_permissions = models.ManyToManyField(Permission, blank=True, related_name='custom_user_permissions')
+
 
     def __str__(self):
         return self.email
