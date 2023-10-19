@@ -113,7 +113,10 @@
         <button type="submit">Sign In</button>
         <div class="forget-pass">
             <a href="{% url 'password_reset' %}">Forgot Password</a>
+            <a href="{% provider_login_url 'google' method='oauth2' %}" class="btn btn-google">Login with Google</a>
+
         </div>
+
     </form>
 
     {% if messages %}
