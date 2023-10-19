@@ -1,27 +1,21 @@
 {% extends 'layout/main.html' %}
+
 {% load static %}
 
 {% block body %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register here!</title>
     <style>
-        /* Reset some default styles for consistency */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         /* Apply styles to the body element */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
         }
-
+        
         /* Style the container */
         .container {
             background-color: whitesmoke;
@@ -31,19 +25,19 @@
             width: 30%;
             margin: 0 auto;
         }
-
+        
         /* Style form fields and buttons */
         .form-group {
             margin-bottom: 20px;
         }
-
+        
         .form-control {
             width: 100%;
             padding: 8px;
             border: 1px solid gray;
             border-radius: 5px;
         }
-
+        
         .btn-primary {
             background-color: #007bff;
             color: #fff;
@@ -52,51 +46,49 @@
             cursor: pointer;
             padding: 5px 20px;
         }
-
+        
         .btn-primary:hover {
             background-color: #0056b3;
         }
-
-        .error-message {
-            color: crimson;
-        }
-
+                
         .text-uppercase {
             text-transform: uppercase;
         }
-
+        
         /* Add more styles and formatting as needed */
-
+        
         /* Align text boxes to the left */
         .form-control[type="text"],
         .form-control[type="password"] {
             text-align: left;
         }
-
+        
         /* Style for mobile input with country code */
         .input-group {
             display: flex;
         }
-
+        
         #country-code {
             flex: 0.5;
             margin-right: 5px;
+        }
+        .error-message {
+            color: crimson;
+        }
+
+        /* Add styles for password reveal checkbox */
+        #show-password-label {
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>Registration</h1>
-    <form action="#" id="userregistrationform" method="POST" oninput="return validateRegistrationForm()">
+    <form action="#" id="userregistrationform" method="POST">
         {% csrf_token %}
         <div class="form-group">
-            <input type="text" class="form-control" id="username" name="username" placeholder="Username" required
-                   oninput="validateUsername()">
-            <div class="error-message" id="username-error"></div>
-        </div>
-        <div class="form-group">
-            <input type="text" class="form-control" id="firstname" name="firstname" placeholder="First Name" required
-                   oninput="capitalizeFirstLetter(this)">
+            <input type="text" class="form-control" id="firstname" name="firstname" placeholder="First Name" required>
             <div class="error-message" id="firstNameError"></div>
         </div>
         <div class="form-group">
@@ -104,141 +96,74 @@
             <div class="error-message" id="lastNameError"></div>
         </div>
         <div class="form-group">
-            <input type="text" class="form-control" id="email" name="email" placeholder="Email" required
-                   oninput="validateEmail()">
+            <input type="text" class="form-control" id="email" name="email" placeholder="Email" required>
             <div class="error-message" id="email-error"></div>
         </div>
         <div class="form-group">
             <div class="input-group">
                 <select id="country-code" class="form-control" required>
                     <option value="+91">+91 (India)</option>
-                    <!-- Add more country codes and names as needed -->
                 </select>
-                <input type="text" class="form-control" id="phone" name="phone"
-                       placeholder="Mobile (e.g., 9876543210)" required oninput="validatePhone()">
+                <input type="text" class="form-control" id="phone" name="phone" placeholder="Mobile (e.g., 9876543210)" required>
             </div>
             <div class="error-message" id="phone-error"></div>
         </div>
         <div class="form-group">
-            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required
-                   oninput="validatePassword()">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
             <div class="error-message" id="password-error"></div>
         </div>
         <div class="form-group">
-            <input type="password" class="form-control" id="confirmpassword" name="confirmpassword"
-                   placeholder="Confirm Password" required oninput="confirmPassword()">
+            <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" placeholder="Confirm Password" required>
             <div class="error-message" id="confirmPassword-error"></div>
         </div>
-        <input type="checkbox" id="show-password"> Show Password
+        <div class="form-group">
+            <input type="checkbox" id="show-password"> Show Password
+        </div>
         <div class="form-group">
             <button type="submit" class="btn btn-primary text-uppercase fw-bold mb-2">Sign Up</button>
         </div>
     </form>
     <p class="login">Already have an account? <a href="{% url 'login' %}">Login</a></p>
-    <script>
-    function validateUsername() {
-        const usernameInput = document.getElementById("username");
-        const usernameError = document.getElementById("username-error");
+</div>
 
-        // Validation for username: Should contain at least one letter, one number, and one special character, and be at least 6 characters long
-        const isValid = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/.test(usernameInput.value);
+<script>
+    const firstNameInput = document.getElementById("firstname");
+    const lastNameInput = document.getElementById("lastname");
+    const emailInput = document.getElementById("email");
+    const phoneInput = document.getElementById("phone");
+    const passwordInput = document.getElementById("password");
+    const confirmPasswordInput = document.getElementById("confirmpassword");
+    const showPasswordCheckbox = document.getElementById("show-password");
+    const passwordError = document.getElementById("password-error");
+    const confirmPasswordError = document.getElementById("confirmPassword-error");
+    const emailError = document.getElementById("email-error");
+    const phoneError = document.getElementById("phone-error");
 
-        if (!isValid) {
-            usernameError.textContent = "Username should contain at least one letter, one number, one special character, and be at least 6 characters long.";
-        } else {
-            usernameError.textContent = "";
-        }
+    // Function to capitalize the first letter of a string
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    function capitalizeFirstLetter(inputElement) {
-        const inputValue = inputElement.value;
-        inputElement.value = inputValue.charAt(0).toUpperCase() + inputValue.slice(1);
+    // Function to validate email format
+    function validateEmail(email) {
+        const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+        return emailRegex.test(email);
     }
 
-    function validateEmail() {
-        const emailInput = document.getElementById("email");
-        const emailError = document.getElementById("email-error");
-
-        // Validation for email: Should match the format abc123@gmail.com
-        const isValid = /^\S+@\S+\.\S+$/.test(emailInput.value);
-
-        if (!isValid) {
-            emailError.textContent = "Email is not in the correct format.";
-        } else {
-            emailError.textContent = "";
-        }
+    // Function to validate phone number format
+    function validatePhoneNumber(phone) {
+        const phoneRegex = /^[6-9]\d{9}$/; // Indian standard format
+        return phoneRegex.test(phone);
     }
 
-    function validatePhone() {
-        const phoneInput = document.getElementById("phone");
-        const phoneerror = document.getElementById("phone-error");
-
-        // Validation for mobile: Should start with 9, 8, 7, or 6 and be exactly 10 digits long
-        const isValid = /^[6789]\d{9}$/.test(phoneInput.value);
-
-        if (!isValid) {
-            phoneerror.textContent = "Mobile number is not valid.";
-        } else {
-            phoneerror.textContent = "";
-        }
-    }
-        document.getElementById("phone").addEventListener("input", validatePhone);
-
-
-    function validatePassword() {
-        const passwordInput = document.getElementById("password");
-        const confirmPasswordInput = document.getElementById("confirmpassword");
-        const showPasswordCheckbox = document.getElementById("show-password");
-        const passwordError = document.getElementById("password-error");
-
-        // Validation for password: Should have at least 8 characters, one special character, one alphabet, and one number
-        const isValid = /^(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\-])(?=.*[a-zA-Z])(?=.*\d).{8,}$/.test(passwordInput.value);
-
-        if (!isValid) {
-            passwordError.textContent = "Password should have at least 8 characters, one special character, one alphabet, and one number.";
-        } else {
-            passwordError.textContent = "";
-        }
+    // Function to validate password format
+    function validatePasswordFormat(password) {
+        const passwordRegex = /^(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\-])(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
+        return passwordRegex.test(password);
     }
 
-    function confirmPassword() {
-        const passwordInput = document.getElementById("password");
-        const confirmPasswordInput = document.getElementById("confirmpassword");
-        const confirmPasswordError = document.getElementById("confirmpassword-error");
-
-        // Validation for confirming password: Should match the password
-        const isValid = passwordInput.value === confirmPasswordInput.value;
-
-        if (!isValid) {
-            confirmPasswordError.textContent = "Passwords do not match.";
-        } else {
-            confirmPasswordError.textContent = "";
-        }
-    }
-
-    function validateRegistrationForm() {
-        // Perform all individual validations here and return true if all validations pass
-        validateUsername();
-        validateEmail();
-        validatePhone();
-        validatePassword();
-        confirmPassword();
-
-        // Check if any error messages are displayed
-        const errorMessages = document.querySelectorAll(".error-message");
-        for (const errorMessage of errorMessages) {
-            if (errorMessage.textContent !== "") {
-                return false; // Return false if there are validation errors
-            }
-        }
-
-        return true; // Return true if all validations pass
-    }
-    function togglePasswordVisibility() {
-        const passwordInput = document.getElementById("password");
-        const confirmPasswordInput = document.getElementById("confirmpassword");
-        const showPasswordCheckbox = document.getElementById("show-password");
-
+    // Function to handle password visibility toggle
+    showPasswordCheckbox.addEventListener("change", function () {
         if (showPasswordCheckbox.checked) {
             passwordInput.type = "text";
             confirmPasswordInput.type = "text";
@@ -246,12 +171,50 @@
             passwordInput.type = "password";
             confirmPasswordInput.type = "password";
         }
-    }
+    });
 
-    // Add an event listener to the "Show Password" checkbox
-    document.getElementById("show-password").addEventListener("change", togglePasswordVisibility);
+    // Event listeners for input fields
+    firstNameInput.addEventListener("input", function () {
+        // Capitalize the first letter of the input
+        firstNameInput.value = capitalizeFirstLetter(firstNameInput.value);
+    });
+
+    lastNameInput.addEventListener("input", function () {
+        // Capitalize the first letter of the input
+        lastNameInput.value = capitalizeFirstLetter(lastNameInput.value);
+    });
+
+    emailInput.addEventListener("input", function () {
+        if (!validateEmail(emailInput.value)) {
+            emailError.textContent = "Invalid email format";
+        } else {
+            emailError.textContent = "";
+        }
+    });
+
+    phoneInput.addEventListener("input", function () {
+        if (!validatePhoneNumber(phoneInput.value)) {
+            phoneError.textContent = "Invalid phone number";
+        } else {
+            phoneError.textContent = "";
+        }
+    });
+
+    passwordInput.addEventListener("input", function () {
+        if (!validatePasswordFormat(passwordInput.value)) {
+            passwordError.textContent = "Password should have at least 8 characters, one special character, one alphabet, and one number.";
+        } else {
+            passwordError.textContent = "";
+        }
+    });
+
+    confirmPasswordInput.addEventListener("input", function () {
+        if (passwordInput.value !== confirmPasswordInput.value) {
+            confirmPasswordError.textContent = "Passwords do not match.";
+        } else {
+            confirmPasswordError.textContent = "";
+        }
+    });
 </script>
-
-</div>
-{% endblock body %}
 </body>
+{% endblock body %}
