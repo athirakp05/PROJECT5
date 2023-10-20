@@ -1,29 +1,16 @@
-from django.contrib.auth import login, authenticate, logout
+from django.contrib import admin
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
-from social_django.utils import psa
 from .models import CustomUser
+from django.http import JsonResponse
+from django.urls import reverse
 
 def index(request):
     return render(request, 'index.html')
-
-@psa('social:begin', 'social:complete')
-def custom_login(request, backend):
-    if request.user.is_authenticated:
-        return redirect('home')
-    return render(request, 'login.html')
-
-@psa('social:complete')
-def custom_complete(request, backend, *args, **kwargs):
-    user = kwargs['user']
-    if user:
-        login(request, user)
-        return redirect('home')
-    else:
-        # Handle the case when the user was not authenticated
-        return redirect('login')
 
 def loginn(request):
     if request.method == "POST":
@@ -33,7 +20,7 @@ def loginn(request):
         user = authenticate(request, email=email, password=password)
 
         if user is not None:
-            login(request, user)
+            auth_login(request, user)
             request.session['email'] = email
             messages.success(request, "Login successful!")
             return redirect("c_dashboard") 
@@ -53,7 +40,7 @@ def registration(request):
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirmpassword')
 
-        if CustomUser.objects.filter(email=email).exists():
+        if (CustomUser.objects.filter(email=email).exists()):
             messages.error(request, "Email already exists")
         elif password != confirm_password:
             messages.error(request, "Passwords do not match")
@@ -65,12 +52,14 @@ def registration(request):
             return redirect("login")
     return render(request, 'registration.html')
 
-def logout_view(request):
-    logout(request)
+def logout(request):
+    auth_logout(request)
     return redirect('home')
 
-@login_required
 def c_dashboard(request):
-    response = render(request, 'c_dashboard.html')
-    response['Cache-Control'] = 'no-store, must-revalidate'
-    return response
+    if 'email' in request.session:
+        response = render(request, 'c_dashboard.html')
+        response['Cache-Control'] = 'no-store, must-revalidate'
+        return response
+    else:
+        return redirect('home')
