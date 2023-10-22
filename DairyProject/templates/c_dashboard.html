@@ -100,7 +100,14 @@
                 <li><a href="{% url 'logout' %}"><i class="fas fa-cog"></i>Logout</a></li>
             </ul>
         </nav>
-        
+        {% if request.user.is_superuser %}
+<!-- Content for admin dashboard -->
+{% elif request.user.is_customer %}
+<!-- Content for customer dashboard -->
+{% elif request.user.is_seller %}
+<!-- Content for seller dashboard -->
+{% endif %}
+
         <!-- Main Content -->
         <div class="content">
             <header>

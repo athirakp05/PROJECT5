@@ -23,7 +23,13 @@ def loginn(request):
             auth_login(request, user)
             request.session['email'] = email
             messages.success(request, "Login successful!")
-            return redirect("c_dashboard") 
+
+            # Check if the user is a superuser
+            if user.is_superuser:
+                return redirect("admin_dashboard.html")
+            else:
+                return redirect("c_dashboard.html")
+
         else:
             messages.error(request, "Invalid login credentials")
 
@@ -63,3 +69,10 @@ def c_dashboard(request):
         return response
     else:
         return redirect('home')
+def s_dashboard(request):
+    # You can add any logic here if needed
+    return render(request, 's_dashboard.html')
+
+def admin_dashboard(request):
+    # You can add any logic here if needed
+    return render(request, 'admin_dashboard.html')
