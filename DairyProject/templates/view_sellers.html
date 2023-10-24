@@ -1,0 +1,32 @@
+{% extends 'layout/main.html' %}
+
+{% block content %}
+    <!-- Seller Table -->
+    <div class="container">
+        <h1>Seller List</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                </tr>
+            </thead>
+            <body>
+                <h1>Seller List</h1>
+                <ul>
+                    {% for seller in sellers %}
+                        <li>{{ seller.firstname }} {{ seller.lastname }} - Email: {{ seller.email }}, Phone: {{ seller.phone }}</li>
+                    {% empty %}
+                        <p>No sellers found.</p>
+                    {% endfor %}
+                </ul>
+            </body>
+            
+            
+        </table>
+    </div>
+</div>
+{% endblock %}

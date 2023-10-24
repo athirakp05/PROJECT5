@@ -21,17 +21,18 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('Superuser must have is_superuser=True.')
 
         return self.create_user(email, password, role=role, phone=phone, **extra_fields)
+
 class CustomUser(AbstractUser):
     CUSTOMER = 'Customer'
     SELLER = 'Seller'
     ADMIN = 'Admin'
+
     ROLE_CHOICES = [
         (CUSTOMER, 'Customer'),
         (SELLER, 'Seller'),
         (ADMIN, 'Admin'),
     ]
 
-    # Fields for custom user roles
     role = models.CharField(max_length=15, choices=ROLE_CHOICES, default=CUSTOMER)
     forget_password_token = models.UUIDField(null=True, blank=True)
     email = models.EmailField(unique=True)
@@ -41,14 +42,30 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
     username = None
     phone = models.CharField(max_length=15, null=True, blank=True)
-    # Define boolean fields for specific roles (customize these as needed)
     is_customer = models.BooleanField(default=True)
     is_seller = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
-    # Use custom Group model
     groups = models.ManyToManyField(CustomGroup, blank=True, related_name='custom_user_groups')
     user_permissions = models.ManyToManyField(Permission, blank=True, related_name='custom_user_permissions')
 
     def __str__(self):
         return self.email
+
+
+
+class Customer(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="customer")
+    firstname = models.CharField(max_length=30, default='')
+    lastname = models.CharField(max_length=30, default='')
+    email = models.EmailField(default='')  # Provide a default value
+    phone = models.CharField(max_length=15, default='')  # Provide a default value
+    # Add additional fields specific to customers
+
+class Seller(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="seller")
+    firstname = models.CharField(max_length=30, default='')
+    lastname = models.CharField(max_length=30, default='')
+    email = models.EmailField()  # Remove the default value
+    phone = models.CharField(max_length=15, default='')  # Provide a default value if needed
+    # Add any other additional fields specific to sellers
