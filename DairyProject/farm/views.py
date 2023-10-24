@@ -1,17 +1,17 @@
+# views.py
+
 from django.contrib import admin
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login as auth_login
-from django.contrib.auth import logout as auth_logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.urls import reverse
 from .models import CustomUser, Customer, Seller
 from django.views.generic import ListView
-
-
-from django.contrib.auth.decorators import user_passes_test
+from django.core.mail import send_mail
+from .forms import SellerForm
+from .models import generate_random_password
 
 def index(request):
     return render(request, 'index.html')
@@ -28,11 +28,11 @@ def loginn(request):
             request.session['email'] = email
             messages.success(request, "Login successful!")
 
-            if user.is_superuser:  # Check if the user is a superuser
-                return redirect("admin_dashboard")  # Redirect to the admin dashboard
-            elif user.is_customer:  # Check if the user is a customer
+            if user.is_superuser:
+                return redirect("admin_dashboard")
+            elif user.is_customer:
                 return redirect("c_dashboard")
-            elif user.is_seller:  # Check if the user is a seller
+            elif user.is_seller:
                 return redirect("s_dashboard")
         else:
             messages.error(request, "Invalid login credentials")
@@ -40,7 +40,6 @@ def loginn(request):
     response = render(request, 'login.html')
     response['Cache-Control'] = 'no-store, must-revalidate'
     return response
-
 
 def registration(request):
     if request.method == "POST":
@@ -51,17 +50,15 @@ def registration(request):
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirmpassword')
 
-        if (CustomUser.objects.filter(email=email).exists()):
+        if CustomUser.objects.filter(email=email).exists():
             messages.error(request, "Email already exists")
         elif password != confirm_password:
             messages.error(request, "Passwords do not match")
         else:
-            user = CustomUser.objects.create_user(email=email, password=password, role='CUSTOMER', phone=phone)
+            user = CustomUser.objects.create_user(email=email, password=password, role='Customer', phone=phone)
             user.is_customer = True
-            user.is_seller = False
             user.save()
 
-            # Create a Customer object
             customer = Customer(user=user, firstname=firstname, lastname=lastname, phone=phone)
             customer.save()
 
@@ -72,7 +69,6 @@ def registration(request):
 def logout(request):
     auth_logout(request)
     return redirect('home')
-from django.contrib.auth import logout as auth_logout
 
 def logout(request):
     # Clear the session
@@ -80,7 +76,6 @@ def logout(request):
     # Log out the user (if using Django's built-in authentication)
     auth_logout(request)
     return redirect('home')
-
 
 def c_dashboard(request):
     if 'email' in request.session:
@@ -134,5 +129,72 @@ def seller_list(request):
     sellers = Seller.objects.all()
     return render(request, 'seller_list.html', {'sellers': sellers})
 
+from .forms import SellerForm
 
+def seller_login_details(request, seller_id):
+    seller = get_object_or_404(Seller, id=seller_id)
+    # You can retrieve and display seller's login details here
+    return render(request, 'seller_login_details.html', {'seller': seller})
+
+def delete_seller(request, seller_id):
+    seller = get_object_or_404(Seller, id=seller_id)
+    seller.delete()
+    return redirect('seller-list')
+def add_seller(request):
+    if request.method == "POST":
+        seller_form = SellerForm(request.POST)
+        if seller_form.is_valid():
+            seller = seller_form.save(commit=False)
+
+            # Generate a random password for the seller
+            password = generate_random_password()
+            seller.user.set_password(password)
+            seller.user.save()
+
+            # Send an email to the seller with the login details
+            subject = 'Your Seller Account Details'
+            message = f'Your login ID is: {seller.user.email}\nYour temporary password is: {password}'
+            from_email = 'athirakp808@gmail.com'
+            recipient_list = [seller.user.email]
+
+            send_mail(subject, message, from_email, recipient_list, fail_silently=False)
+
+            seller.save()
+
+            return redirect('seller-list')  # Redirect to the seller list page
+
+    else:
+        seller_form = SellerForm()
+
+    return render(request, 'add_seller.html', {'seller_form': seller_form})
+def c_delete(request, customer_id):
+    # Retrieve the customer to be deleted
+    customer = get_object_or_404(Customer, id=customer_id)
+
+    # Delete the customer
+    customer.delete()
+
+    # Redirect back to the customer list page
+    return redirect('customer_list')
+
+def update_s(request, seller_id):
+    seller = get_object_or_404(Seller, pk=seller_id)
+
+    if request.method == 'POST':
+        form = SellerForm(request.POST, instance=seller)
+        if form.is_valid():
+            form.save()
+            return redirect('seller_list')
+
+    else:
+        form = SellerForm(instance=seller)
+
+    return render(request, 'update_s.html', {'form': form, 'seller': seller})
+def delete_s(request, seller_id):
+    seller = get_object_or_404(Seller, pk=seller_id)
+    if request.method == 'POST':
+        seller.delete()
+        return redirect('seller_list')
+
+    return render(request, 'delete_s.html', {'seller': seller})
 

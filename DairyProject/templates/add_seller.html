@@ -1,0 +1,15 @@
+<!-- add_seller.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Seller</title>
+</head>
+<body>
+    <h1>Add Seller</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ seller_form.as_p }}
+        <input type="submit" value="Add Seller">
+    </form>
+</body>
+</html>

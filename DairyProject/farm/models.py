@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
 from .custom_models import CustomGroup  # Import your custom models from custom_models.py
 
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, role=None, phone=None, **extra_fields):
         if not email:
@@ -66,6 +67,13 @@ class Seller(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="seller")
     firstname = models.CharField(max_length=30, default='')
     lastname = models.CharField(max_length=30, default='')
-    email = models.EmailField()  # Remove the default value
-    phone = models.CharField(max_length=15, default='')  # Provide a default value if needed
-    # Add any other additional fields specific to sellers
+    email = models.EmailField()
+    phone = models.CharField(max_length=15, default='')
+
+# Function to generate random password
+import random
+import string
+
+def generate_random_password(length=10):
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choice(characters) for i in range(length))

@@ -42,18 +42,30 @@
     <header>
         <h1>Customer List</h1>
     </header>
-    <div class="customer-list">
-        <ul>
-            {% for customer in customers %}
-                <li>
-                    <p>Name: {{ customer.firstname }} {{ customer.lastname }}</p>
-                    <p>Email: {{ customer.email }}</p>
-                    <p>Phone: {{ customer.phone }}</p>
-                </li>
-            {% empty %}
-                <p class="no-customers">No customers found.</p>
-            {% endfor %}
-        </ul>
-    </div>
+    <!-- ... (previous HTML code) ... -->
+<div class="customer-list">
+    <ul>
+        {% for customer in customers %}
+            <li>
+                <p>Name: {{ customer.firstname }} {{ customer.lastname }}</p>
+                <p>Email: {{ customer.email }}</p>
+                <p>Phone: {{ customer.phone }}</p>
+                <!-- Button to delete customer (you need to implement this) -->
+                <form method="post" action="{% url 'c_delete' customer.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        {% empty %}
+            <p class="no-customers">No customers found.</p>
+        {% endfor %}
+    </ul>
+</div>
+<!-- Button to add a new customer (redirects to registration form) -->
+<div>
+    <a href="{% url 'registration' %}">Add Customer</a>
+</div>
+<!-- ... (rest of HTML code) ... -->
+
 </body>
 </html>

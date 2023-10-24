@@ -138,6 +138,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'athirakp808@gmail.com'
 EMAIL_HOST_PASSWORD = 'jyyt gxnj qmbc yogf'
+DEFAULT_FROM_EMAIL = 'athirakp808@gmail.com'
 
 
 AUTHENTICATION_BACKENDS = [

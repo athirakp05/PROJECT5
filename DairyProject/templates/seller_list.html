@@ -45,11 +45,17 @@
     <div class="seller-list">
         <ul>
             {% for seller in sellers %}
-                <li>
-                    <p>Name: {{ seller.firstname }} {{ seller.lastname }}</p>
-                    <p>Email: {{ seller.email }}</p>
-                    <p>Phone: {{ seller.phone }}</p>
-                </li>
+            <li>
+                <p>Name: {{ seller.firstname }} {{ seller.lastname }}</p>
+                <p>Email: {{ seller.email }}</p>
+                <p>Phone: {{ seller.phone }}</p>
+                <!-- Add other seller details here -->
+            
+                <!-- Buttons or links for actions -->
+                <a href="{% url 'update_s' seller.id %}">Update</a>
+                <a href="{% url 'delete_s' seller.id %}">Delete</a>
+            </li>
+            
             {% empty %}
                 <p class="no-sellers">No sellers found.</p>
             {% endfor %}
