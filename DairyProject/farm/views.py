@@ -11,7 +11,9 @@ from .models import CustomUser, Customer, Seller
 from django.views.generic import ListView
 from django.core.mail import send_mail
 from .forms import SellerForm
-from .models import generate_random_password
+from .utils import generate_random_password
+from django.db import transaction
+
 
 def index(request):
     return render(request, 'index.html')
@@ -140,29 +142,23 @@ def delete_seller(request, seller_id):
     seller = get_object_or_404(Seller, id=seller_id)
     seller.delete()
     return redirect('seller-list')
+from django.shortcuts import render, redirect
+from .forms import SellerForm
+from django.db import transaction
+
 def add_seller(request):
     if request.method == "POST":
         seller_form = SellerForm(request.POST)
         if seller_form.is_valid():
-            seller = seller_form.save(commit=False)
-
-            # Generate a random password for the seller
-            password = generate_random_password()
-            seller.user.set_password(password)
-            seller.user.save()
-
-            # Send an email to the seller with the login details
-            subject = 'Your Seller Account Details'
-            message = f'Your login ID is: {seller.user.email}\nYour temporary password is: {password}'
-            from_email = 'athirakp808@gmail.com'
-            recipient_list = [seller.user.email]
-
-            send_mail(subject, message, from_email, recipient_list, fail_silently=False)
-
-            seller.save()
-
+            # Form is valid, save the data
+            seller = seller_form.save()
+            # You can also send a success message here if needed
             return redirect('seller-list')  # Redirect to the seller list page
-
+        else:
+            # Form is invalid, handle errors
+            print(seller_form.errors)  # Print validation errors for debugging
+            # Return the form with errors to the user
+            return render(request, 'add_seller.html', {'seller_form': seller_form})
     else:
         seller_form = SellerForm()
 

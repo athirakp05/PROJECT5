@@ -20,10 +20,10 @@ urlpatterns = [
     path('sellers/', views.SellerListView.as_view(), name='seller-list'),
     path('customer_list/', views.customer_list, name='customer_list'),
     path('seller_list/', views.seller_list, name='seller_list'),
-    path('seller/<int:seller_id>/', views.seller_login_details, name='seller-login-details'),
+   # path('seller/<int:seller_id>/', views.seller_login_details, name='seller-login-details'),
     path('update_s/<int:seller_id>/', views.update_s, name='update_s'),
     path('delete_s/<int:seller_id>/', views.delete_s, name='delete_s'),
-    path('add_seller/', views.add_seller, name='add_seller'),
+    path('add_seller/', views.add_seller, name='add_seller'),  # Add this line to define the URL pattern for the "add_seller" view
     path('c_delete/<int:customer_id>/', views.c_delete, name='c_delete'),
     
 

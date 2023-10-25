@@ -1,15 +1,127 @@
-<!-- add_seller.html -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Add Seller</title>
+    <style>
+        /* Basic styling for the form container */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        /* Styling for the form */
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="email"], input[type="tel"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="submit"] {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        /* Add some styles for error messages */
+        .text-danger {
+            color: red;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
     <h1>Add Seller</h1>
-    <form method="post">
+    <form method="post" action="{% url 'seller_list' %}">
         {% csrf_token %}
-        {{ seller_form.as_p }}
+
+        <label for="{{ seller_form.firstname.id_for_label }}">First Name:</label>
+        {{ seller_form.firstname }}
+        <span class="text-danger">{{ seller_form.firstname.errors }}</span>
+
+        <label for="{{ seller_form.lastname.id_for_label }}">Last Name:</label>
+        {{ seller_form.lastname }}
+        <span class="text-danger">{{ seller_form.lastname.errors }}</span>
+
+        <label for="{{ seller_form.email.id_for_label }}">Email:</label>
+        {{ seller_form.email }}
+        <span class="text-danger">{{ seller_form.email.errors }}</span>
+
+        <label for="{{ seller_form.phone.id_for_label }}">Phone:</label>
+        {{ seller_form.phone }}
+        <span class="text-danger">{{ seller_form.phone.errors }}</span>
+
         <input type="submit" value="Add Seller">
+        {% if success_message %}
+            <p>{{ success_message }}</p>
+        {% endif %}
     </form>
+
+    <script>
+        function validateForm() {
+            const emailInput = document.querySelector('input[type="email"]');
+            const phoneInput = document.querySelector('input[type="tel"]');
+            const emailError = document.querySelector('#email-error');
+            const phoneError = document.querySelector('#phone-error');
+
+            emailError.textContent = '';
+            phoneError.textContent = '';
+
+            const email = emailInput.value;
+            const phone = phoneInput.value;
+
+            if (!validateEmail(email)) {
+                emailError.textContent = 'Invalid email format';
+                return false;
+            }
+
+            if (!validatePhoneNumber(phone)) {
+                phoneError.textContent = 'Invalid phone number';
+                return false;
+            }
+
+            return true;
+        }
+
+        function validateEmail(email) {
+            const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+            return emailRegex.test(email);
+        }
+
+        function validatePhoneNumber(phone) {
+            const phoneRegex = /^[6-9]\d{9}$/; // Indian standard format
+            return phoneRegex.test(phone);
+        }
+    </script>
 </body>
 </html>

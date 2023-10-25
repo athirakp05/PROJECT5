@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
-from .custom_models import CustomGroup  # Import your custom models from custom_models.py
-
+from .custom_models import CustomGroup
+import random
+import string
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, role=None, phone=None, **extra_fields):
@@ -53,27 +54,17 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
 
-
-
 class Customer(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="customer")
     firstname = models.CharField(max_length=30, default='')
     lastname = models.CharField(max_length=30, default='')
-    email = models.EmailField(default='')  # Provide a default value
-    phone = models.CharField(max_length=15, default='')  # Provide a default value
-    # Add additional fields specific to customers
-
-class Seller(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="seller")
-    firstname = models.CharField(max_length=30, default='')
-    lastname = models.CharField(max_length=30, default='')
-    email = models.EmailField()
     phone = models.CharField(max_length=15, default='')
 
-# Function to generate random password
-import random
-import string
+class Seller(models.Model):
+    firstname = models.CharField(max_length=50)
+    lastname = models.CharField(max_length=50)
+    email = models.EmailField(unique=True)  # Add the email field
+    phone = models.CharField(max_length=15)
 
-def generate_random_password(length=10):
-    characters = string.ascii_letters + string.digits
-    return ''.join(random.choice(characters) for i in range(length))
+    def __str__(self):
+        return self.firstname + ' ' + self.lastname
