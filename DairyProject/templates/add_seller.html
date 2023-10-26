@@ -62,29 +62,27 @@
 </head>
 <body>
     <h1>Add Seller</h1>
-    <form method="post" action="{% url 'seller_list' %}">
+    <form method="post" action="{% url 'seller_list' %}" onsubmit="return validateForm()">
         {% csrf_token %}
+        
+        <label for="id_firstname">First Name:</label>
+        <input type="text" name="firstname" id="id_firstname">
+        <span class="text-danger" id="firstname-error"></span>
 
-        <label for="{{ seller_form.firstname.id_for_label }}">First Name:</label>
-        {{ seller_form.firstname }}
-        <span class="text-danger">{{ seller_form.firstname.errors }}</span>
+        <label for="id_lastname">Last Name:</label>
+        <input type="text" name="lastname" id="id_lastname">
+        <span class="text-danger" id="lastname-error"></span>
 
-        <label for="{{ seller_form.lastname.id_for_label }}">Last Name:</label>
-        {{ seller_form.lastname }}
-        <span class="text-danger">{{ seller_form.lastname.errors }}</span>
+        <label for="id_email">Email:</label>
+        <input type="email" name="email" id="id_email">
+        <span class="text-danger" id="email-error"></span>
 
-        <label for="{{ seller_form.email.id_for_label }}">Email:</label>
-        {{ seller_form.email }}
-        <span class="text-danger">{{ seller_form.email.errors }}</span>
-
-        <label for="{{ seller_form.phone.id_for_label }}">Phone:</label>
-        {{ seller_form.phone }}
-        <span class="text-danger">{{ seller_form.phone.errors }}</span>
+        <label for="id_phone">Phone:</label>
+        <input type="tel" name="phone" id="id_phone">
+        <span class="text-danger" id="phone-error"></span>
 
         <input type="submit" value="Add Seller">
-        {% if success_message %}
-            <p>{{ success_message }}</p>
-        {% endif %}
+        <p id="success-message"></p>
     </form>
 
     <script>

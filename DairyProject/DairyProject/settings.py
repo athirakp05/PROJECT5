@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'farm',
+    'farmer',
+    'social_django',
+    'product',
     
 ]
 

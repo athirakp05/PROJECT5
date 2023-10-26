@@ -37,7 +37,7 @@
         <a href="{% url 'seller_list' %}">View Sellers</a>
         <a href="#">Orders</a>
         <a href="#">View Products</a>
-        <a href="{% url 'logout' %}" style="float: right;">Logout</a>
+        <li><a href="{% url 'logout' %}"><i class="fas fa-cog"></i>Logout</a></li>
     </div>
 
     <!-- Page content -->
@@ -46,8 +46,6 @@
         {% if request.session.admin_logged_in %}
             <p>Welcome, Admin!</p>
             <!-- Add content specific to the admin dashboard here -->
-        {% else %}
-            <p>Please <a href="{% url 'login' %}">log in</a> to access the admin dashboard.</p>
         {% endif %}
     </div>
 </body>

@@ -25,6 +25,9 @@ urlpatterns = [
     path('delete_s/<int:seller_id>/', views.delete_s, name='delete_s'),
     path('add_seller/', views.add_seller, name='add_seller'),  # Add this line to define the URL pattern for the "add_seller" view
     path('c_delete/<int:customer_id>/', views.c_delete, name='c_delete'),
-    
+    path('edit_customer/', views.edit_customer, name='edit_customer'),
+    path('edit_seller/<int:seller_id>/', views.edit_seller, name='edit_seller'),
+    path('admin-logout/', views.admin_logout, name='admin_logout'),
+
 
 ]

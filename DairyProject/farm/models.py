@@ -1,8 +1,12 @@
 from django.db import models
+from django.conf import settings
+
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
 from .custom_models import CustomGroup
 import random
-import string
+import string   
+from django.db import models
+from django.contrib.auth.models import User 
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, role=None, phone=None, **extra_fields):
@@ -54,17 +58,62 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
 
+
 class Customer(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="customer")
-    firstname = models.CharField(max_length=30, default='')
-    lastname = models.CharField(max_length=30, default='')
-    phone = models.CharField(max_length=15, default='')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    firstname = models.CharField(max_length=100)
+    lastname = models.CharField(max_length=100)
+    phone = models.CharField(max_length=15)
+    email = models.EmailField(unique=True)  # Add an email field to the Customer model
+
+    def __str__(self):
+        return self.firstname
+
 
 class Seller(models.Model):
     firstname = models.CharField(max_length=50)
     lastname = models.CharField(max_length=50)
-    email = models.EmailField(unique=True)  # Add the email field
+    email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15)
+    # Add other fields as specified
+    
+    def __str__(self):
+        return f"{self.firstname} {self.lastname}"
+
+class SellerEdit(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    FirstName = models.CharField(max_length=30)
+    LastName = models.CharField(max_length=30)
+    HouseName = models.CharField(max_length=100)
+    City = models.CharField(max_length=50)
+    PinCode = models.CharField(max_length=10)
+    Occupation = models.CharField(max_length=50)
+    Gender = models.CharField(max_length=10)
+    DOB = models.DateField()
+    RationcardNo = models.CharField(max_length=20)
+    Email = models.EmailField()
+    Mobile = models.CharField(max_length=15)
+    AccNo = models.CharField(max_length=20)
+    Societycode = models.CharField(max_length=20)
+    Photo = models.ImageField(upload_to='seller_photos/', blank=True, null=True)
 
     def __str__(self):
-        return self.firstname + ' ' + self.lastname
+        return f"{self.FirstName} {self.LastName}'s Seller Edit Profile"
+     # You can use the built-in User model or your CustomUser model
+
+
+class CustomerEdit(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    firstname = models.CharField(max_length=30)
+    lastname = models.CharField(max_length=30)  
+    email = models.EmailField(unique=True)
+    phone = models.CharField(max_length=15)
+
+    housename = models.CharField(max_length=100)
+    gender = models.CharField(max_length=10)
+    district = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"{self.firstname} {self.lastname}'s Customer Edit Profile"
+
+

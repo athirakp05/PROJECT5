@@ -1,6 +1,5 @@
 from django.contrib import admin
 from .models import Seller
-from .forms import SellerForm
 from .utils import generate_random_password
 from django.core.mail import send_mail
 
@@ -27,4 +26,4 @@ class SellerAdmin(admin.ModelAdmin):
 
     send_login_details.short_description = "Send login details to selected sellers"
 
-admin.site.register(Seller, SellerAdmin)
+admin.site.register(Seller, SellerAdmin)  # Register the Seller model, not the SellerAdmin class
