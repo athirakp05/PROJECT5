@@ -26,12 +26,13 @@
         /* Sidebar styles */
 
         .navbar {
-            width: 250px;
+            width: 100%; /* Set the width to 100% to make it full width */
             background-color: darkcyan; /* Updated background color */
             color: #fff;
-            padding-top: 20px;
+            padding: 20px; /* Add padding to the top */
             position: fixed; /* Fixed position */
-            height: 100%; /* Full height */
+            top: 0; /* Place it at the top */
+            z-index: 2; /* Add a higher z-index to overlay content */
         }
 
         /* Rest of your CSS remains the same */
@@ -47,11 +48,11 @@
             padding: 0;
         }
 
-        .menu li {
+        .menu {
             margin-bottom: 10px;
         }
 
-        .menu li a {
+        .menu a {
             text-decoration: none;
             color: #fff;
             display: block;
@@ -59,7 +60,7 @@
             transition: background-color 0.3s;
         }
 
-        .menu li a:hover {
+        .menu a:hover {
             background-color: #555;
         }
 
@@ -80,93 +81,80 @@
             color: #333;
         }
         /* CSS for the profile dropdown */
-.profile-dropdown {
-    position: relative;
-    display: inline-block;
-}
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
 
-.profile-dropbtn {
-    background-color: darkcyan;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-}
+        .profile-dropbtn {
+            background-color: darkcyan;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
 
-.profile-dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #fff;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
+        .profile-dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
 
-.profile-dropdown-content a {
-    color: #333;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
+        .profile-dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
 
-.profile-dropdown-content a:hover {
-    background-color: #f2f2f2;
-}
+        .profile-dropdown-content a:hover {
+            background-color: #f2f2f2;
+        }
 
-/* Show the dropdown content when the user clicks on the profile link */
-.profile-dropdown:hover .profile-dropdown-content {
-    display: block;
-}
-
+        /* Show the dropdown content when the user clicks on the profile link */
+        .profile-dropdown:hover .profile-dropdown-content {
+            display: block;
+        }
 
         /* FontAwesome Icons */
         @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
     </style>
 </head>
 <body>
-    <div class="dashboard">
-        <!-- Sidebar -->
-        <nav class="navbar">
-            <div class="logo">
-                Dashboard
-            </div>
-            <ul class="menu">
-                <div class="profile-dropdown">
-                    <button class="profile-dropbtn">
-                        <i class="fas fa-user"></i> {{ user.email }}
-                    </button>
-                    <div class="profile-dropdown-content">
-                        <a href="#">View Profile</a>
-                        <a href="#">Edit Profile</a>
-                        <a href="#">Change Password</a>
-                    </div>
-                </div>
-                
-                <li><a href="#"><i class="fas fa-chart-bar"></i>View Product</a></li>
-                
-                <li><a href="#"><i class="fas fa-users"></i>Order History</a></li>
-                <li><a href="#"><i class="fas fa-users"></i>Payment History</a></li>
-                <li><a href="{% url 'logout' %}"><i class="fas fa-cog"></i>Logout</a></li>
-            </ul>
-        </nav>
-        {% if request.user.is_superuser %}
-<!-- Content for admin dashboard -->
-{% elif request.user.is_customer %}
-<!-- Content for customer dashboard -->
-{% elif request.user.is_seller %}
-<!-- Content for seller dashboard -->
-{% endif %}
-
-        <!-- Main Content -->
-        <div class="content">
-            <header>
-                <h1> Welcome to {{ user.username }}  </h1>
-            </header>
-            <main>
-                <p></p>
-            </main>
+    <!-- Sidebar -->
+    <nav class="navbar">
+        <div class="logo">
+            Dashboard
         </div>
+           
+            
+            <a href="#"><i class="fas fa-chart-bar"></i>View Product</a>
+            
+            <a href="#"><i class="fas fa-users"></i>Order History</a>
+            <a href="#"><i class="fas fa-users"></i>Payment History</a>
+            <a href="{% url 'logout' %}"><i class="fas fa-cog"></i>Logout</a>
+            <div class="profile-dropdown" >
+                <button class="profile-dropbtn">
+                    <i class="fas fa-user" ></i> {{ user.email }}
+                </button>
+                <div class="profile-dropdown-content">
+                    <a href="#">View Profile</a>
+                    <a href="#">Edit Profile</a>
+                    <a href="#">Change Password</a>
+                </div>
+            </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content">
+        <header>
+            <h1>Welcome to {{ user.email }}</h1>
+        </header>
+        <main>
+            <p></p>
+        </main>
     </div>
 </body>
 </html>
-
-
