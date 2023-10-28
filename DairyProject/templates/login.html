@@ -2,131 +2,115 @@
 
 {% load static %}
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    {% block body %}     
+{% block body %}
 
-
-        <style>
-/* Container for login form */
-.login-container {
-    width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: whitesmoke;
-}
-
-/* Form elements */
-.form-group {
-    margin-bottom: 5px;
-}
-
-label {
-    display: block;
-    margin-bottom: 10px;
-}
-
-input[type="text"],
-input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-}
-
-/* Show Password checkbox */
-#show-password {
-    margin-left: 5px;
-    cursor: pointer;
-}
-
-/* Submit button */
-.submit-button {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    font-size: 18px;
-    cursor: pointer;
-}
-
-/* Forgot password link */
-.forget-pass a {
-    text-decoration: none;
-    color: #007bff;
-    font-size: 14px;
-}
-
-/* Alert messages */
-.alert {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    z-index: 9999;
-}
-
-.alert-danger {
-    background-color: #f44336;
-    color: #fff;
-}
-
-.alert-warning {
-    background-color: #ff9800;
-    color: #fff;
-}
-
-.alert-top {
-    top: 0;
-}
-
-        </style>
-        
+<style>/* Container for login form */
+    .login-container {
+        width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background-color: whitesmoke;
+    }
     
-      
-</head>
-
-<body>
-    <div class="login-container">
-        <h2>Login</h2>
-        <form method="POST" id="login-form">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="username"></label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password"></label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit" >Sign In</button>
-            <div class="forget-pass">
-                <a href="{% url "password_reset" %}">Forgot Password</a>
-            </div>
-        </div>
-        </form>
-        
-        {% if messages %}
-        <div class="alert alert-danger">
-            {% for message in messages %}
-                {{ message }}
-            {% endfor %}
-        </div>
-        {% endif %}
-        
-       
-<script>
+    /* Form elements */
+    .form-group {
+        margin-bottom: 15px;
+    }
     
-</script>
-        
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 16px;
+    }
+    
+    input[type="email"],
+    input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+    
+    /* Show Password checkbox */
+    #show-password {
+        margin-left: 5px;
+        cursor: pointer;
+    }
+    
+    /* Submit button */
+    .submit-button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 10px;
+        font-size: 18px;
+        cursor: pointer;
+    }
+    
+    /* Forgot password link */
+    .forget-pass a {
+        text-decoration: none;
+        color: #007bff;
+        font-size: 14px;
+    }
+    
+    /* Alert messages */
+    .alert {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        z-index: 9999;
+    }
+    
+    .alert-danger {
+        background-color: #f44336;
+        color: #fff;
+    }
+    
+    .alert-warning {
+        background-color: #ff9800;
+        color: #fff;
+    }
+    
+    .alert-top {
+        top: 0;
+    }
+    </style>
+<div class="login-container">
+    <h2>Login</h2>
+    <form method="POST" id="login-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="email"></label>
+            <input type="email" id="email" name="email" required placeholder="Enter your email">
+        </div>
+        <div class="form-group">
+            <label for="password"></label>
+            <input type="password" id="password" name="password" required placeholder="Enter your password">
+        </div>
+        <button type="submit" class="submit-button">Sign In</button>
+        <div class="forget-pass">
+            <a href="{% url 'password_reset' %}">Forgot Password</a><br>
+            Click here to <a href="{% url 'registration' %}"> Register!</a>
+        </div>
+    </form>
+</div>
+
+{% if messages %}
+    <div class="alert alert-danger">
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    </div>
+{% endif %}
 
 {% endblock body %}
