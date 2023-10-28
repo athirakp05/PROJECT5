@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #83b0d5;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background-color: #fff;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        li p {
+            margin: 0;
+        }
+        .no-customers {
+            text-align: center;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Customer List</h1>
+    </header>
+    <!-- ... (previous HTML code) ... -->
+<div class="customer-list">
+    <ul>
+        {% for customer in customers %}
+            <li>
+                <p>Name: {{ customer.firstname }} {{ customer.lastname }}</p>
+                <p>Email: {{ customer.email }}</p>
+                <p>Phone: {{ customer.phone }}</p>
+                <!-- Button to delete customer (you need to implement this) -->
+                <form method="post" action="{% url 'c_delete' customer.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        {% empty %}
+            <p class="no-customers">No customers found.</p>
+        {% endfor %}
+    </ul>
+</div>
+<!-- Button to add a new customer (redirects to registration form) -->
+<div>
+    <a href="{% url 'registration' %}">Add Customer</a>
+</div>
+<!-- ... (rest of HTML code) ... -->
+
+</body>
+</html>

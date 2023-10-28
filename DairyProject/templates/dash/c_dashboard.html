@@ -27,18 +27,20 @@ load static
         /* Sidebar styles */
 
         .navbar {
-            width: 250px;
-            background-color: darkcyan; /* Updated background color */
+            width: 100%;
+            background-color: rgb(146, 232, 238);
             color: #fff;
-            padding-top: 20px;
-            position: fixed; /* Fixed position */
-            height: 100%; /* Full height */
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        /* Rest of your CSS remains the same */
-
         .logo {
-            font-size: 24px;
+            font-size: 10px;
             text-align: center;
             margin-bottom: 20px;
         }
@@ -46,21 +48,21 @@ load static
         .menu {
             list-style: none;
             padding: 0;
+            display: flex; /* Display menu items in a row */
+            margin-left: auto; /* Push the menu to the right */
         }
 
         .menu li {
-            margin-bottom: 10px;
+            margin-right: 10px; /* Add spacing between menu items */
         }
 
-        .menu li a {
+        .menu a {
             text-decoration: none;
             color: #fff;
-            display: block;
-            padding: 10px 20px;
             transition: background-color 0.3s;
         }
 
-        .menu li a:hover {
+        .menu a:hover {
             background-color: #555;
         }
 
@@ -71,8 +73,8 @@ load static
         /* Main content styles */
         .content {
             flex-grow: 1;
-            padding: 20px;
-            margin-left: 250px; /* Add a margin to content to push it away from the fixed sidebar */
+            padding: 80px;
+            margin-left: 5px;
         }
 
         header {
@@ -81,36 +83,98 @@ load static
             color: #333;
         }
 
+        /* CSS for the profile dropdown */
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-dropbtn {
+            background-color: darkcyan;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .profile-dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            right: 0;
+        }
+
+        .profile-dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .profile-dropdown-content a:hover {
+            background-color: #f2f2f2;
+        }
+
+        .profile-dropdown img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .profile-dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            right: 0;
+            top: 60px;
+        }
+
+        /* Show the dropdown content when the user clicks on the profile link */
+        .profile-dropdown:hover .profile-dropdown-content {
+            display: block;
+        }
+
         /* FontAwesome Icons */
         @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
     </style>
 </head>
 <body>
-    <div class="dashboard">
-        <!-- Sidebar -->
-        <nav class="navbar">
-            <div class="logo">
-                Dashboard
-            </div>
-            <ul class="menu">
-                <li><a href="#"><i class="fas fa-home"></i> Profile</a></li>
-                <li><a href="#"><i class="fas fa-chart-bar"></i>View Product</a></li>
-                
-                <li><a href="#"><i class="fas fa-users"></i>Order History</a></li>
-                <li><a href="#"><i class="fas fa-users"></i>Payment History</a></li>
-                <li><a href="{% url 'logout' %}"><i class="fas fa-cog"></i>Logout</a></li>
-            </ul>
-        </nav>
-        
-        <!-- Main Content -->
-        <div class="content">
-            <header>
-                <h1> Welcome to {{ user.username }}  </h1>
-            </header>
-            <main>
-                <p></p>
-            </main>
+    <!-- Sidebar -->
+    <nav class="navbar">
+            <li class="profile-dropdown">
+                <button class="profile-dropbtn">
+                    <img src="#" alt="Profile Picture">
+                    {{ user.email }}
+                </button>
+                <div class="profile-dropdown-content">
+                    <a href="#">View Profile</a>
+                    <a href="#">Edit Profile</a>
+                    <a href="#">Change Password</a>
+                    <a href="{% url 'logout' %}"><i class="fas fa-cog"></i> Logout</a>
+            </li>
         </div>
+        
+        <ul class="menu">
+            <li><a href="#"><i class="fas fa-chart-bar"></i> View Product</a></li>
+            <li><a href="#"><i class="fas fa-users"></i> Order History</a></li>
+            <li><a href="#"><i class="fas fa-users"></i> Payment History</a></li>
+            
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content">
+        <header>
+            <h1>Welcome to {{ user.email }}</h1>
+        </header>
+        <main>
+            <p></p>
+        </main>
     </div>
 </body>
 </html>

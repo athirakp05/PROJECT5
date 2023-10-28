@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Seller List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #96b9e7;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background-color: #fff;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        li p {
+            margin: 0;
+        }
+        .no-sellers {
+            text-align: center;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Seller List</h1>
+    </header>
+    
+    <div class="seller-list">
+        <ul>
+            {% for seller in sellers %}
+
+            <li>
+                <p>Name: {{ seller.firstname }} {{ seller.lastname }}</p>
+                <p>Email: {{ seller.email }}</p>
+                <p>Phone: {{ seller.phone }}</p>
+                <!-- Add other seller details here -->
+            
+                <!-- Buttons or links for actions -->
+                <a href="{% url 'update_s' seller.id %}">Update</a>
+                <a href="{% url 'delete_s' seller.id %}">Delete</a>
+            </li>
+
+            {% empty %}
+                <p class="no-sellers">No sellers found.</p>
+            {% endfor %}
+        </ul>
+
+    </div>
+
+</body>
+<a href="{% url 'add_seller'  %}">Add Seller</a>
+
+</html>

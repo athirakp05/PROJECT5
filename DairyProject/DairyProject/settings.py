@@ -39,6 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'farm',
+    'farmer',
+    'social_django',
+    'product',
+    
 ]
 
 MIDDLEWARE = [
@@ -140,7 +144,15 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'athirakp808@gmail.com'
-EMAIL_HOST_PASSWORD = 'jyyt gxnj qmbc yogf'
+EMAIL_HOST_PASSWORD = 'jyytgxnjqmbcyogf'
+DEFAULT_FROM_EMAIL = 'athirakp808@gmail.com'
+
+
+AUTHENTICATION_BACKENDS = [
+   'farm.auth.EmailBackend',  # Replace 'your_app_name' with the actual name of your app
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

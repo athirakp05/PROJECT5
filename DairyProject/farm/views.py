@@ -9,12 +9,8 @@ from .models import CustomUser
 from django.http import JsonResponse
 from django.urls import reverse
 
-
-
-# Create your views here.
 def index(request):
     return render(request, 'index.html')
-
 
 def loginn(request):
     if request.method == "POST":
@@ -27,7 +23,7 @@ def loginn(request):
             auth_login(request, user)
             request.session['email'] = email
             messages.success(request, "Login successful!")
-            return redirect("c_dashboard")
+            return redirect("c_dashboard") 
         else:
             messages.error(request, "Invalid login credentials")
 
@@ -46,13 +42,10 @@ def registration(request):
 
         if (CustomUser.objects.filter(email=email).exists()):
             messages.error(request, "Email already exists")
-            return render(request, 'registration.html')
         elif password != confirm_password:
             messages.error(request, "Passwords do not match")
-            return render(request, 'registration.html')
-
         else:
-            user = CustomUser.objects.create_user(first_name=firstname, last_name=lastname, email=email, phone=phone, role='CUSTOMER')
+            user = CustomUser.objects.create_user(email=email, password=password, role='CUSTOMER', phone=phone)
             user.set_password(password)
             user.save()
             messages.success(request, "Registered successfully")
@@ -60,10 +53,8 @@ def registration(request):
     return render(request, 'registration.html')
 
 def logout(request):
-    auth_logout(request)  # Use the logout function to log the user out
-    return redirect('home')  # Redirect to the confirmation page
-
-
+    auth_logout(request)
+    return redirect('home')
 
 def c_dashboard(request):
     if 'email' in request.session:

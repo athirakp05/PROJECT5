@@ -1,0 +1,8 @@
+<li>
+    <!-- ... (customer details) ... -->
+    <!-- Button to delete customer -->
+    <form method="post" action="{% url 'c_delete' customer.id %}">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+    </form>
+</li>
