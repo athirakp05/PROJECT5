@@ -1,47 +1,42 @@
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-    <body>
-<nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5">
-            <a href="{% static 'index.html' %}" class="navbar-brand d-flex align-items-center">
-            <img class="img-fluid" src="{% static '/img/logo.jpg' %}" height="200" width="100" alt="Logo">
-    </a>
-    <button type="button" class="navbar-toggler me-0" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-        <div class="navbar-nav ms-auto p-4 p-lg-0">
-            <a href="{% url 'home' %}" class="nav-item nav-link active">Home</a>
-            <a href="{% static '/about.html' %}" class="nav-item nav-link">About</a>
 
-            <a href="{% static '/service.html' %}" class="nav-item nav-link">View Products</a>
-
-            <a href="{% static '/service.html' %}" class="nav-item nav-link">Order History</a>
-            <a href="{% static '/service.html' %}" class="nav-item nav-link">Payment History</a>
-
-
-                </div>
-            </div>
-            <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Todays Rate</a>
-                <div class="dropdown-menu bg-light rounded-0 m-0">
-                    <a class="dropdown-item">Milk ----50/-</a>
-                    <a  class="dropdown-item">Curd----70/-</a>
-                    <a  class="dropdown-item">Ghee----400/-</a>
-                    <a  class="dropdown-item">Butter----300/-</a>
-                    <a  class="dropdown-item">Paneer----100/-</a>
-
-                </div>
-            </div>
-            <a href="{% url 'home' %}" class="nav-item nav-link">Logout</a>
-            <a href="{% url 'c_dashboard' %}" class="nav-item nav-link active">Help</a>
-
-            <a href="{% static '/contact.html' %}" class="nav-item nav-link">Contact</a>
-        </div>
-        <div class="border-start ps-4 d-none d-lg-block">
-            <button type="button" class="btn btn-sm p-0"><i class="fa fa-search"></i></button>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'c_dashboard' %}">Your Logo</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userProfileDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        User Profile
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="userProfileDropdown">
+                        <a class="dropdown-item" href="{% url 'edit_profile' %}">Edit Profile</a>
+                        <a class="dropdown-item" href="{% url 'view_profile' %}">View Profile</a>
+                        <a class="dropdown-item" href="{% url 'change_password' %}">Change Password</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'view_products' %}">View Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'order_products' %}">Order Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'order_history' %}">Order History</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'payment_history' %}">Payment History</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout_view' %}">Logout</a>
+                </li>
+            </ul>
         </div>
     </div>
 </nav>
-</body>
-</html>

@@ -72,6 +72,10 @@ TEMPLATES = [
         },
     },
 ]
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Add this line
+    # Other authentication backends
+]
 
 WSGI_APPLICATION = 'DairyProject.wsgi.application'
 

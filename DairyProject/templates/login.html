@@ -91,23 +91,24 @@ input[type="password"] {
 </style>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Login</h2>
-        <form method="POST" id="login-form" >
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="email"></label>
-                <input type="text" id="email" name="email"  placeholder="Email" required>
-            </div>
-            <div class="form-group">
-                <label for="password"></label>
-                <input type="password" id="password" name="password" placeholder="Password" required>
-            </div>
-            <button type="submit" >Sign In</button>
-            <div class="forget-pass">
-                <a href="{% url  'password_reset'  %}">Forgot Password</a>
-            </div>
-            Click here to <a href="{% url  'c_register'  %}"> Register !</a>
+<div class="login-container">
+    <h2>Login</h2>
+    <form method="POST" id="login-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="email"></label>
+            <input type="text" id="email" name="email" placeholder="Email" required>
+        </div>
+        <div class="form-group password-container">
+            <label for="password"></label>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <i class="far fa-eye" id="show-password"></i>
+        </div>
+        <button type="submit">Sign In</button>
+        <div class="forget-pass">
+            <a href="{% url 'password_reset' %}">Forgot Password</a><br>
+
+            Click here to<a href="{% url 'registration' %}"> Register</a>
 
         </div>
         </form>
