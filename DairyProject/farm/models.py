@@ -1,9 +1,9 @@
-
 # models.py
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
-from django.conf import settings
-from .custom_models import CustomGroup
+from .custom_models import CustomGroup  # Import your custom models from custom_models.py
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, role=None, phone=None, **extra_fields):
@@ -18,6 +18,7 @@ class CustomUserManager(BaseUserManager):
     def create_superuser(self, email, password=None, role='Admin', phone=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
+
         if extra_fields.get('is_staff') is not True:
             raise ValueError('Superuser must have is_staff=True.')
         if extra_fields.get('is_superuser') is not True:
@@ -35,7 +36,7 @@ class CustomUser(AbstractUser):
         (SELLER, 'Seller'),
         (ADMIN, 'Admin'),
     ]
-
+    
     role = models.CharField(max_length=15, choices=ROLE_CHOICES, default=CUSTOMER)
     forget_password_token = models.UUIDField(null=True, blank=True)
     email = models.EmailField(unique=True)
@@ -44,66 +45,66 @@ class CustomUser(AbstractUser):
 
     objects = CustomUserManager()
     username = None
-    phone = models.CharField(max_length=15, null=True, blank=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
     is_customer = models.BooleanField(default=True)
     is_seller = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-
+    is_admin = models.BooleanField(default=False)
     groups = models.ManyToManyField(CustomGroup, blank=True, related_name='custom_user_groups')
     user_permissions = models.ManyToManyField(Permission, blank=True, related_name='custom_user_permissions')
 
     def __str__(self):
         return self.email
 
-class Customer(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
-    firstname = models.CharField(max_length=100)
-    lastname = models.CharField(max_length=100)
-    phone = models.CharField(max_length=15)
-    email = models.EmailField(unique=True)
+class Society(models.Model):
+    district = models.CharField(max_length=20)
+    subdistrict = models.CharField(max_length=50)
+    panchayath = models.CharField(max_length=50)
+    ward_no = models.IntegerField()
+    farmer = models.ForeignKey('SellerEditProfile', on_delete=models.CASCADE, related_name='societies')
 
-    def __str__(self):
-        return self.firstname
+class IFSCCode(models.Model):
+    bankname = models.CharField(max_length=50)
+    branch = models.CharField(max_length=50)
+    accno = models.IntegerField()
+    farmer = models.ForeignKey('SellerEditProfile', on_delete=models.CASCADE, related_name='ifsccodes')
+
+class SellerEditProfile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    house_name = models.CharField(max_length=200)
+    city = models.CharField(max_length=50)
+    pin_code = models.IntegerField()
+    occupation = models.CharField(max_length=20)
+    gender = models.CharField(max_length=10)
+    dob = models.DateField()
+    rationcard_no = models.IntegerField()
+    email = models.EmailField()
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    acc_no = models.IntegerField()
+    society = models.ForeignKey(Society, on_delete=models.CASCADE, related_name='farmers')
+    profile_photo = models.ImageField(upload_to='seller_profile_photos/', null=True, blank=True)
+
+    # Add any other fields you need for your Seller model
+
+class Customer(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    first_name = models.CharField(max_length=50)  # Added for Customer's first name
+    last_name = models.CharField(max_length=50)  # Added for Customer's last name
+    phone = models.CharField(max_length=20, blank=True, null=True)
 
 class Seller(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
-    firstname = models.CharField(max_length=50)
-    lastname = models.CharField(max_length=50)
-    email = models.EmailField()
-    phone = models.CharField(max_length=15)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    first_name = models.CharField(max_length=50)  # Added for Seller's first name
+    last_name = models.CharField(max_length=50)  # Added for Seller's last name
+    mobile = models.CharField(max_length=15,blank=True, null=True)
 
-    def __str__(self):
-        return f"{self.firstname} {self.lastname}"
-
-class SellerEdit(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    FirstName = models.CharField(max_length=30)
-    LastName = models.CharField(max_length=30)
-    HouseName = models.CharField(max_length=100)
-    City = models.CharField(max_length=50)
-    PinCode = models.CharField(max_length=10)
-    Occupation = models.CharField(max_length=50)
-    Gender = models.CharField(max_length=10)
-    DOB = models.DateField()
-    RationcardNo = models.CharField(max_length=20)
-    Email = models.EmailField()
-    Mobile = models.CharField(max_length=15)
-    AccNo = models.CharField(max_length=20)
-    Societycode = models.CharField(max_length=20)
-    Photo = models.ImageField(upload_to='seller_photos/', blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.FirstName} {self.LastName}'s Seller Edit Profile"
-
-class CustomerEdit(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    firstname = models.CharField(max_length=30)
-    lastname = models.CharField(max_length=30)
-    email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=15)
-    housename = models.CharField(max_length=100)
-    gender = models.CharField(max_length=10)
+class CustomerEditProfile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
     district = models.CharField(max_length=50)
-
-    def __str__(self):
-        return f"{self.firstname} {self.lastname}'s Customer Edit Profile"
+    city = models.CharField(max_length=50)
+    dob = models.DateField()
+    card_number = models.CharField(max_length=20)
+    # Add other customer-specific fields
+    profile_photo = models.ImageField(upload_to='Your_Profile/', null=True, blank=True)

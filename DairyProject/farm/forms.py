@@ -1,30 +1,17 @@
+
 from django import forms
-from .models import CustomUser
-from .models import Seller
-from .models import SellerEdit
-from .models import Customer
 
 
-class CustomerRegistrationForm(forms.ModelForm):
+class CustomerRegistrationForm(forms.Form):
+    first_name = forms.CharField(max_length=50)
+    last_name = forms.CharField(max_length=50)
+    email = forms.EmailField()
     password = forms.CharField(widget=forms.PasswordInput)
+    phone = forms.CharField(max_length=15)
 
-    class Meta:
-        model = Customer
-        fields = ['firstname', 'lastname', 'phone', 'email', 'password']
-
-
-class SellerForm(forms.ModelForm):
-    class Meta:
-        model = Seller
-        fields = ['firstname', 'lastname', 'email', 'phone']
-
-
-class CustomerEdit(forms.ModelForm):
-    class Meta:
-        model = Customer
-        fields = ['firstname', 'lastname', 'email', 'phone']  # Include the fields you want to allow customers to edit
-
-class SellerEditForm(forms.ModelForm):
-    class Meta:
-        model = SellerEdit
-        fields = ['FirstName', 'LastName', 'HouseName', 'City', 'PinCode', 'Occupation', 'Gender', 'DOB', 'RationcardNo', 'Email', 'Mobile', 'AccNo', 'Societycode', 'Photo']
+class SellerRegistrationForm(forms.Form):
+    first_name = forms.CharField(max_length=50)
+    last_name = forms.CharField(max_length=50)
+    email = forms.EmailField()
+    password = forms.CharField(widget=forms.PasswordInput)
+    mobile = forms.DecimalField(max_digits=10, decimal_places=0)

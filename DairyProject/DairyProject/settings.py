@@ -39,9 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'farm',
-    'farmer',
-    'social_django',
-    'product',
+    # 'farmer',
+    # 'social_django',
+    # 'product',
     
 ]
 
@@ -94,8 +94,11 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
-    {
+     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 6,  # Change to your desired minimum length
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -140,7 +143,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'athirakp808@gmail.com'
-EMAIL_HOST_PASSWORD = 'jyytgxnjqmbcyogf'
+EMAIL_HOST_PASSWORD = 'jyyt gxnj qmbc yogf'
 DEFAULT_FROM_EMAIL = 'athirakp808@gmail.com'
 
 

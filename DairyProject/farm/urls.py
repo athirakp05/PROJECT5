@@ -1,25 +1,19 @@
-from django.urls import path
-from . import views
 from django.contrib import admin
+from django.urls import path
+from.import views
 from django.contrib.auth.views import PasswordResetView,PasswordResetDoneView,PasswordResetConfirmView,PasswordResetCompleteView
 
 urlpatterns = [
-    path('', views.index, name='home'),
-    path('login/', views.loginn, name='login'),
-    path('registration/', views.registration, name='registration'),
-    path('logout/', views.logout, name='logout'),
-    path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
-    path('customer/dashboard/', views.c_dashboard, name='c_dashboard'),
-    path('seller/dashboard/', views.s_dashboard, name='s_dashboard'),
-    path('view_customers/', views.view_customers, name='view_customers'),
-    path('view_sellers/', views.view_sellers, name='view_sellers'),
-    path('customers/', views.CustomerListView.as_view(), name='customer-list'),
-    path('sellers/', views.SellerListView.as_view(), name='seller-list'),
-    path('customer_list/', views.customer_list, name='customer_list'),
-    path('seller_list/', views.seller_list, name='seller_list'),
-    path('add_seller/', views.add_seller, name='add_seller'),
-    path('seller/<int:seller_id>/', views.seller_login_details, name='seller-login-details'),
-    path('admin-logout/', views.admin_logout, name='admin_logout'),
+    path('',views.index,name='home'),
+    #path('admin',views.admin,name='admin'),
+    path('login',views.loginn,name='login'),
+    path('c_register',views.c_register,name='c_register'),
+    path('s_register/', views.s_register, name='s_register'),
+    path('logout',views.logout,name='logout'),
+    path('about',views.logout,name='about'),
+    path('c_dashboard', views.c_dashboard, name='c_dashboard'),
+    path('s_dashboard', views.s_dashboard, name='s_dashboard'),
+    path('a_dashboard', views.a_dashboard, name='a_dashboard'),
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),

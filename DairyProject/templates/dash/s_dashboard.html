@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        /* Reset some default browser styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+        }
+
+        /* Navigation bar styles */
+        .navbar {
+            background-color: rgb(87, 202, 251); /* Updated background color */
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 24px;
+        }
+
+        .menu {
+            list-style: none;
+            padding: 0;
+            display: flex;
+        }
+
+        .menu li {
+            margin-right: 20px;
+        }
+
+        .menu li a {
+            text-decoration: none;
+            color: #fff;
+            transition: background-color 0.3s;
+        }
+
+        .menu li a:hover {
+            background-color: #555;
+        }
+
+        .menu li a i {
+            margin-right: 10px;
+        }
+
+        /* Main content styles */
+        .content {
+            padding: 20px;
+        }
+
+        header {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* FontAwesome Icons */
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">Dashboard</div>
+        <ul class="menu">
+            <li><a href="#"><i class="fas fa-home"></i> Profile</a></li>
+            <li><a href="#"><i class="fas fa-chart-bar"></i> View Product</a></li>
+            <li><a href="#"><i class="fas fa-users"></i> Order History</a></li>
+            <li><a href="#"><i class="fas fa-users"></i> Payment History</a></li>
+            <li><a href="{% url 'logout' %}"><i class="fas fa-cog"></i> Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <header>
+            <h1>Welcome to {{ user.first_name }}</h1>
+        </header>
+        <main>
+            <p></p>
+        </main>
+    </div>
+</body>
+</html>

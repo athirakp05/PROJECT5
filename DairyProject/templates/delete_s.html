@@ -1,8 +1,0 @@
-
-  <h2>Delete Seller</h2>
-  <p>Are you sure you want to delete the seller "{{ seller.firstname }} {{ seller.lastname }}"?</p>
-  <form method="post">
-    {% csrf_token %}
-    <input type="submit" value="Delete Seller">
-  </form>
-  <a href="{% url 'seller_list' %}">Cancel</a>

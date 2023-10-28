@@ -1,16 +1,16 @@
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib import admin
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from .models import CustomUser, Customer, Seller, SellerEdit
-from .forms import SellerForm, CustomerRegistrationForm
-import secrets
-import string
-from django.contrib.auth import get_user_model
-from django.views.generic.list import ListView
-from django.contrib.auth.hashers import make_password  # Import make_password
-
-
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from .models import CustomUser, Customer, Seller
+from django.http import JsonResponse
+from django.urls import reverse
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.models import Permission
+from .forms import CustomerRegistrationForm, SellerRegistrationForm
 
 def index(request):
     return render(request, 'index.html')
@@ -27,128 +27,97 @@ def loginn(request):
             request.session['email'] = email
             messages.success(request, "Login successful!")
 
-            if user.is_superuser:
-                return redirect("admin_dashboard")
-            elif user.is_customer:
+            if user.role == 'Admin':
+                return redirect("a_dashboard")
+            elif user.role == 'Customer':
                 return redirect("c_dashboard")
-            elif user.is_seller:
+            elif user.role == 'Seller':
                 return redirect("s_dashboard")
-        else:
-            messages.error(request, "Invalid login credentials")
 
     response = render(request, 'login.html')
     response['Cache-Control'] = 'no-store, must-revalidate'
     return response
+# views.py
+# Import necessary modules and models
 
-def registration(request):
-    if request.method == 'POST':
-        form = CustomerRegistrationForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
+# Customer registration view
+def c_register(request):
+    if request.method == "POST":
+        # Retrieve customer registration data
+        firstname = request.POST.get('firstname')
+        lastname = request.POST.get('lastname')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirmpassword')
 
-            if CustomUser.objects.filter(email=email).exists():
-                messages.error(request, 'This email is already registered.')
-                return render(request, 'registration.html', {'form': form})
-
-            user = get_user_model().objects.create_user(
-                email=email,
-                password=form.cleaned_data['password']
-            )
-
-            firstname = form.cleaned_data['firstname']
-            lastname = form.cleaned_data['lastname']
-            phone = form.cleaned_data['phone']
-            customer = Customer(user=user, firstname=firstname, lastname=lastname, email=email, phone=phone)
-            customer.save()
-
-            messages.success(request, 'Registration successful. You can now log in.')
-            return redirect('login')
+        # Validate and save customer registration data
+        if CustomUser.objects.filter(email=email).exists():
+            messages.error(request, "Email already exists")
+        elif password != confirm_password:
+            messages.error(request, "Passwords do not match")
         else:
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field}: {error}")
+            # Create a user with the role 'Customer'
+            user = CustomUser.objects.create_user(email=email, password=password, role='Customer')
+            customer = Customer(user=user, first_name=firstname, last_name=lastname, phone=phone)
+            customer.save()
+            messages.success(request, "Registered successfully")
+            return redirect("loginn")  # Redirect to the login page
 
-    else:
-        form = CustomerRegistrationForm()
+    return render(request, 'c_register.html')
 
-    return render(request, 'registration.html', {'form': form})
-def add_seller(request):
-    if request.method == 'POST':
-        form = SellerForm(request.POST)
-        if form.is_valid():
-            seller = form.save(commit=False)
-            
-            # Set the role attribute to "seller"
-            seller.role = "seller"
-            
-            # Generate a random password
-            temporary_password = generate_random_password()
-            
-            # Set the password
-            seller.set_password(temporary_password)
-            
-            # Save the seller
+# Seller registration view
+def s_register(request):
+    if request.method == "POST":
+        # Retrieve seller registration data
+        firstname = request.POST.get('firstname')
+        lastname = request.POST.get('lastname')
+        email = request.POST.get('email')
+        mobile = request.POST.get('mobile')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirmpassword')
+
+        # Validate and save seller registration data
+        if CustomUser.objects.filter(email=email).exists():
+            messages.error(request, "Email already exists")
+        elif password != confirm_password:
+            messages.error(request, "Passwords do not match")
+        else:
+            # Create a user with the role 'Seller' and save first name, last name, and mobile
+            user = CustomUser.objects.create_user(email=email, password=password, role='Seller')
+            seller = Seller(user=user, first_name=firstname, last_name=lastname, mobile=mobile)
             seller.save()
+            messages.success(request, "Registered successfully")
+            return redirect("s_register")  # Redirect to the login page
 
-            return render(request, 'seller_password.html', {'temporary_password': temporary_password})
-    else:
-        form = SellerForm()
-
-    return render(request, 'add_seller.html', {'form': form})
-
+    return render(request, 's_register.html')
 def logout(request):
     auth_logout(request)
-    messages.info(request, "You have been logged out.")
-    return redirect('login')
-
-def admin_logout(request):
-    auth_logout(request)
-    messages.info(request, "You have been logged out.")
-    return redirect('login')
+    return redirect('home')
 
 def c_dashboard(request):
     if 'email' in request.session:
-        return render(request, 'c_dashboard.html')
+        response = render(request, 'dash/c_dashboard.html')
+        response['Cache-Control'] = 'no-store, must-revalidate'
+        return response
     else:
-        return redirect('index')
+        return redirect('home')
 
-def admin_dashboard(request):
-    return render(request, 'admin_dashboard.html')
-
+#@user_passes_test(lambda u: u.is_authenticated and u.is_seller)
 def s_dashboard(request):
-    return render(request, 's_dashboard.html')
+    if 'email' in request.session:
+        response = render(request, 'dash/s_dashboard.html')
+        response['Cache-Control'] = 'no-store, must-revalidate'
+        return response
+    else:
+        return redirect('home')
 
-def view_sellers(request):
-    sellers = Seller.objects.all()
-    return render(request, 'view_sellers.html', {'sellers': sellers})
-class SellerListView(ListView):
-    model = Seller
-    template_name = 'seller_list.html'
-    context_object_name = 'sellers'  
-
-def view_customers(request):
-    customers = Customer.objects.all()
-    return render(request, 'view_customers.html', {'customers': customers})
-    
-class CustomerListView(ListView):
-    model = Customer
-    template_name = 'customer_list.html'
-    context_object_name = 'customers' 
-
-def customer_list(request):
-    customers = Customer.objects.all()
-    return render(request, 'customer_list.html', {'customers': customers})
-
-def seller_list(request):
-    sellers = Seller.objects.all()
-    return render(request, 'seller_list.html', {'sellers': sellers})
-
-def seller_login_details(request, seller_id):
-    seller = get_object_or_404(Seller, id=seller_id)
-    return render(request, 'seller_login_details.html', {'seller': seller})
-
-def generate_random_password():
-    password_length = 6
-    characters = string.ascii_letters + string.digits + string.punctuation
-    password = ''.join(secrets.choice(characters) for i in range(password_length))
-    return password
+# Admin dashboard view
+#@user_passes_test(lambda u: u.is_authenticated and u.is_admin)
+def a_dashboard(request):
+    if 'email' in request.session:
+        response = render(request, 'dash/a_dashboard.html')
+        response['Cache-Control'] = 'no-store, must-revalidate'
+        return response
+    else:
+        return redirect('home')
