@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 # models.py
 
-=======
->>>>>>> 31f53b8323e18a63a5f7af549007d7b21b1466b6
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
 from .custom_models import CustomGroup  # Import your custom models from custom_models.py
@@ -18,7 +15,6 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-
     def create_superuser(self, email, password=None, role='Admin', phone=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
@@ -31,7 +27,6 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, role=role, phone=phone, **extra_fields)
 
 class CustomUser(AbstractUser):
-
     CUSTOMER = 'Customer'
     SELLER = 'Seller'
     ADMIN = 'Admin'
@@ -41,48 +36,24 @@ class CustomUser(AbstractUser):
         (SELLER, 'Seller'),
         (ADMIN, 'Admin'),
     ]
-<<<<<<< HEAD
     
-=======
-        
-    
-    
-    
-
-    # Fields for custom user roles
->>>>>>> 31f53b8323e18a63a5f7af549007d7b21b1466b6
     role = models.CharField(max_length=15, choices=ROLE_CHOICES, default=CUSTOMER)
     forget_password_token = models.UUIDField(null=True, blank=True)
-    is_admin = models.BooleanField(default=False)  # Add this field
-
     email = models.EmailField(unique=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
-<<<<<<< HEAD
     username = None
     phone = models.CharField(max_length=20, blank=True, null=True)
     is_customer = models.BooleanField(default=True)
     is_seller = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
-=======
-    username= None
-    phone = models.CharField(max_length=15, null=True, blank=True)
-    # Define boolean fields for specific roles (customize these as needed)
-    is_customer = models.BooleanField(default=True)
-    is_seller = models.BooleanField(default=False)
-    is_admin = models.BooleanField(default=False)
-
-    # Use custom Group model
->>>>>>> 31f53b8323e18a63a5f7af549007d7b21b1466b6
     groups = models.ManyToManyField(CustomGroup, blank=True, related_name='custom_user_groups')
     user_permissions = models.ManyToManyField(Permission, blank=True, related_name='custom_user_permissions')
 
-
     def __str__(self):
         return self.email
-<<<<<<< HEAD
 
 class Society(models.Model):
     district = models.CharField(max_length=20)
@@ -137,6 +108,3 @@ class CustomerEditProfile(models.Model):
     card_number = models.CharField(max_length=20)
     # Add other customer-specific fields
     profile_photo = models.ImageField(upload_to='Your_Profile/', null=True, blank=True)
-=======
-     
->>>>>>> 31f53b8323e18a63a5f7af549007d7b21b1466b6
