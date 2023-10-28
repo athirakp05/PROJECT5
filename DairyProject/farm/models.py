@@ -1,12 +1,9 @@
-from django.db import models
-from django.conf import settings
 
-from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
-from .custom_models import CustomGroup
-import random
-import string   
+# models.py
 from django.db import models
-from django.contrib.auth.models import User 
+from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
+from django.conf import settings
+from .custom_models import CustomGroup
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, role=None, phone=None, **extra_fields):
@@ -58,25 +55,23 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
 
-
 class Customer(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     firstname = models.CharField(max_length=100)
     lastname = models.CharField(max_length=100)
     phone = models.CharField(max_length=15)
-    email = models.EmailField(unique=True)  # Add an email field to the Customer model
+    email = models.EmailField(unique=True)
 
     def __str__(self):
         return self.firstname
 
-
 class Seller(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     firstname = models.CharField(max_length=50)
     lastname = models.CharField(max_length=50)
-    email = models.EmailField(unique=True)
+    email = models.EmailField()
     phone = models.CharField(max_length=15)
-    # Add other fields as specified
-    
+
     def __str__(self):
         return f"{self.firstname} {self.lastname}"
 
@@ -99,21 +94,16 @@ class SellerEdit(models.Model):
 
     def __str__(self):
         return f"{self.FirstName} {self.LastName}'s Seller Edit Profile"
-     # You can use the built-in User model or your CustomUser model
-
 
 class CustomerEdit(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     firstname = models.CharField(max_length=30)
-    lastname = models.CharField(max_length=30)  
+    lastname = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15)
-
     housename = models.CharField(max_length=100)
     gender = models.CharField(max_length=10)
     district = models.CharField(max_length=50)
 
     def __str__(self):
         return f"{self.firstname} {self.lastname}'s Customer Edit Profile"
-
-

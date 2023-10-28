@@ -85,7 +85,7 @@
 <body>
 <div class="container">
     <h1>Registration</h1>
-    <form action="#" id="userregistrationform" method="POST">
+    <form action="{% url 'login' %}" id="userregistrationform" method="POST">
         {% csrf_token %}
         <div class="form-group">
             <input type="text" class="form-control" id="firstname" name="firstname" placeholder="First Name" required>

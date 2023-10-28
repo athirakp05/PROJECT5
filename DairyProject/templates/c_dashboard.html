@@ -26,19 +26,20 @@
         /* Sidebar styles */
 
         .navbar {
-            width: 100%; /* Set the width to 100% to make it full width */
-            background-color: darkcyan; /* Updated background color */
+            width: 100%;
+            background-color: rgb(146, 232, 238);
             color: #fff;
-            padding: 20px; /* Add padding to the top */
-            position: fixed; /* Fixed position */
-            top: 0; /* Place it at the top */
-            z-index: 2; /* Add a higher z-index to overlay content */
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        /* Rest of your CSS remains the same */
-
         .logo {
-            font-size: 24px;
+            font-size: 10px;
             text-align: center;
             margin-bottom: 20px;
         }
@@ -46,17 +47,17 @@
         .menu {
             list-style: none;
             padding: 0;
+            display: flex; /* Display menu items in a row */
+            margin-left: auto; /* Push the menu to the right */
         }
 
-        .menu {
-            margin-bottom: 10px;
+        .menu li {
+            margin-right: 10px; /* Add spacing between menu items */
         }
 
         .menu a {
             text-decoration: none;
             color: #fff;
-            display: block;
-            padding: 10px 20px;
             transition: background-color 0.3s;
         }
 
@@ -71,8 +72,8 @@
         /* Main content styles */
         .content {
             flex-grow: 1;
-            padding: 20px;
-            margin-left: 250px; /* Add a margin to content to push it away from the fixed sidebar */
+            padding: 80px;
+            margin-left: 5px;
         }
 
         header {
@@ -80,6 +81,7 @@
             margin-bottom: 20px;
             color: #333;
         }
+
         /* CSS for the profile dropdown */
         .profile-dropdown {
             position: relative;
@@ -98,8 +100,9 @@
             position: absolute;
             background-color: #fff;
             min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
             z-index: 1;
+            right: 0;
         }
 
         .profile-dropdown-content a {
@@ -111,6 +114,23 @@
 
         .profile-dropdown-content a:hover {
             background-color: #f2f2f2;
+        }
+
+        .profile-dropdown img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .profile-dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            right: 0;
+            top: 60px;
         }
 
         /* Show the dropdown content when the user clicks on the profile link */
@@ -125,26 +145,25 @@
 <body>
     <!-- Sidebar -->
     <nav class="navbar">
-        <div class="logo">
-            Dashboard
-        </div>
-           
-            
-            <a href="#"><i class="fas fa-chart-bar"></i>View Product</a>
-            
-            <a href="#"><i class="fas fa-users"></i>Order History</a>
-            <a href="#"><i class="fas fa-users"></i>Payment History</a>
-            <a href="{% url 'logout' %}"><i class="fas fa-cog"></i>Logout</a>
-            <div class="profile-dropdown" >
+            <li class="profile-dropdown">
                 <button class="profile-dropbtn">
-                    <i class="fas fa-user" ></i> {{ user.email }}
+                    <img src="#" alt="Profile Picture">
+                    {{ user.email }}
                 </button>
                 <div class="profile-dropdown-content">
                     <a href="#">View Profile</a>
                     <a href="#">Edit Profile</a>
                     <a href="#">Change Password</a>
-                </div>
-            </div>
+                    <a href="{% url 'logout' %}"><i class="fas fa-cog"></i> Logout</a>
+            </li>
+        </div>
+        
+        <ul class="menu">
+            <li><a href="#"><i class="fas fa-chart-bar"></i> View Product</a></li>
+            <li><a href="#"><i class="fas fa-users"></i> Order History</a></li>
+            <li><a href="#"><i class="fas fa-users"></i> Payment History</a></li>
+            
+        </ul>
     </nav>
 
     <!-- Main Content -->
