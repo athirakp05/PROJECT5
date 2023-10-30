@@ -2,84 +2,249 @@
 {% load static %}
 
 {% block body %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seller Registration</title>
-<style>body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: rgb(150, 210, 236); /* Updated background color */
+            margin: 0;
+        }
 
-.registration-container {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    max-width: 400px;
-}
+        .registration-container {
+            background-color: whitesmoke;
+            border: 1px solid #fafcfd;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 10px 10px 10px rgba(178, 179, 180, 0.1);
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
+            margin-top: 20px;
+        }
 
-h1 {
-    color: #333;
-}
+        h1 {
+            color: #060606;
+        }
 
-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-input {
-    margin: 10px 0;
-    padding: 10px;
-    width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-}
+        .form-group {
+            text-align: left;
+        }
 
-button {
-    background-color: #007BFF;
-    color: #fff;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
+        .form-group label {
+            display: block;
+            font-weight: bold;
+        }
 
-button:hover {
-    background-color: #0056b3;
-}
+        .form-group input {
+            margin: 10px 10px;
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
 
-a {
-    margin-top: 10px;
-    text-decoration: none;
-    color: #007BFF;
-}
-</style></head>
-<body>
-    <div class="registration-container">
-        <h1>Seller Registration</h1>
-        <form method="post">
-            {% csrf_token %}
-            <input type="text" name="firstname" placeholder="First Name" required>
-            <input type="text" name="lastname" placeholder="Last Name" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="text" name="mobile" placeholder="Mobile" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <input type="password" name="confirmpassword" placeholder="Confirm Password" required>
-            <button type="submit">Register</button>
-        </form>
-        <a href="{% url 'login' %}">Already have an account? Login</a>
-    </div>
- {% endblock body %}
+        .form-group select {
+            margin: 10px 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 12px;
+        }
 
-</body>
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        a {
+            margin-top: 10px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+
+        .error-message {
+            color: #FF0000;
+            font-size: 14px;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        .phone-input-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .password-input-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .password-input-container .fa-eye, .password-input-container .fa-eye-slash {
+            cursor: pointer;
+            font-size: 10px;
+            margin-left: -30px;
+            z-index: 1;
+        }
+    </style>
+
+    <script>
+        function capitalizeFirstLetter(inputId) {
+            const input = document.querySelector(`input[name="${inputId}"]`);
+            const inputValue = input.value;
+            if (inputValue.length > 0) {
+                input.value = inputValue.charAt(0).toUpperCase() + inputValue.slice(1);
+            }
+        }
+
+        function validateEmail() {
+            const emailInput = document.querySelector('input[name="email"]');
+            const emailValue = emailInput.value;
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+            const emailError = document.querySelector('#emailError');
+
+            if (!emailPattern.test(emailValue)) {
+                emailError.textContent = 'Invalid email format';
+            } else {
+                emailError.textContent = '';
+            }
+        }
+
+        function validatePhoneNumber() {
+            const phoneInput = document.querySelector('input[name="phone"]');
+            const phoneValue = phoneInput.value;
+            const phonePattern = /^(9|8|7|6)[0-9]{9}$/; // Assuming Indian standard format
+            const phoneError = document.querySelector('#phoneError');
+
+            if (!phonePattern.test(phoneValue)) {
+                phoneError.textContent = 'Invalid phone number format';
+            } else {
+                phoneError.textContent = '';
+            }
+        }
+
+        function validatePassword() {
+            const passwordInput = document.querySelector('input[name="password"]');
+            const passwordValue = passwordInput.value;
+            const passwordPattern = /^(?=.*[0-9])(?=.*[!@#$%^&*])([a-zA-Z0-9!@#$%^&*]+){6,}$/;
+            const passwordError = document.querySelector('#passwordError');
+
+            if (!passwordPattern.test(passwordValue)) {
+                passwordError.innerHTML = "Password must be:<br>6 characters!<br>at least one number!<br>at least one special symbol!";
+            } else {
+                passwordError.textContent = '';
+            }
+        }
+
+        function validateConfirmPassword() {
+            const passwordInput = document.querySelector('input[name="password"]');
+            const confirmPasswordInput = document.querySelector('input[name="confirmpassword"]');
+            const confirmPasswordError = document.querySelector('#confirmpasswordError');
+
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                confirmPasswordError.textContent = 'Passwords do not match';
+            } else {
+                confirmPasswordError.textContent = '';
+            }
+        }
+
+        function togglePasswordVisibility(inputId) {
+            const passwordInput = document.querySelector(`input[name="${inputId}"]`);
+            const passwordToggle = document.querySelector(`#${inputId}Toggle`);
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordToggle.classList.add('fa-eye-slash');
+                passwordToggle.classList.remove('fa-eye');
+            } else {
+                passwordInput.type = 'password';
+                passwordToggle.classList.add('fa-eye');
+                passwordToggle.classList.remove('fa-eye-slash');
+            }
+        }
+        
+    </script>
+   
+    
+
+    <body>
+        <div class="registration-container">
+            <h1>Seller Registration</h1>
+            <form method="POST" action="{% url 's_register' %}" onsubmit="return validateForm()">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="firstname"></label>
+                    <input type="text" name="firstname" id="firstname" placeholder="First Name" required oninput="capitalizeFirstLetter('firstname')">
+                    <div class="error-message" id="firstnameError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="lastname"></label>
+                    <input type="text" name="lastname" id="lastname" placeholder="Last Name" oninput="capitalizeFirstLetter('lastname')">
+                    <div class="error-message" id="lastnameError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="email"></label>
+                    <input type="email" name="email" id="email" placeholder="Email" required oninput="validateEmail()">
+                    <div class="error-message" id="emailError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="phone"></label>
+                    <div class="phone-input-container">
+                        <select name="country_code" id="country_code">
+                            <option value="+91">+91 (India)</option>
+                            <!-- Add more options for other countries -->
+                        </select>
+                        <input type="text" name="phone" id="phone" placeholder="Mobile" required oninput="validatePhoneNumber()">
+                    </div>
+                    <div class="error-message" id="phoneError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="password"></label>
+                    <div class="password-input-container">
+                        <input type="password" name="password" id="password" placeholder="Password" required oninput="validatePassword()">
+                        <i class="fa fa-eye" id="passwordToggle" onclick="togglePasswordVisibility('password')"></i>
+                    </div>
+                    <div class="error-message" id="passwordError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmpassword"></label>
+                    <div class="password-input-container">
+                        <input type="password" name="confirmpassword" id="confirmpassword" placeholder="Confirm Password" required oninput="validateConfirmPassword()">
+                        <i class="fa fa-eye" id="confirmpasswordToggle" onclick="togglePasswordVisibility('confirmpassword')"></i>
+                    </div>
+                    <div class="error-message" id="confirmpasswordError"></div>
+                </div>
+                <div class="form-group">
+                    <button type="submit">SignUp</button>
+                </div>
+            </form>
+            <div id="alert" style="display: none;">
+            </div>
+            <a href="{% url 'login' %}">Already have an account? Login</a>
+            <div id="alert">
+                {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                            <li class="{{ message.tags }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+        
+        
+    </body>
+{% endblock body %}

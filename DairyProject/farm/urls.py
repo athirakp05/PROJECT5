@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from.import views
+from . import views  # Import your views module
 from django.contrib.auth.views import PasswordResetView,PasswordResetDoneView,PasswordResetConfirmView,PasswordResetCompleteView
 
 urlpatterns = [
@@ -17,6 +17,9 @@ urlpatterns = [
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('reset/done/', PasswordResetCompleteView.as_view(), name='password_reset_complete')
-
+    path('reset/done/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    path('s_view', views.s_view, name='s_view'),
+    path('c_view', views.c_view, name='c_view'),
+    path('profile', views.profile, name='profile')
 ]
+

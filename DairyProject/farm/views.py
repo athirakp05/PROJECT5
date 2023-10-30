@@ -14,7 +14,6 @@ from .forms import CustomerRegistrationForm, SellerRegistrationForm
 
 def index(request):
     return render(request, 'index.html')
-
 def loginn(request):
     if request.method == "POST":
         email = request.POST.get('email')
@@ -25,46 +24,48 @@ def loginn(request):
         if user is not None:
             auth_login(request, user)
             request.session['email'] = email
-            messages.success(request, "Login successful!")
 
             if user.role == 'Admin':
+                messages.success(request, "Login successful!")
                 return redirect("a_dashboard")
             elif user.role == 'Customer':
+                messages.success(request, "Login successful!")
                 return redirect("c_dashboard")
             elif user.role == 'Seller':
+                messages.success(request, "Login successful!")
                 return redirect("s_dashboard")
-
-    response = render(request, 'login.html')
-    response['Cache-Control'] = 'no-store, must-revalidate'
-    return response
-# views.py
-# Import necessary modules and models
+    
+    # Handle login failure
+    messages.error(request, "Login failed. Please check your credentials.")
+    return render(request, 'login.html')
 
 # Customer registration view
 def c_register(request):
     if request.method == "POST":
-        # Retrieve customer registration data
+        # Retrieve seller registration data
         firstname = request.POST.get('firstname')
         lastname = request.POST.get('lastname')
         email = request.POST.get('email')
-        phone = request.POST.get('phone')
+        mobile = request.POST.get('mobile')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirmpassword')
 
-        # Validate and save customer registration data
+        # Validate and save seller registration data
         if CustomUser.objects.filter(email=email).exists():
             messages.error(request, "Email already exists")
         elif password != confirm_password:
             messages.error(request, "Passwords do not match")
         else:
-            # Create a user with the role 'Customer'
+            # Create a user with the role 'Seller' and save first name, last name, and mobile
             user = CustomUser.objects.create_user(email=email, password=password, role='Customer')
-            customer = Customer(user=user, first_name=firstname, last_name=lastname, phone=phone)
+            customer = Seller(user=user, first_name=firstname, last_name=lastname, mobile=mobile)
             customer.save()
             messages.success(request, "Registered successfully")
-            return redirect("loginn")  # Redirect to the login page
+            showAlert("Registered successfully");
+            return redirect("login")  # Redirect to the login page
 
     return render(request, 'c_register.html')
+
 
 # Seller registration view
 def s_register(request):
@@ -88,9 +89,12 @@ def s_register(request):
             seller = Seller(user=user, first_name=firstname, last_name=lastname, mobile=mobile)
             seller.save()
             messages.success(request, "Registered successfully")
-            return redirect("s_register")  # Redirect to the login page
+            return redirect("s_register")  # Redirect to the registration page
+
 
     return render(request, 's_register.html')
+
+    
 def logout(request):
     auth_logout(request)
     return redirect('home')
@@ -121,3 +125,28 @@ def a_dashboard(request):
         return response
     else:
         return redirect('home')
+# views.py
+from .models import Seller, Customer
+
+# Other views
+def s_view(request):
+    sellers = Seller.objects.all()
+    print(sellers)  # Add this line for debugging
+    return render(request, 'view/s_view.html', {'sellers': sellers})
+
+# Add a view to display customers
+def c_view(request):
+    customers = Customer.objects.all()
+    print(customers)  # Add this line for debugging
+    return render(request, 'view/c_view.html', {'customers': customers})
+
+    
+def profile(request):
+    admin = CustomUser.objects.get(id=request.user.id)  # Assuming you have an 'id' field for the user
+
+    # You can customize this based on your user model and how you store profile information
+    context = {
+        'admin': admin,
+    }
+
+    return render(request, 'profile.html', context)

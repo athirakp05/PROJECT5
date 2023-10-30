@@ -1,0 +1,38 @@
+<header>Products</header>
+<style>
+    /* Add spacing to the table cells (td elements) */
+    td {
+        padding: 100px; /* You can adjust the value as needed */
+    }
+</style>
+
+<table>
+    <thead>
+        <tr>
+            <th>Product Image</th>
+            <th>Product Name</th>
+            <th>Manufacturing Date</th>
+            <th>Expiry Date</th>
+            <th>Grade Level</th>
+            <th>Quantity(ltrs/kgms)</th>
+            <th>Price</th>
+            <th>Category</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+            <tr>
+                <td >
+                    <img src="{{ product.image.url }}" alt="{{ product.p_name }}" width="100">
+                </td>
+                <td>{{ product.p_name }}</td>
+                <td>{{ product.mfg_date }}</td>
+                <td>{{ product.expiry_date }}</td>
+                <td>{{ product.grade_level }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.category.category }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

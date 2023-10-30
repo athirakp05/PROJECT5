@@ -75,7 +75,9 @@
         <div class="logo">Dashboard</div>
         <ul class="menu">
             <li><a href="#"><i class="fas fa-home"></i> Profile</a></li>
-            <li><a href="#"><i class="fas fa-chart-bar"></i> View Product</a></li>
+            <li><a href="{% url 'prod_view' %}"><i class="fas fa-chart-bar"></i> View Product</a></li>
+
+            <li><a href="{% url 'product_add' %}"><i class="fas fa-chart-bar"></i> Add Product</a></li>
             <li><a href="#"><i class="fas fa-users"></i> Order History</a></li>
             <li><a href="#"><i class="fas fa-users"></i> Payment History</a></li>
             <li><a href="{% url 'logout' %}"><i class="fas fa-cog"></i> Logout</a></li>

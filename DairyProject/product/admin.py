@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import p_Category
 
-# Register your models here.
+admin.site.register(p_Category)
+#admin.site.register(Product)
