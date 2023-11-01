@@ -1,9 +1,7 @@
 # models.py
-
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
 from .custom_models import CustomGroup  # Import your custom models from custom_models.py
-
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, role=None, mobile=None, **extra_fields):
@@ -60,13 +58,11 @@ class Society(models.Model):
     subdistrict = models.CharField(max_length=50)
     panchayath = models.CharField(max_length=50)
     ward_no = models.IntegerField()
-    farmer = models.ForeignKey('SellerEditProfile', on_delete=models.CASCADE, related_name='societies')
 
 class IFSCCode(models.Model):
     bankname = models.CharField(max_length=50)
     branch = models.CharField(max_length=50)
-    accno = models.IntegerField()
-    farmer = models.ForeignKey('SellerEditProfile', on_delete=models.CASCADE, related_name='ifsccodes')
+    acc_no = models.IntegerField()
 
 class SellerEditProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
@@ -82,22 +78,77 @@ class SellerEditProfile(models.Model):
     email = models.EmailField()
     mobile = models.CharField(max_length=20, blank=True, null=True)
     acc_no = models.IntegerField()
-    society = models.ForeignKey(Society, on_delete=models.CASCADE, related_name='farmers')
+    society = models.ForeignKey(Society, on_delete=models.CASCADE)
     profile_photo = models.ImageField(upload_to='seller_profile_photos/', null=True, blank=True)
-
     # Add any other fields you need for your Seller model
+    def __str__(self):
+        return f'Seller Profile for {self.user.email}'
 
-class Customer(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
-    first_name = models.CharField(max_length=50)  # Added for Customer's first name
-    last_name = models.CharField(max_length=50)  # Added for Customer's last name
-    mobile = models.CharField(max_length=20, blank=True, null=True)
+
 
 class Seller(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
     first_name = models.CharField(max_length=50)  # Added for Seller's first name
     last_name = models.CharField(max_length=50)  # Added for Seller's last name
     mobile = models.CharField(max_length=15,blank=True, null=True)
+class Cattle(models.Model):
+    cattle_id = models.AutoField(primary_key=True)
+    ear_tag_id = models.IntegerField()
+    cattle_type = models.CharField(max_length=10)
+    breed_name = models.CharField(max_length=50)
+    weight = models.IntegerField()
+    age = models.IntegerField()
+    colour = models.CharField(max_length=50)
+    health_status = models.CharField(max_length=50)
+    seller = models.ForeignKey(
+        'farm.CustomUser',  # Replace 'farm' with the correct app name
+        limit_choices_to={'role': 'Seller'},  # Filter by role
+        on_delete=models.CASCADE
+    )
+    profile_image = models.ImageField(upload_to='cattle_profile_photos/', null=True, blank=True)
+    height = models.IntegerField(null=True)
+    feed = models.CharField(max_length=50,null=True)
+    medicine = models.CharField(max_length=5,null=True)
+    milk_obtained_per_day = models.IntegerField(null=True)
+
+    def __str__(self):
+        return f'Cattle ID {self.cattle_id}'
+class CattleType(models.Model):
+    id = models.AutoField(primary_key=True)  # Add this line
+    cattle_type = models.CharField(max_length=50)
+
+
+class Breed(models.Model):
+    breed_id = models.AutoField(primary_key=True)
+    breed_name = models.CharField(max_length=50)
+class Customer(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    first_name = models.CharField(max_length=50)  # Added for Customer's first name
+    last_name = models.CharField(max_length=50)  # Added for Customer's last name
+    mobile = models.CharField(max_length=20, blank=True, null=True)
+
+class Health(models.Model):
+    height = models.IntegerField()
+    weight = models.IntegerField()
+    age = models.IntegerField()
+    milk_obtained_per_day = models.IntegerField()
+    health_status = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f'Health record for Cattle ID {self.cattle.cattle_id}'
+
+class Gender(models.Model):
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('others', 'Others'),
+    ]
+    
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
+
+    def __str__(self):
+        return self.gender
+
 
 class CustomerEditProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
@@ -108,3 +159,6 @@ class CustomerEditProfile(models.Model):
     card_number = models.CharField(max_length=20)
     # Add other customer-specific fields
     profile_photo = models.ImageField(upload_to='Your_Profile/', null=True, blank=True)
+
+
+

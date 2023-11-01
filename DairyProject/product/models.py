@@ -3,7 +3,6 @@ from farm.models import Seller
 
 class p_Category(models.Model):
     category = models.CharField(max_length=50, null=False)
-    seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.category

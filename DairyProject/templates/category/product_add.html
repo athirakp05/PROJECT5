@@ -5,40 +5,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Product</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px 0px #aaa;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0;
+        }
+
+        select, input[type="text"], input[type="number"], input[type="date"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+
+        input[type="file"] {
+            margin: 10px 0;
+        }
+
+        input[type="submit"] {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        /* Style the submit button on hover */
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <h1>Add Product</h1>
-    <form method="post" action="{% url 'product_add' %}" enctype="multipart/form-data">
-        {% csrf_token %}
-        <label for="category">Category:</label>
-        <select name="category" id="category">
-            {% for category in categories %}
-                <option value="{{ category.id }}">{{ category.category }}</option>
-            {% endfor %}
-        </select>
-        <br>
-        <label for="product_name">Product Name:</label>
-        <input type="text" name="p_name" id="product_name" required>
-        <br>
-        <label for="mfg_date">Manufacturing Date:</label>
-        <input type="date" name="mfg_date" id="mfg_date" required>
-        <br>
-        <label for="expiry_date">Expiry Date:</label>
-        <input type="date" name="expiry_date" id="expiry_date" required>
-        <br>
-        <label for="grade_level">Grade Level:</label>
-        <input type="number" name="grade_level" id="grade_level" required>
-        <br>
-        <label for="quantity">Quantity:</label>
-        <input type="number" name="quantity" id="quantity" required>
-        <br>
-        <label for="price">Price:</label>
-        <input type="number" name="price" id="price" step="0.01" required>
-        <br>
-        <label for="image">Product Image:</label>
-        <input type="file" name="image" id="image">
-        <br>
-        <input type="submit" value="Add Product">
-    </form>
+    <div class="container">
+        <form method="post" action="{% url 'product_add' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="category">Category:</label>
+            <select name="category" id="category">
+                {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.category }}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <label for="product_name">Product Name:</label>
+            <input type="text" name="p_name" id="product_name" required>
+            <br>
+            <label for="mfg_date">Manufacturing Date:</label>
+            <input type="date" name="mfg_date" id="mfg_date" required>
+            <br>
+            <label for="expiry_date">Expiry Date:</label>
+            <input type="date" name="expiry_date" id="expiry_date" required>
+            <br>
+            <label for="grade_level">Grade Level:</label>
+            <input type="number" name="grade_level" id="grade_level" required>
+            <br>
+            <label for="quantity">Quantity:</label>
+            <input type="number" name="quantity" id="quantity" required>
+            <br>
+            <label for="price">Price:</label>
+            <input type="number" name="price" id="price" step="0.01" required>
+            <br>
+            <label for="image">Product Image:</label>
+            <input type="file" name="image" id="image">
+            <br>
+            <input type="submit" value="Add Product">
+        </form>
+    </div>
 </body>
 </html>

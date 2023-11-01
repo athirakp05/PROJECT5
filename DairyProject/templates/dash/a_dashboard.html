@@ -60,7 +60,7 @@
         }
 
         .menu li a:hover {
-            background-color: #555;
+            background-color: #f9f8f8;
         }
 
         .menu li a i {
@@ -76,7 +76,7 @@
         header {
             font-size: 24px;
             margin-bottom: 20px;
-            color: #333;
+            color:whitesmoke;
         }
     </style>
 </head>
@@ -101,10 +101,12 @@
         <ul class="menu">
             <li><a href="{% url 'profile' %}"><i class="fas fa-home"></i> Profile</a></li>
             <li><a href="{% url 'prod_view' %}"><i class="fas fa-chart-bar"></i> View Product</a></li>
-            <li><a href="{% url 's_register' %}"><i class="fas fa-chart-bar"></i> Add Seller</a></li>
+            <li><a href="{% url 'cat_add' %}"><i class="fas fa-users"></i> Add Category</a></li>
+            <li><a href="$"><i class="fas fa-users"></i> Add Cattle type</a></li>
+            <li><a href="$"><i class="fas fa-users"></i>sdfg</a></li>
+            <li><a href="$"><i class="fas fa-users"></i>vb</a></li>
+            <li><a href="$"><i class="fas fa-users"></i>View cattle</a></li>
             <li><a href="{% url 's_view' %}"><i class="fas fa-users"></i> View Seller</a></li>
-
-            <li><a href="{% url 'cat_add' %}"><i class="fas fa-users"></i> View Seller</a></li>
             <li><a href="{% url 'c_view' %}"><i class="fas fa-users"></i> View Customer</a></li>
         </ul>
         <li><a href="{% url 'logout' %}"><i class="fas fa-cog"></i> Logout</a></li>

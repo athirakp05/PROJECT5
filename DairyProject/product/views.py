@@ -31,4 +31,4 @@ def product_add(request):
 
 def prod_view(request):
     products = Product.objects.all()
-    return render(request, 'category/prod_view.html', {'products': products})
+    return render(request, 'view/prod_view.html', {'products': products})

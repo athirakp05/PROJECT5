@@ -13,6 +13,11 @@ urlpatterns = [
     path('about',views.logout,name='about'),
     path('c_dashboard', views.c_dashboard, name='c_dashboard'),
     path('s_dashboard', views.s_dashboard, name='s_dashboard'),
+
+    path('add_cattle', views.add_cattle, name='add_cattle'),
+
+    path('cattle_view', views.cattle_view, name='cattle_view'),
+    path('s_prof_edit/<int:user_id>/', views.s_prof_edit, name='s_prof_edit'),
     path('a_dashboard', views.a_dashboard, name='a_dashboard'),
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
@@ -20,6 +25,6 @@ urlpatterns = [
     path('reset/done/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('s_view', views.s_view, name='s_view'),
     path('c_view', views.c_view, name='c_view'),
-    path('profile', views.profile, name='profile')
+    path('profile', views.profile, name='profile'),
 ]
 

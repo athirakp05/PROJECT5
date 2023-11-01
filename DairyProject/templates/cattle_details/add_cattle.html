@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Cattle</title>
+</head>
+<style>/* Add some basic styling to the form */
+    form {
+        width: 80%;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    h1 {
+        text-align: center;
+    }
+    
+    label {
+        display: block;
+        margin-top: 10px;
+    }
+    
+    input[type="text"],
+    input[type="number"],
+    input[type="file"],
+    select {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+    }
+    
+    select {
+        height: 34px; /* Match the height of text inputs for consistency */
+    }
+    
+    input[type="submit"] {
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+    
+    /* Style the submit button on hover */
+    input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+    
+    /* Add some padding to the form for better spacing */
+    body {
+        padding: 20px;
+    }
+    
+    /* Center the form on the page */
+    html, body {
+        height: 100%;
+    }
+    
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f0f0f0;
+        min-height: 100%;
+        margin: 0;
+    }
+    
+    /* Apply some additional styling as needed based on your project's design */
+    </style>
+<body>
+    <h1>Add Cattle</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="ear_tag_id">Ear Tag ID:</label>
+        <input type="text" name="ear_tag_id" required><br>
+
+        <label for="cattle_type">Cattle Type:</label>
+<select name="cattle_type" id="cattle_type" required>
+    <option value="" disabled selected>Select Cattle Type</option>
+    {% for cattle_type in cattle_types %}
+        <option value="{{ cattle_type.cattle_type }}">{{ cattle_type.cattle_type }}</option>
+    {% endfor %}
+</select><br>
+
+<label for="breed_name">Breed Name:</label>
+<select name="breed_name" id="breed_name" required>
+    <option value="" disabled selected>Select Breed Name</option>
+</select><br>
+
+
+
+        <label for="weight">Weight (in kg):</label>
+        <input type="number" name="weight" required><br>
+
+        <label for="age">Age (in months):</label>
+        <input type="number" name="age" required><br>
+
+        <label for="colour">Colour:</label>
+        <input type="text" name="colour" required><br>
+
+        <label for="health_status">Health Status:</label>
+<select name="health_status" id="health_status" required>
+    <option value="" disabled selected>Select Health Status</option>
+    {% for status in health_status_options %}
+        <option value="{{ status }}">{{ status }}</option>
+    {% endfor %}
+</select><br>
+
+        <label for="height">Height (in cm):</label>
+        <input type="number" name="height"><br>
+
+        <label for="feed">Feed:</label>
+        <input type="text" name="feed"><br>
+
+        <label for="medicine">Medicine:</label>
+        <input type="text" name="medicine"><br>
+
+        <label for="milk_obtained_per_day">Milk Obtained per Day (in liters):</label>
+        <input type="number" name="milk_obtained_per_day"><br>
+
+        <label for="profile_image">Profile Image:</label>
+        <input type="file" name="profile_image"><br>
+
+        <label for="seller">Seller:</label>
+        <select name="seller" required>
+            <option value="" disabled selected>Select Seller</option>
+            {% for seller in sellers %}
+                <option value="{{ seller.user.id }}">{{ seller.user.first_name }} {{ seller.user.last_name }}</option>
+            {% endfor %}
+        </select><br>
+
+        <input type="submit" value="Add Cattle">
+    </form>
+    
+</body>
+
+</html>

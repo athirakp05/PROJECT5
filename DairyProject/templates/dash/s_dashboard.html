@@ -55,31 +55,46 @@
             margin-right: 10px;
         }
 
-        /* Main content styles */
-        .content {
-            padding: 20px;
+        /* Dropdown Content Styles */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #083150;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
         }
 
-        header {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #333;
+        .dropdown-content a {
+            padding: 12px 16px;
+            display: block;
         }
 
-        /* FontAwesome Icons */
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+        /* Show the dropdown content when hovering or clicking on the dropdown button */
+        .profile-dropdown:hover .dropdown-content,
+        .profile-dropdown.show .dropdown-content {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="navbar">
         <div class="logo">Dashboard</div>
         <ul class="menu">
-            <li><a href="#"><i class="fas fa-home"></i> Profile</a></li>
+            <li class="profile-dropdown">
+                <a href="#" id="profile-dropdown-toggle">
+                    <i class="fas fa-user"></i> Profile <i class="fas fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-content" id="profile-dropdown-content">
+                    <li><a href="{% url 's_view' %}">View Profile</a></li>
+                    <a href="{% url 's_prof_edit' request.user.id %}">Edit Profile</a>
+                    <li><a href="#">Change Password</a></li>
+                </ul>
+            </li>
             <li><a href="{% url 'prod_view' %}"><i class="fas fa-chart-bar"></i> View Product</a></li>
-
             <li><a href="{% url 'product_add' %}"><i class="fas fa-chart-bar"></i> Add Product</a></li>
-            <li><a href="#"><i class="fas fa-users"></i> Order History</a></li>
-            <li><a href="#"><i class="fas fa-users"></i> Payment History</a></li>
+
+            <li><a href="{% url 'add_cattle' %}"><i class="fas fa-chart-bar"></i> Add cattle</a></li>
             <li><a href="{% url 'logout' %}"><i class="fas fa-cog"></i> Logout</a></li>
         </ul>
     </div>
@@ -93,5 +108,23 @@
             <p></p>
         </main>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const profileDropdownToggle = document.getElementById('profile-dropdown-toggle');
+            const profileDropdownContent = document.getElementById('profile-dropdown-content');
+    
+            profileDropdownToggle.addEventListener('click', function (event) {
+                event.preventDefault();
+                profileDropdownContent.classList.toggle('show');
+            });
+    
+            window.addEventListener('click', function (event) {
+                if (event.target !== profileDropdownToggle && event.target !== profileDropdownContent) {
+                    profileDropdownContent.classList.remove('show');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

@@ -11,6 +11,10 @@ from django.urls import reverse
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import Permission
 from .forms import CustomerRegistrationForm, SellerRegistrationForm
+from .models import SellerEditProfile
+from .forms import SellerProfileEditForm,CattleForm  # Import your SellerProfileEditForm
+from .models import CattleType
+
 
 def index(request):
     return render(request, 'index.html')
@@ -94,6 +98,35 @@ def s_register(request):
 
     return render(request, 's_register.html')
 
+def s_prof_edit(request, user_id):
+    # Check if the user is authenticated
+    if not request.user.is_authenticated:
+        return redirect('login')  # Redirect to the login page if the user is not authenticated
+
+    # Check if the user object is available and has the correct user_id
+    if request.user.id != user_id:
+        raise Http404("User does not exist or you don't have permission to edit this profile.")
+    # Get the current user
+    user = request.user
+
+    # Check if a SellerEditProfile object exists for the user
+    try:
+        seller_profile = SellerEditProfile.objects.get(user=user)
+    except SellerEditProfile.DoesNotExist:
+        # If it doesn't exist, create a new SellerEditProfile object
+        seller_profile = SellerEditProfile(user=user)
+
+    if request.method == 'POST':
+        form = SellerProfileEditForm(request.POST, request.FILES, instance=seller_profile)
+        if form.is_valid():
+            form.save()  # This should save the pin_code as well
+            return redirect('s_view')  # Redirect to a success page or another appropriate URL
+    else:
+        form = SellerProfileEditForm(instance=seller_profile)
+
+    return render(request, 'profile_edit/s_prof_edit.html', {'form': form})
+
+
     
 def logout(request):
     auth_logout(request)
@@ -126,7 +159,6 @@ def a_dashboard(request):
     else:
         return redirect('home')
 # views.py
-from .models import Seller, Customer
 
 # Other views
 def s_view(request):
@@ -150,3 +182,58 @@ def profile(request):
     }
 
     return render(request, 'profile.html', context)
+    
+def add_cattle(request):
+    if request.method == 'POST':
+        form = CattleForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            # Create and save the cattle object
+            cattle = form.save(commit=False)
+
+            # Get the selected cattle type and breed name from the form
+            cattle_type = request.POST.get('cattle_type')
+            breed_name = request.POST.get('breed_name')
+
+            # Retrieve the cattle type and breed objects from the database
+            cattle_type_obj = cattleType.objects.get(cattle_type=cattle_type)
+            breed_obj = Breed.objects.get(breed_name=breed_name)
+
+            # Set the cattle type and breed for the cattle object
+            cattle.cattle_type = cattle_type_obj
+            cattle.breed_name = breed_obj
+
+            # Fetch health status options from the Health table
+            health_status_options = Health.objects.values_list('health_status', flat=True).distinct()
+
+            cattle.save()
+            return redirect('add_cattle')
+    else:
+        form = CattleForm()
+
+        # Retrieve cattle types from the database
+        cattle_types = cattleType.objects.all()
+
+        # Initialize health status options as empty
+        health_status_options = []
+
+    return render(request, 'cattle_details/add_cattle.html', {'form': form, 'cattle_types': cattle_types, 'health_status_options': health_status_options})
+
+def cattle_view(request, user_id):
+    # Retrieve the specific seller using the provided user_id
+    seller = get_object_or_404(CustomUser, id=user_id, role='Seller')
+
+    # Retrieve the cattles associated with the seller
+    seller_cattles = Cattle.objects.filter(seller=seller)
+
+    # Pass the seller and their cattles to the template
+    context = {
+        'seller': seller,
+        'seller_cattles': seller_cattles,
+    }
+
+    # Render the cattle_view.html template with the context data
+    return render(request, 'cattle_details/cattle_view.html', context)
+
+    
+    

@@ -4,7 +4,7 @@ from .models import p_Category, Product
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = p_Category
-        fields = ['category', 'seller']  # Define the fields you want to include in the form
+        fields = ['category']  # Define the fields you want to include in the form
 
 class ProductForm(forms.ModelForm):
     class Meta:

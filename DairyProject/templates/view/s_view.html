@@ -5,42 +5,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> <!-- Include Bootstrap CSS -->
     <title>View Sellers</title>
 </head>
+<style>/* Reset default margin and padding */
+    html, body, div, h1, h2, h3, p, ul, li, table, th, td {
+        margin: 0;
+        padding: 0;
+    }
+    
+    /* Apply a background color to the body */
+    body {
+        background-color: #f8f8f8;
+        font-family: Arial, sans-serif;
+        padding: 20px;
+    }
+    
+    /* Style for the header */
+    h1 {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    
+    /* Style for the table */
+    .table {
+        width: 100%;
+        margin-bottom: 20px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-collapse: collapse;
+    }
+    
+    /* Style for table headings */
+    th {
+        background-color: #007BFF;
+        color: #fff;
+        text-align: center;
+        padding: 10px;
+    }
+    
+    /* Style for table cells */
+    td {
+        text-align: center;
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+    
+    /* Style for the form-check and buttons */
+    .form-check {
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-check-input {
+        margin-right: 5px;
+    }
+    
+    .btn {
+        text-decoration: none;
+        padding: 5px 10px;
+        margin: 5px;
+    }
+    
+    .btn-primary {
+        background-color: #007BFF;
+        color: #fff;
+    }
+    
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+    
+    .btn-info {
+        background-color: #17a2b8;
+        color: #fff;
+    }
+    
+    .btn-info:hover {
+        background-color: #117a8b;
+    }
+    
+    /* Style for pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+    }
+    
+    .page-item {
+        margin: 0 5px;
+    }
+    
+    .page-link {
+        text-decoration: none;
+        background-color: #007BFF;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+    
+    .page-link:hover {
+        background-color: #0056b3;
+    }
+    </style>
 <body>
     <h1>List of Sellers</h1>
-    <!-- s_view.html -->
-<table border="1px">
-    <thead>
-        <tr>
-            <th>Email</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Mobile</th>
-            <th>Active</th> <!-- New column for Active status -->
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for seller in sellers %}
-            <tr>
-                <td>{{ seller.user.email }}</td>
-                <td>{{ seller.first_name }}</td>
-                <td>{{ seller.last_name }}</td>
-                <td>{{ seller.mobile }}</td>
-                <td>
-                    <form method="post" action="#">
-                        {% csrf_token %}
-                        <input type="checkbox" name="is_active" {% if seller.is_active %}checked{% endif %}>
-                        <button type="submit">Save</button>
-                    </form>
-                </td>
-                <td>
-                    <a href="#">Edit</a>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
 
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Mobile</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for seller in sellers %}
+                <tr>
+                    <td>{{ seller.user.email }}</td>
+                    <td>{{ seller.first_name }}</td>
+                    <td>{{ seller.last_name }}</td>
+                    <td>{{ seller.mobile }}</td>
+                    <td>
+                        <form method="post" action="#">
+                            {% csrf_token %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="is_active" {% if seller.is_active %}checked{% endif %}>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </td>
+                    <td>
+                        <a href="#" class="btn btn-info">Edit</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+    </nav>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> <!-- Include jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script> <!-- Include Popper.js -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> <!-- Include Bootstrap JS -->
 </body>
 </html>
