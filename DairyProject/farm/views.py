@@ -14,6 +14,8 @@ from .forms import CustomerRegistrationForm, SellerRegistrationForm
 from .models import SellerEditProfile
 from .forms import SellerProfileEditForm,CattleForm  # Import your SellerProfileEditForm
 from .models import CattleType
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 
 
 def index(request):
@@ -183,6 +185,16 @@ def profile(request):
 
     return render(request, 'profile.html', context)
     
+
+# ...
+
+def get_breed_names(request):
+    cattle_type = request.GET.get('cattle_type')
+    if cattle_type:
+        breed_names = Breed.objects.filter(cattle_type__cattle_type=cattle_type).values_list('breed_name', flat=True)
+        return JsonResponse(list(breed_names), safe=False)
+    return JsonResponse([], safe=False)
+
 def add_cattle(request):
     if request.method == 'POST':
         form = CattleForm(request.POST, request.FILES)
@@ -196,8 +208,10 @@ def add_cattle(request):
             breed_name = request.POST.get('breed_name')
 
             # Retrieve the cattle type and breed objects from the database
-            cattle_type_obj = cattleType.objects.get(cattle_type=cattle_type)
-            breed_obj = Breed.objects.get(breed_name=breed_name)
+            cattle_type_obj = CattleType.objects.get(cattle_type=cattle_type)
+
+            # Associate the breed name with the selected cattle type
+            breed_obj = Breed.objects.get(breed_name=breed_name, cattle_type=cattle_type_obj)
 
             # Set the cattle type and breed for the cattle object
             cattle.cattle_type = cattle_type_obj
@@ -212,12 +226,13 @@ def add_cattle(request):
         form = CattleForm()
 
         # Retrieve cattle types from the database
-        cattle_types = cattleType.objects.all()
+        cattle_types = CattleType.objects.all()
 
         # Initialize health status options as empty
         health_status_options = []
 
     return render(request, 'cattle_details/add_cattle.html', {'form': form, 'cattle_types': cattle_types, 'health_status_options': health_status_options})
+
 
 def cattle_view(request, user_id):
     # Retrieve the specific seller using the provided user_id
@@ -232,8 +247,6 @@ def cattle_view(request, user_id):
         'seller_cattles': seller_cattles,
     }
 
-    # Render the cattle_view.html template with the context data
     return render(request, 'cattle_details/cattle_view.html', context)
 
-    
-    
+

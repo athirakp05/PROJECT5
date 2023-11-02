@@ -1,28 +1,25 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Add Cattle</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
-<style>/* Add some basic styling to the form */
-    form {
-        width: 80%;
-        max-width: 400px;
-        margin: 0 auto;
+<style>/* Add basic styling to the form container */
+    .container {
+        margin-top: 20px;
     }
     
-    h1 {
-        text-align: center;
+    /* Style form labels */
+    .form-label {
+        font-weight: bold;
     }
     
-    label {
-        display: block;
-        margin-top: 10px;
-    }
-    
-    input[type="text"],
-    input[type="number"],
-    input[type="file"],
-    select {
+    /* Style form inputs and selects */
+    .form-control {
         width: 100%;
         padding: 8px;
         margin: 5px 0;
@@ -30,11 +27,8 @@
         border-radius: 3px;
     }
     
-    select {
-        height: 34px; /* Match the height of text inputs for consistency */
-    }
-    
-    input[type="submit"] {
+    /* Style form submit button */
+    .btn-primary {
         background-color: #007BFF;
         color: white;
         border: none;
@@ -43,97 +37,139 @@
         cursor: pointer;
     }
     
-    /* Style the submit button on hover */
-    input[type="submit"]:hover {
+    /* Style form submit button on hover */
+    .btn-primary:hover {
         background-color: #0056b3;
     }
     
-    /* Add some padding to the form for better spacing */
-    body {
-        padding: 20px;
+    /* Style form checkboxes and labels */
+    .form-check-input {
+        margin-top: 5px;
     }
     
-    /* Center the form on the page */
-    html, body {
-        height: 100%;
+    /* Center the form horizontally */
+    .text-center {
+        text-align: center;
     }
-    
-    body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #f0f0f0;
-        min-height: 100%;
-        margin: 0;
-    }
-    
-    /* Apply some additional styling as needed based on your project's design */
     </style>
 <body>
-    <h1>Add Cattle</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <label for="ear_tag_id">Ear Tag ID:</label>
-        <input type="text" name="ear_tag_id" required><br>
+    <h1 class="text-center">Add Cattle</h1>
+    <div class="container">
+        <form class="row g-3" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="col-md-6">
+                <label for="cattle_type" class="form-label">Cattle Type:</label>
+                <select name="cattle_type" id="cattle_type" class="form-select" required>
+                    <option value="" disabled selected>Select Cattle Type</option>
+                    {% for cattle_type in cattle_types %}
+                    <option value="{{ cattle_type.cattle_type }}">{{ cattle_type.cattle_type }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="breed_name" class="form-label">Breed Name:</label>
+                <select name="breed_name" id="breed_name" class="form-select" required>
+                    <option value="" disabled selected>Select Breed Name</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="ear_tag_id" class="form-label">Ear Tag ID:</label>
+                <input type="text" name="ear_tag_id" class="form-control" required>
+            </div>
+           
+            <div class="col-md-6">
+                <label for="age" class="form-label">Age (in months):</label>
+                <input type="number" name="age" class="form-control" required>
+            </div>
+            <div class="col-12">
+                <label for="colour" class="form-label">Colour:</label>
+                <input type="text" name="colour" class="form-control" required>
+            </div>
+            
+            </div>
+            <div class="col-md-6">
+                <label for="height" class="form-label">Height (in cm):</label>
+                <input type="number" name="height" class="form-control">
+            </div>
+            <div class="col-md-6">
+                <label for="weight" class="form-label">Weight (in kg):</label>
+                <input type="number" name="weight" class="form-control" required>
+            </div>
+            <div class="col-12">
+                <label for="feed" class="form-label">Feed:</label>
+                <input type="text" name="feed" class="form-control">
+            </div>
+            <div class="col-12">
+                <label for="medicine" class="form-label">Medicine:</label>
+                <input type="text" name="medicine" class="form-control">
+            </div>
+            <div class="col-md-6">
+                <label for="milk_obtained_per_day" class="form-label">Milk Obtained per Day (in liters):</label>
+                <input type="number" name="milk_obtained_per_day" class="form-control">
+            </div>
+            <div class="col-12">
+                <label for="vaccination" class="form-label">Vaccination:</label>
+                <input type="text" name="vaccination" class="form-control">
+            </div>
+            <div class="col-md-6">
+                <label for="health_status" class="form-label">Health Status:</label>
+                <select name="health_status" id="health_status" class="form-select" required>
+                    <option value="" disabled selected>Select Health Status</option>
+                    {% for status in health_status_options %}
+                    <option value="{{ status }}">{{ status }}</option>
+                    {% endfor %}
+                </select>
+            <div class="col-md-6">
+                <label for="profile_image" class="form-label">Profile Image:</label>
+                <input type="file" name="profile_image" class="form-control">
+            </div>
+            <div class="col-12">
+                <label for="seller" class="form-label">Seller:</label>
+                <select name="seller" class="form-select" required>
+                    <option value="" disabled selected>Select Seller</option>
+                    {% for seller in sellers %}
+                    <option value="{{ seller.user.id }}">{{ seller.user.first_name }} {{ seller.user.last_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Add Cattle</button>
+            </div>
+        </form>
+    </div>
 
-        <label for="cattle_type">Cattle Type:</label>
-<select name="cattle_type" id="cattle_type" required>
-    <option value="" disabled selected>Select Cattle Type</option>
-    {% for cattle_type in cattle_types %}
-        <option value="{{ cattle_type.cattle_type }}">{{ cattle_type.cattle_type }}</option>
-    {% endfor %}
-</select><br>
+    <script>
+        $(document).ready(function () {
+            $('#cattle_type').on('change', function () {
+                var cattleType = $(this).val();
+                if (cattleType) {
+                    $.ajax({
+                        type: 'GET',
+                        url: '/get_breed_names/',
+                        data: {
+                            'cattle_type': cattleType
+                        },
+                        success: function (data) {
+                            var breedSelect = $('#breed_name');
+                            breedSelect.empty();
+                            breedSelect.append('<option value="" disabled selected>Select Breed Name</option>');
+                            $.each(data, function (index, value) {
+                                breedSelect.append('<option value="' + value + '">' + value + '</option>');
+                            });
+                        },
+                        error: function () {
+                            alert('Failed to retrieve breed names.');
+                        }
+                    });
+                } else {
+                    $('#breed_name').empty();
+                    $('#breed_name').append('<option value="" disabled selected>Select Breed Name</option>');
+                }
+            });
+        });
+    </script>
 
-<label for="breed_name">Breed Name:</label>
-<select name="breed_name" id="breed_name" required>
-    <option value="" disabled selected>Select Breed Name</option>
-</select><br>
-
-
-
-        <label for="weight">Weight (in kg):</label>
-        <input type="number" name="weight" required><br>
-
-        <label for="age">Age (in months):</label>
-        <input type="number" name="age" required><br>
-
-        <label for="colour">Colour:</label>
-        <input type="text" name="colour" required><br>
-
-        <label for="health_status">Health Status:</label>
-<select name="health_status" id="health_status" required>
-    <option value="" disabled selected>Select Health Status</option>
-    {% for status in health_status_options %}
-        <option value="{{ status }}">{{ status }}</option>
-    {% endfor %}
-</select><br>
-
-        <label for="height">Height (in cm):</label>
-        <input type="number" name="height"><br>
-
-        <label for="feed">Feed:</label>
-        <input type="text" name="feed"><br>
-
-        <label for="medicine">Medicine:</label>
-        <input type="text" name="medicine"><br>
-
-        <label for="milk_obtained_per_day">Milk Obtained per Day (in liters):</label>
-        <input type="number" name="milk_obtained_per_day"><br>
-
-        <label for="profile_image">Profile Image:</label>
-        <input type="file" name="profile_image"><br>
-
-        <label for="seller">Seller:</label>
-        <select name="seller" required>
-            <option value="" disabled selected>Select Seller</option>
-            {% for seller in sellers %}
-                <option value="{{ seller.user.id }}">{{ seller.user.first_name }} {{ seller.user.last_name }}</option>
-            {% endfor %}
-        </select><br>
-
-        <input type="submit" value="Add Cattle">
-    </form>
-    
 </body>
 
 </html>

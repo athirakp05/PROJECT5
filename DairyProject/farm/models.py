@@ -114,13 +114,20 @@ class Cattle(models.Model):
     def __str__(self):
         return f'Cattle ID {self.cattle_id}'
 class CattleType(models.Model):
-    id = models.AutoField(primary_key=True)  # Add this line
+    id = models.AutoField(primary_key=True)
     cattle_type = models.CharField(max_length=50)
 
+    def __str__(self):
+        return self.cattle_type
 
 class Breed(models.Model):
     breed_id = models.AutoField(primary_key=True)
     breed_name = models.CharField(max_length=50)
+    cattle_type = models.ForeignKey(CattleType, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.breed_name
+
 class Customer(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
     first_name = models.CharField(max_length=50)  # Added for Customer's first name

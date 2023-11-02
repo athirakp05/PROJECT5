@@ -105,7 +105,7 @@
             <li><a href="$"><i class="fas fa-users"></i> Add Cattle type</a></li>
             <li><a href="$"><i class="fas fa-users"></i>sdfg</a></li>
             <li><a href="$"><i class="fas fa-users"></i>vb</a></li>
-            <li><a href="$"><i class="fas fa-users"></i>View cattle</a></li>
+            <a href="{% url 'cattle_view' seller.id %}">View Cattle</a>
             <li><a href="{% url 's_view' %}"><i class="fas fa-users"></i> View Seller</a></li>
             <li><a href="{% url 'c_view' %}"><i class="fas fa-users"></i> View Customer</a></li>
         </ul>
