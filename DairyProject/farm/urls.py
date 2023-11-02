@@ -13,9 +13,11 @@ urlpatterns = [
     path('about',views.logout,name='about'),
     path('c_dashboard', views.c_dashboard, name='c_dashboard'),
     path('s_dashboard', views.s_dashboard, name='s_dashboard'),
+    path('s_profile', views.s_profile, name='s_profile'),
 
     path('add_cattle', views.add_cattle, name='add_cattle'),
     path('get_breed_names/', views.get_breed_names, name='get_breed_names'),
+    path('s_profile/', views.s_profile, name='s_profile'),
 
     path('cattle_view/', views.cattle_view, name='cattle_viewt'),
     path('s_prof_edit/<int:user_id>/', views.s_prof_edit, name='s_prof_edit'),

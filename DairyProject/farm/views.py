@@ -249,4 +249,16 @@ def cattle_view(request, user_id):
 
     return render(request, 'cattle_details/cattle_view.html', context)
 
+def s_profile(request):
+    user = request.user  # Get the currently logged-in user
+    try:
+        seller_profile = SellerEditProfile.objects.get(user=user)
+        data = {
+            'user': user,
+            'seller_profile': seller_profile,
+        }
+        return render(request, 'profile_edit/s_profile.html', data)
+    except SellerEditProfile.DoesNotExist:
+        return render(request, 'profile_edit/incomplete_profile.html')
+
 

@@ -1,129 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <style>
-        /* Reset some default browser styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        /* Global styles */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
-        }
-
-        /* Navigation bar styles */
-        .navbar {
-            background-color: rgb(87, 202, 251); /* Updated background color */
-            color: #fff;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .logo {
-            font-size: 24px;
-        }
-
-        .menu {
-            list-style: none;
-            padding: 0;
-            display: flex;
-        }
-
-        .menu li {
-            margin-right: 20px;
-        }
-
-        .menu li a {
-            text-decoration: none;
-            color: #fff;
-            transition: background-color 0.3s;
-        }
-
-        .menu li a:hover {
-            background-color: #555;
-        }
-
-        .menu li a i {
-            margin-right: 10px;
-        }
-
-        /* Dropdown Content Styles */
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #083150;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-        }
-
-        .dropdown-content a {
-            padding: 12px 16px;
-            display: block;
-        }
-
-        /* Show the dropdown content when hovering or clicking on the dropdown button */
-        .profile-dropdown:hover .dropdown-content,
-        .profile-dropdown.show .dropdown-content {
-            display: block;
-        }
-    </style>
+    <!-- Your head content -->
 </head>
+<style>/* Reset some default browser styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    /* Global styles */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh; /* Ensure the page covers the full viewport height */
+    }
+    
+    /* Navigation bar styles */
+    .navbar {
+        background-color: rgb(87, 202, 251);
+        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+    }
+    
+    .logo {
+        font-size: 24px;
+    }
+    
+    /* Sidebar styles */
+    .sidebar {
+        width: 250px;
+        background-color: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        position: fixed;
+        height: 100%;
+        overflow: auto;
+    }
+    
+    .sidebar a {
+        padding: 10px 15px;
+        text-decoration: none;
+        font-size: 16px;
+        color: #ecf0f1;
+        display: block;
+        transition: background-color 0.3s;
+    }
+    
+    .sidebar a i {
+        margin-right: 10px;
+    }
+    
+    .sidebar a:hover {
+        background-color: #34495e;
+    }
+    
+    /* Content styles */
+    .content {
+        margin-left: 250px;
+        padding: 20px;
+    }
+    
+    /* Main header styles */
+    header {
+        margin-bottom: 20px;
+    }
+    
+    h1 {
+        font-size: 24px;
+    }
+    
+    /* Main content styles */
+    main {
+        line-height: 1.6;
+    }
+    /* User info styles */
+.user-info {
+    display: flex;
+    align-items: left;
+    padding: 10px 20px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: auto;
+}
+
+.user-name {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Logout link styles */
+.logout-link {
+    text-decoration: none;
+    color: #fff;
+    padding: 10px 20px;
+}
+
+.logout-link i {
+    margin-right: 10px;
+}
+
+    /* You can add more specific styles based on your project design as needed. */
+    </style>
 <body>
+    <!-- Navigation bar -->
     <div class="navbar">
         <div class="logo">Dashboard</div>
-        <ul class="menu">
-            <li class="profile-dropdown">
-                <a href="#" id="profile-dropdown-toggle">
-                    <i class="fas fa-user"></i> Profile <i class="fas fa-caret-down"></i>
-                </a>
-                <ul class="dropdown-content" id="profile-dropdown-content">
-                    <li><a href="{% url 's_view' %}">View Profile</a></li>
-                    <a href="{% url 's_prof_edit' request.user.id %}">Edit Profile</a>
-                    <li><a href="#">Change Password</a></li>
-                </ul>
-            </li>
-            <li><a href="{% url 'prod_view' %}"><i class="fas fa-chart-bar"></i> View Product</a></li>
-            <li><a href="{% url 'product_add' %}"><i class="fas fa-chart-bar"></i> Add Product</a></li>
+    
+            <a href="{% url 'logout' %}" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
 
-            <li><a href="{% url 'add_cattle' %}"><i class="fas fa-chart-bar"></i> Add cattle</a></li>
-            <li><a href="{% url 'logout' %}"><i class="fas fa-cog"></i> Logout</a></li>
-        </ul>
+    <!-- Sidebar -->
+    <div>{{ user.first_name }}</div>
+
+<div class="sidebar">
+    <div class="user-info">
+        <div class="user-avatar">
+            <img src=" " alt="Profile Picture">
+        </div>
+        <div class="user-name">
+            {{ user.first_name }}
+        </div>
+    </div>
+        <a href="{% url 's_profile' %}" data-url="{% url 's_profile' %}"><i class="fas fa-user"></i> View Profile</a>
+        <a href="{% url 's_prof_edit' request.user.id %}" data-url="{% url 's_prof_edit' request.user.id %}"><i class="fas fa-user-edit"></i> Complete Profile</a>
+        <a href="#" data-url="#"><i class="fas fa-key"></i> Change Password</a>
+        <a href="{% url 'prod_view' %}" data-url="{% url 'prod_view' %}"><i class="fas fa-chart-bar"></i> View Product</a>
+        <a href="{% url 'product_add' %}" data-url="{% url 'product_add' %}"><i class="fas fa-chart-bar"></i> Add Product</a>
+        <a href="{% url 'add_cattle' %}" data-url="{% url 'add_cattle' %}"><i class="fas fa-chart-bar"></i> Add Cattle</a>
+        <a href="{% url 'logout' %}" data-url="{% url 'logout' %}"><i class="fas fa-cog"></i> Logout</a>
     </div>
 
     <!-- Main Content -->
     <div class="content">
         <header>
-            <h1>Welcome to {{ user.first_name }}</h1>
+            <h1> </h1>
         </header>
         <main>
-            <p></p>
+            <div id="dashboard-content">Content loaded via AJAX will be displayed here.</div>
         </main>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const profileDropdownToggle = document.getElementById('profile-dropdown-toggle');
-            const profileDropdownContent = document.getElementById('profile-dropdown-content');
-    
-            profileDropdownToggle.addEventListener('click', function (event) {
-                event.preventDefault();
-                profileDropdownContent.classList.toggle('show');
+            const sidebarLinks = document.querySelectorAll('.sidebar a');
+            const dashboardContent = document.getElementById('dashboard-content');
+
+            sidebarLinks.forEach(function(link) {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const url = link.getAttribute('data-url');
+                    if (url) {
+                        loadContent(url);
+                    }
+                });
             });
-    
-            window.addEventListener('click', function (event) {
-                if (event.target !== profileDropdownToggle && event.target !== profileDropdownContent) {
-                    profileDropdownContent.classList.remove('show');
-                }
-            });
+
+            function loadContent(url) {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        dashboardContent.innerHTML = xhr.responseText;
+                    }
+                };
+                xhr.open('GET', url, true);
+                xhr.send();
+            }
         });
     </script>
 </body>

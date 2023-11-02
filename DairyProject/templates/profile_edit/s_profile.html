@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Profile</title>
+<style>/* Add your CSS styles here */
+    .profile-container {
+        width: 80%;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .profile-details {
+        margin-right: 150px;  /* Adjust the margin based on your design */
+    }
+    
+    .profile-photo {
+        float: right;
+        width: 150px;
+        height: 150px;
+        overflow: hidden;
+        border-radius: 50%;
+    }
+    
+    .profile-photo img {
+        width: 100%;
+        height: auto;
+    }
+    </style></head>
+<body>
+    <div class="profile-container">
+        <h1>User Profile</h1>
+        <div class="profile-details">
+            <p>First Name: {{ seller_profile.first_name }}</p>
+            <p>Last Name: {{ seller_profile.last_name }}</p>
+            <p>House Name: {{ seller_profile.house_name }}</p>
+            <p>City: {{ seller_profile.city }}</p>
+            <p>Pin Code: {{ seller_profile.pin_code }}</p>
+            <p>Occupation: {{ seller_profile.occupation }}</p>
+            <p>Gender: {{ seller_profile.gender }}</p>
+            <p>Date of Birth: {{ seller_profile.dob }}</p>
+            <p>Ration Card No: {{ seller_profile.rationcard_no }}</p>
+            <p>Email: {{ user.email }}</p>
+            <p>Mobile: {{ seller_profile.mobile }}</p>
+            <p>Account No: {{ seller_profile.acc_no }}</p>
+            <p>Society: {{ seller_profile.society }}</p>
+        </div>
+        <div class="profile-photo">
+            <img src="{{ seller_profile.profile_photo.url }}" alt="Profile Photo">
+        </div>
+    </div>
+</body>
+</html>
