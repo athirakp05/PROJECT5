@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -133,19 +134,18 @@
 <div class="sidebar">
     <div class="user-info">
         <div class="user-avatar">
-            <img src=" " alt="Profile Picture">
+            <img src="{% static '/img/service.png' %}" alt="Profile Picture">
         </div>
         <div class="user-name">
             {{ user.first_name }}
         </div>
     </div>
-        <a href="{% url 's_profile' %}" data-url="{% url 's_profile' %}"><i class="fas fa-user"></i> View Profile</a>
-        <a href="{% url 's_prof_edit' request.user.id %}" data-url="{% url 's_prof_edit' request.user.id %}"><i class="fas fa-user-edit"></i> Complete Profile</a>
-        <a href="#" data-url="#"><i class="fas fa-key"></i> Change Password</a>
+        <a href="$" data-url="$"><i class="fas fa-user"></i> View Profile</a>
+        <a href="$" data-url="$"><i class="fas fa-user-edit"></i> Complete Profile</a>
+        <a href="$" data-url="$"><i class="fas fa-key"></i> Change Password</a>
         <a href="{% url 'prod_view' %}" data-url="{% url 'prod_view' %}"><i class="fas fa-chart-bar"></i> View Product</a>
         <a href="{% url 'product_add' %}" data-url="{% url 'product_add' %}"><i class="fas fa-chart-bar"></i> Add Product</a>
-        <a href="{% url 'add_cattle' %}" data-url="{% url 'add_cattle' %}"><i class="fas fa-chart-bar"></i> Add Cattle</a>
-        <a href="{% url 'logout' %}" data-url="{% url 'logout' %}"><i class="fas fa-cog"></i> Logout</a>
+        <a href="$" data-url="$"><i class="fas fa-chart-bar"></i> Add Cattle</a>
     </div>
 
     <!-- Main Content -->

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Cattle</title>
+</head>
+<body>
+    <h1>Delete Cattle</h1>
+    <p>Are you sure you want to delete this cattle record?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Yes, Delete</button>
+        <a href="{% url 'view_cattle' %}">Cancel</a>
+    </form>
+</body>
+</html>

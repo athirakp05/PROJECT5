@@ -1,14 +1,6 @@
 
 from django import forms
-# forms.py
-from .models import SellerEditProfile,Cattle
-
-
-class SellerProfileEditForm(forms.ModelForm):
-    class Meta:
-        model = SellerEditProfile
-        fields = ['first_name', 'last_name', 'house_name', 'city', 'pin_code', 'occupation', 'gender', 'dob', 'rationcard_no', 'email', 'mobile', 'acc_no', 'society', 'profile_photo']
-
+from .models import Cattle
 
 class CustomerRegistrationForm(forms.Form):
     first_name = forms.CharField(max_length=50)
@@ -22,11 +14,29 @@ class SellerRegistrationForm(forms.Form):
     last_name = forms.CharField(max_length=50)
     email = forms.EmailField()
     password = forms.CharField(widget=forms.PasswordInput)
-    mobile = forms.DecimalField(max_digits=10, decimal_places=0)
+    mobile = forms.CharField(max_length=15)
+    cattle_license = forms.CharField(max_length=50)  # Add the cattle_license field
 
-
-
+class CattleRegistrationForm(forms.ModelForm):
+    class Meta:
+        model = Cattle
+        fields = '__all__'
 class CattleForm(forms.ModelForm):
+    class Meta:
+        model = Cattle
+        fields = '__all__'
+        widgets = {
+            'vaccination': forms.RadioSelect(choices=[(True, 'Yes'), (False, 'No')]),
+            'insurance': forms.RadioSelect(choices=[(True, 'Yes'), (False, 'No')]),
+        }
+
+
+class CattleVaccinationForm(forms.ModelForm):
+    class Meta:
+        model = Cattle
+        fields = '__all__'
+
+class CattleInsuranceForm(forms.ModelForm):
     class Meta:
         model = Cattle
         fields = '__all__'

@@ -1,5 +1,4 @@
 from django.contrib import admin
-from .models import p_Category
+from .models import Product
 
-admin.site.register(p_Category)
-#admin.site.register(Product)
+admin.site.register(Product)

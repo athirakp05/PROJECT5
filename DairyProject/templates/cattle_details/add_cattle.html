@@ -1,175 +1,163 @@
-{% load static %}
-
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>Add Cattle</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<style>/* Add basic styling to the form container */
-    .container {
-        margin-top: 20px;
-    }
-    
-    /* Style form labels */
-    .form-label {
-        font-weight: bold;
-    }
-    
-    /* Style form inputs and selects */
-    .form-control {
-        width: 100%;
-        padding: 8px;
-        margin: 5px 0;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-    }
-    
-    /* Style form submit button */
-    .btn-primary {
-        background-color: #007BFF;
-        color: white;
-        border: none;
-        border-radius: 3px;
-        padding: 10px 20px;
-        cursor: pointer;
-    }
-    
-    /* Style form submit button on hover */
-    .btn-primary:hover {
-        background-color: #0056b3;
-    }
-    
-    /* Style form checkboxes and labels */
-    .form-check-input {
-        margin-top: 5px;
-    }
-    
-    /* Center the form horizontally */
-    .text-center {
-        text-align: center;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Cattle Form</title>
+    <style>
+        /* Internal CSS for styling */
+        form {
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        select, input[type="text"], input[type="radio"], input[type="submit"] {
+            margin: 10px;
+        }
+
+        div {
+            display: none;
+        }
+
+        input[type="radio"]:checked ~ div {
+            display: block;
+        }
+        /* Internal CSS for styling */
+form {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 300px; /* Adjust the width as needed */
+    margin: 0 auto; /* Center the form horizontally */
+    background-color: #f9f9f9;
+}
+
+select, input[type="text"], input[type="radio"], input[type="submit"] {
+    margin: 10px;
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+label {
+    display: block; /* Place labels on their own line */
+}
+
+div {
+    display: none;
+    margin: 10px 0; /* Add space between sections */
+}
+
+input[type="radio"]:checked ~ div {
+    display: block;
+}
+
+/* Style for the breed dropdown */
+#id_breed_name {
+    /* Add specific styles for the breed dropdown */
+    width: 100%;
+}
+
+/* Add styles for the save button */
+input[type="submit"] {
+    background-color: #007bff; /* Customize the button color */
+    color: #fff;
+    cursor: pointer;
+    border: none;
+    padding: 10px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+/* Add hover effect for the button */
+input[type="submit"]:hover {
+    background-color: #0056b3; /* Change the color on hover */
+}
+
     </style>
+</head>
 <body>
-    <h1 class="text-center">Add Cattle</h1>
-    <div class="container">
-        <form class="row g-3" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            
-            <div class="col-md-6">
-                <label for="cattle_type" class="form-label">Cattle Type:</label>
-                <select name="cattle_type" id="cattle_type" class="form-select" required>
-                    <option value="" disabled selected>Select Cattle Type</option>
-                    {% for cattle_type in cattle_types %}
-                    <option value="{{ cattle_type.cattle_type }}">{{ cattle_type.cattle_type }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label for="breed_name" class="form-label">Breed Name:</label>
-                <select name="breed_name" id="breed_name" class="form-select" required>
-                    <option value="" disabled selected>Select Breed Name</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label for="ear_tag_id" class="form-label">Ear Tag ID:</label>
-                <input type="text" name="ear_tag_id" class="form-control" required>
-            </div>
-           
-            <div class="col-md-6">
-                <label for="age" class="form-label">Age (in months):</label>
-                <input type="number" name="age" class="form-control" required>
-            </div>
-            <div class="col-12">
-                <label for="colour" class="form-label">Colour:</label>
-                <input type="text" name="colour" class="form-control" required>
-            </div>
-            
-            </div>
-            <div class="col-md-6">
-                <label for="height" class="form-label">Height (in cm):</label>
-                <input type="number" name="height" class="form-control">
-            </div>
-            <div class="col-md-6">
-                <label for="weight" class="form-label">Weight (in kg):</label>
-                <input type="number" name="weight" class="form-control" required>
-            </div>
-            <div class="col-12">
-                <label for="feed" class="form-label">Feed:</label>
-                <input type="text" name="feed" class="form-control">
-            </div>
-            <div class="col-12">
-                <label for="medicine" class="form-label">Medicine:</label>
-                <input type="text" name="medicine" class="form-control">
-            </div>
-            <div class="col-md-6">
-                <label for="milk_obtained_per_day" class="form-label">Milk Obtained per Day (in liters):</label>
-                <input type="number" name="milk_obtained_per_day" class="form-control">
-            </div>
-            <div class="col-12">
-                <label for="vaccination" class="form-label">Vaccination:</label>
-                <input type="text" name="vaccination" class="form-control">
-            </div>
-            <div class="col-md-6">
-                <label for="health_status" class="form-label">Health Status:</label>
-                <select name="health_status" id="health_status" class="form-select" required>
-                    <option value="" disabled selected>Select Health Status</option>
-                    {% for status in health_status_options %}
-                    <option value="{{ status }}">{{ status }}</option>
-                    {% endfor %}
-                </select>
-            <div class="col-md-6">
-                <label for="profile_image" class="form-label">Profile Image:</label>
-                <input type="file" name="profile_image" class="form-control">
-            </div>
-            <div class="col-12">
-                <label for="seller" class="form-label">Seller:</label>
-                <select name="seller" class="form-select" required>
-                    <option value="" disabled selected>Select Seller</option>
-                    {% for seller in sellers %}
-                    <option value="{{ seller.user.id }}">{{ seller.user.first_name }} {{ seller.user.last_name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-12">
-                <button type="submit" class="btn btn-primary">Add Cattle</button>
-            </div>
-        </form>
-    </div>
+    <!-- AddCattleForm template -->
+    <form id="add-cattle-form" method="POST" action="{% url 'add_cattle' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div id="breed-div">
+            <select id="id_breed_name" name="breed_name">
+                <!-- Options will be populated dynamically using JavaScript -->
+            </select>
+        </div>
+        <div>
+            <label for="id_disabilities">Disabilities:</label>
+            <input type="radio" name="disabilities" id="id_disabilities_0" value="0"> No
+            <input type="radio" name="disabilities" id="id_disabilities_1" value="1"> Yes
+        </div>
+        <div id="insurance-details-div">
+            {{ form.insurance_provider }}
+            {{ form.policy_number }}
+            <!-- Other insurance fields -->
+        </div>
+        <div id="vaccination-details-div">
+            {{ form.vaccination_name }}
+            {{ form.date_administered }}
+            {{ form.next_due_date }}
+            <!-- Other vaccination fields -->
+        </div>
+        <input type="submit" value="Save">
+    </form>
 
     <script>
-        $(document).ready(function () {
-            $('#cattle_type').on('change', function () {
-                var cattleType = $(this).val();
-                if (cattleType) {
-                    $.ajax({
-                        type: 'GET',
-                        url: '/get_breed_names/',
-                        data: {
-                            'cattle_type': cattleType
-                        },
-                        success: function (data) {
-                            var breedSelect = $('#breed_name');
-                            breedSelect.empty();
-                            breedSelect.append('<option value="" disabled selected>Select Breed Name</option>');
-                            $.each(data, function (index, value) {
-                                breedSelect.append('<option value="' + value + '">' + value + '</option>');
-                            });
-                        },
-                        error: function () {
-                            alert('Failed to retrieve breed names.');
-                        }
-                    });
+        // JavaScript to handle dynamic dropdowns and show/hide fields
+        const cattleTypeSelect = document.getElementById("id_cattle_type");
+        const breedSelect = document.getElementById("id_breed_name");
+        const disabilitiesRadios = document.getElementsByName("disabilities");
+        const insuranceRadios = document.getElementsByName("insurance");
+        const vaccinationRadios = document.getElementsByName("vaccination");
+
+        // Function to update the breed dropdown based on cattle type
+        function updateBreedOptions() {
+            // Make an AJAX request to fetch breed options based on cattle type
+            const selectedCattleType = cattleTypeSelect.value;
+            // Perform an AJAX request to the server to fetch breed options
+            // and update the breedSelect options here.
+            // You can use fetch or any other AJAX method for this.
+        }
+
+        // Event listeners for cattle type dropdown and disabilities radio buttons
+        cattleTypeSelect.addEventListener("change", updateBreedOptions);
+        disabilitiesRadios.forEach(radio => {
+            radio.addEventListener("change", () => {
+                if (radio.value === "1") {
+                    healthStatusDiv.style.display = "block";
                 } else {
-                    $('#breed_name').empty();
-                    $('#breed_name').append('<option value="" disabled selected>Select Breed Name</option>');
+                    healthStatusDiv.style.display = "none";
+                }
+            });
+        });
+
+        // Event listeners for insurance and vaccination radio buttons
+        insuranceRadios.forEach(radio => {
+            radio.addEventListener("change", () => {
+                if (radio.value === "1") {
+                    insuranceDetailsDiv.style.display = "block";
+                } else {
+                    insuranceDetailsDiv.style.display = "none";
+                }
+            });
+        });
+
+        vaccinationRadios.forEach(radio => {
+            radio.addEventListener("change", () => {
+                if (radio.value === "1") {
+                    vaccinationDetailsDiv.style.display = "block";
+                } else {
+                    vaccinationDetailsDiv.style.display = "none";
                 }
             });
         });
     </script>
-
 </body>
-
 </html>

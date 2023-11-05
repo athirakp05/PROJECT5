@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Cattle</title>
+</head>
+<body>
+    <h1>View Cattle</h1>
+    <table>
+        <tr>
+            <th>Cattle License</th>
+            <th>Ear Tag ID</th>
+            <th>Cattle Type</th>
+            <th>Breed Name</th>
+            <th>Weight</th>
+            <th>Actions</th>
+        </tr>
+        {% for cattle in cattle_list %}
+        <tr>
+            <td>{{ cattle.cattle_license }}</td>
+            <td>{{ cattle.EarTagID }}</td>
+            <td>{{ cattle.CattleType }}</td>
+            <td>{{ cattle.BreedName }}</td>
+            <td>{{ cattle.weight }}</td>
+            <td>
+                <a href="{% url 'edit_cattle' cattle.cattle_license %}">Edit</a> |
+                <a href="{% url 'delete_cattle' cattle.cattle_license %}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

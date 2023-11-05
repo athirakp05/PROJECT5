@@ -142,17 +142,32 @@ AUTH_USER_MODEL = 'farm.CustomUser'
 # settings.py
 
 # settings.py
-SESSION_ENGINE = "django.contrib.sessions.backends.db"
-SESSION_COOKIE_NAME = "sessionid"
-SESSION_COOKIE_AGE = 600
-LOGIN_URL = 'login'
+# SESSION_ENGINE = "django.contrib.sessions.backends.db"
+# SESSION_COOKIE_NAME = "sessionid"
+# SESSION_COOKIE_AGE = 600
+# LOGIN_URL = 'login'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'athirakp808@gmail.com'
+# EMAIL_HOST_PASSWORD = 'jyyt gxnj qmbc yogf'
+# DEFAULT_FROM_EMAIL = 'athirakp808@gmail.com'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'athirakp808@gmail.com'
-EMAIL_HOST_PASSWORD = 'jyyt gxnj qmbc yogf'
-DEFAULT_FROM_EMAIL = 'athirakp808@gmail.com'
+EMAIL_HOST_USER = 'athirakp808@gmail.com'  # Your Gmail email address
+EMAIL_HOST_PASSWORD = 'jyyt gxnj qmbc yogf'  # Your App Password from Gmail
+DEFAULT_FROM_EMAIL = 'athirakp808@gmail.com'  # Your Gmail email address
+
+# Session settings
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+SESSION_COOKIE_NAME = "sessionid"
+SESSION_COOKIE_AGE = 600
+LOGIN_URL = 'login'
+
 
 
 AUTHENTICATION_BACKENDS = [

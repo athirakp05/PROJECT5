@@ -1,23 +1,22 @@
+# views.py
 from django.shortcuts import render, redirect
-from .models import p_Category,Product  # Import your Category model
-from .forms import CategoryForm
-from .forms import ProductForm  # Create a Django form for adding products
+from .models import Product
+from .forms import ProductForm  # Import your ProductForm
 
-def cat_add(request):
-    if request.method == 'POST':
-        form = CategoryForm(request.POST)
-        if form.is_valid():
-            category = form.save()
-            return redirect('cat_add')  # Redirect to a category list view
-    else:
-        form = CategoryForm()
-
-    return render(request, 'category/cat_add.html', {'form': form})
-
-
-
+CATEGORY_CHOICES = [
+    ('Milk', 'Milk'),
+    ('Curd', 'Curd'),
+    ('Paneer', 'Paneer'),
+    ('Ghee', 'Ghee'),
+    ('Butter', 'Butter'),
+    ('Cheese', 'Cheese'),
+]
+GRADE_CHOICES = [
+        ('A', 'A'),
+        ('B', 'B'),
+        ('C', 'C'),
+]
 def product_add(request):
-    categories = p_Category.objects.all()
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
@@ -26,9 +25,14 @@ def product_add(request):
     else:
         form = ProductForm()
 
-    return render(request, 'category/product_add.html', {'form': form, 'categories': categories})
+    categories = [choice for choice in CATEGORY_CHOICES]
+    grade_level = [choice for choice in GRADE_CHOICES]
 
+    return render(request, 'category/product_add.html', {'form': form, 'categories': categories})
 
 def prod_view(request):
     products = Product.objects.all()
-    return render(request, 'view/prod_view.html', {'products': products})
+    context = {
+        'products': products,
+    }
+    return render(request, 'category/prod_view.html', context)

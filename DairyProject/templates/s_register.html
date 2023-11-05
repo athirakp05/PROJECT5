@@ -84,7 +84,7 @@
             text-align: center;
         }
 
-        .phone-input-container {
+        .mobile-input-container {
             display: flex;
             align-items: center;
         }
@@ -124,16 +124,16 @@
             }
         }
 
-        function validatePhoneNumber() {
-            const phoneInput = document.querySelector('input[name="phone"]');
-            const phoneValue = phoneInput.value;
-            const phonePattern = /^(9|8|7|6)[0-9]{9}$/; // Assuming Indian standard format
-            const phoneError = document.querySelector('#phoneError');
+        function validatemobileNumber() {
+            const mobileInput = document.querySelector('input[name="mobile"]');
+            const mobileValue = mobileInput.value;
+            const mobilePattern = /^(9|8|7|6)[0-9]{9}$/; // Assuming Indian standard format
+            const mobileError = document.querySelector('#mobileError');
 
-            if (!phonePattern.test(phoneValue)) {
-                phoneError.textContent = 'Invalid phone number format';
+            if (!mobilePattern.test(mobileValue)) {
+                mobileError.textContent = 'Invalid mobile number format';
             } else {
-                phoneError.textContent = '';
+                mobileError.textContent = '';
             }
         }
 
@@ -196,20 +196,25 @@
                     <div class="error-message" id="lastnameError"></div>
                 </div>
                 <div class="form-group">
+                    <label for="cattle_license"></label>
+                    <input type="text" name="cattle_license" id="cattle_license" placeholder="Cattle License" required>
+                </div>
+                
+                <div class="form-group">
                     <label for="email"></label>
                     <input type="email" name="email" id="email" placeholder="Email" required oninput="validateEmail()">
                     <div class="error-message" id="emailError"></div>
                 </div>
                 <div class="form-group">
-                    <label for="phone"></label>
-                    <div class="phone-input-container">
+                    <label for="mobile"></label>
+                    <div class="mobile-input-container">
                         <select name="country_code" id="country_code">
                             <option value="+91">+91 (India)</option>
                             <!-- Add more options for other countries -->
                         </select>
-                        <input type="text" name="phone" id="phone" placeholder="Mobile" required oninput="validatePhoneNumber()">
+                        <input type="text" name="mobile" id="mobile" placeholder="Mobile" required oninput="validatemobileNumber()">
                     </div>
-                    <div class="error-message" id="phoneError"></div>
+                    <div class="error-message" id="mobileError"></div>
                 </div>
                 <div class="form-group">
                     <label for="password"></label>
@@ -235,15 +240,16 @@
             </div>
             <a href="{% url 'login' %}">Already have an account? Login</a>
             <div id="alert">
-                {% if messages %}
-                    <ul class="messages">
-                        {% for message in messages %}
-                            <li class="{{ message.tags }}">{{ message }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-        </div>
+                <div id="alert">
+                    {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                                <li class="{{ message.tags }}">{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                
         
         
     </body>

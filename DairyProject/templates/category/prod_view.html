@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<style>
+    /* Style for the header */
+    header {
+        background-color: hsl(240, 7%, 97%);
+        text-align: center;
+        font-size: 24px;
+    }
+
+    /* Style for the table */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    /* Style for table headings */
+    th {
+        background-color: #3eacdb;
+        color: #fff;
+        text-align: left;
+        padding: 10px;
+    }
+
+    /* Style for table cells */
+    td {
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+
+    /* Style for product images */
+    img {
+        max-width: 100px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+
+    /* Style for pagination */
+    .pagination {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        justify-content: center;
+    }
+
+    .page-item {
+        margin: 10px 1px;
+    }
+
+    .page-link {
+        text-decoration: none;
+        background-color: white;
+        color: #1d1818;
+        padding: 4px 10px;
+        border-radius: 0px;
+    }
+
+    .page-link:hover {
+        background-color: #0056b3;
+    }
+</style>
+<body>
+    <header>Products</header>
+    <table>
+        <thead>
+            <tr>
+                <th>Product Image</th>
+                <th>Product Name</th>
+                <th>Manufacturing Date</th>
+                <th>Expiry Date</th>
+                <th>Grade Level</th>
+                <th>Quantity(ltrs/kgms)</th>
+                <th>Price</th>
+                <th>Description</th> <!-- Added Description column -->
+                <th>Category</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>
+                        <img src="{{ product.image.url }}" alt="{{ product.p_name }}" width="100">
+                    </td>
+                    <td>{{ product.p_name }}</td>
+                    <td>{{ product.mfg_date }}</td>
+                    <td>{{ product.expiry_date }}</td>
+                    <td>{{ product.grade_level }}</td>
+                    <td>{{ product.quantity }}</td>
+                    <td>{{ product.price }}</td>
+                    <td>{{ product.Description }}</td> <!-- Added Description field -->
+                    <td>{{ product.category.category }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+    </nav>
+</body>
+</html>

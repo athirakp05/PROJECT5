@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background-image: url('1.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        .button-container {
+            text-align: center;
+            padding-top: 50px;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 50px;
+            margin: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <a href="{% url 's_register' %}" class="btn">Seller</a>
+        <a href="{% url 'c_register' %}" class="btn">Customer</a>
+    </div>
+</body>
+</html>

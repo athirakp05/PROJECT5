@@ -1,3 +1,4 @@
+{% load static%}
 <!-- dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
@@ -60,7 +61,7 @@
         }
 
         .menu li a:hover {
-            background-color: #f9f8f8;
+            background-color: #555;
         }
 
         .menu li a i {
@@ -76,7 +77,33 @@
         header {
             font-size: 24px;
             margin-bottom: 20px;
-            color:whitesmoke;
+            color: #333;
+/* Add this CSS to your existing styles */
+.menu li ul.submenu {
+    display: none;
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+.menu li:hover ul.submenu {
+    display: block;
+}
+
+.menu li ul.submenu li {
+    margin-bottom: 0;
+}
+
+.menu li ul.submenu li a {
+    padding: 10px 40px;
+    display: block;
+    transition: background-color 0.3s;
+}
+
+.menu li ul.submenu li a:hover {
+    background-color: #555;
+}
+
         }
     </style>
 </head>
@@ -92,38 +119,43 @@
     </div>
 </div>
 
-
 <body>
     <div class="dashboard">
-       <!-- sidebar.html -->
-       <div class="sidebar">
-        
-        <ul class="menu">
-            <li><a href="{% url 'profile' %}"><i class="fas fa-home"></i> Profile</a></li>
-            <li><a href="{% url 'prod_view' %}"><i class="fas fa-chart-bar"></i> View Product</a></li>
-            <li><a href="{% url 'cat_add' %}"><i class="fas fa-users"></i> Add Category</a></li>
-            <li><a href="$"><i class="fas fa-users"></i> Add Cattle type</a></li>
-            <li><a href="$"><i class="fas fa-users"></i>sdfg</a></li>
-            <li><a href="$"><i class="fas fa-users"></i>vb</a></li>
-            <a href="{% url 'cattle_view' seller.id %}">View Cattle</a>
-            <li><a href="{% url 's_view' %}"><i class="fas fa-users"></i> View Seller</a></li>
-            <li><a href="{% url 'c_view' %}"><i class="fas fa-users"></i> View Customer</a></li>
-        </ul>
-        <li><a href="{% url 'logout' %}"><i class="fas fa-cog"></i> Logout</a></li>
-
-    </div>
-    
-
+        <!-- sidebar.html -->
+        <div class="sidebar">
+            <ul class="menu">
+                <li><a href="{% url 'profile' %}"><i class="fas fa-home"></i> Profile</a></li>
+                <li><a href="{% url 'prod_view' %}"><i class="fas fa-chart-bar"></i> View Product</a></li>
+                <li><a href="{% url 's_view' %}"><i class="fas fa-users"></i> View Seller</a></li>
+                <li><a href="{% url 'cat_add' %}"><i class="fas fa-users"></i> View Seller</a></li>
+                <li><a href="{% url 'c_view' %}"><i class="fas fa-users"></i> View monthly Statistics</a></li>
+                <li><a href="{% url 'c_view' %}"><i class="fas fa-users"></i> View Availability</a></li>
+                <li><a href="{% url 'c_view' %}"><i class="fas fa-users"></i> View Orders</a></li>
+                <li>
+                    <a href="#" id="reports-dropdown" class="dropdown-toggle">
+                        <i class="fas fa-file"></i> Reports
+                        <i class="fas fa-caret-down"></i>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#" onclick="loadContent('#')">Salary Report</a></li>
+                        <li><a href="#" onclick="loadContent('#')">Milk Collection Report</a></li>
+                        <li><a href="#" onclick="loadContent('#')">Sale Report</a></li>
+                        <li><a href="#" onclick="loadContent('#')">Payment Obtained</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <a href="{% url 'logout' %}"><i class="fas fa-cog"></i> Logout</a>
+        </div>
         <main class="content">
             <header>
             </header>
-            <!-- Content loaded dynamically here -->
             <div id="dashboard-content">
-                <!-- The content will be loaded here -->
+                <!-- Content will be loaded here -->
             </div>
         </main>
     </div>
     <script>
+        // Your JavaScript code to load content remains the same
         function loadContent(url) {
             if (url === "{% url 's_register' %}") {
                 // Open the "Add Seller" form in a new tab or window
@@ -139,18 +171,16 @@
                 xhr.send();
             }
         }
-    
+
         document.querySelectorAll('.menu a').forEach(function(link) {
             link.addEventListener('click', function(event) {
                 event.preventDefault();
                 loadContent(link.getAttribute('href'));
             });
         });
-    
+
         // Load default content (e.g., Profile) on page load
         loadContent("{% url 'profile' %}");
     </script>
-    
-    
 </body>
 </html>

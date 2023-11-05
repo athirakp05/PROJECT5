@@ -1,0 +1,138 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Cattle</title>
+</head>
+<style>/* Reset default browser styles */
+    body, h1, form {
+        margin: 0;
+        padding: 0;
+    }
+    
+    /* Apply a background color and center content */
+    body {
+        background-color: #f5f5f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    
+    /* Create a container with a max width and padding */
+    .container {
+        max-width: 800px;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Style the form elements */
+    form {
+        display: grid;
+        gap: 10px;
+    }
+    
+    /* Style the form labels */
+    label {
+        font-weight: bold;
+    }
+    
+    /* Style the form inputs */
+    input[type="text"],
+    input[type="file"],
+    input[type="checkbox"],
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+    
+    /* Style the submit button */
+    button[type="submit"] {
+        background-color: #0074a2;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    button[type="submit"]:hover {
+        background-color: #005680;
+    }
+    
+    /* Style the grid layout */
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    /* Style the title and form controls */
+    h1, .grid {
+        margin-bottom: 20px;
+    }
+    
+    /* Style the elements inside the grid */
+    .grid > * {
+        grid-column: span 2;
+    }
+    
+    /* Style the elements for vaccination and insurance details */
+    #vaccination_details,
+    #insurance_details {
+        display: none;
+    }
+    
+    /* Style the label for checkboxes */
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    /* Style the checked checkboxes */
+    input[type="checkbox"]:checked + .checkbox-label {
+        font-weight: bold;
+    }
+    
+    /* Media query for responsiveness */
+    @media screen and (max-width: 768px) {
+        .grid {
+            grid-template-columns: 1fr;
+        }
+    
+        /* Center the form controls on smaller screens */
+        .grid > * {
+            grid-column: span 1;
+        }
+    }
+    </style>
+<body>
+    <h1>Add Cattle</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+                
+        <button type="submit">Add Cattle</button>
+    </form>
+
+    <script>
+        document.getElementById("id_vaccination_0").addEventListener("change", function() {
+            var vaccinationDetails = document.getElementById("vaccination_details");
+            vaccinationDetails.style.display = this.checked ? "block" : "none";
+        });
+
+        document.getElementById("id_insurance_0").addEventListener("change", function() {
+            var insuranceDetails = document.getElementById("insurance_details");
+            insuranceDetails.style.display = this.checked ? "block" : "none";
+        });
+    </script>
+</body>
+</html>

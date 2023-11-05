@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from .models import CustomUser, Customer, Seller
 from django.http import JsonResponse
@@ -11,12 +12,10 @@ from django.urls import reverse
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import Permission
 from .forms import CustomerRegistrationForm, SellerRegistrationForm
-from .models import SellerEditProfile
-from .forms import SellerProfileEditForm,CattleForm  # Import your SellerProfileEditForm
-from .models import CattleType
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Cattle,Login
+from .forms import CattleRegistrationForm
+from .forms import CattleForm, CattleVaccinationForm, CattleInsuranceForm
 
 def index(request):
     return render(request, 'index.html')
@@ -24,27 +23,34 @@ def loginn(request):
     if request.method == "POST":
         email = request.POST.get('email')
         password = request.POST.get('password')
+        try:
+            login_details = Login.objects.get(email=email)
 
-        user = authenticate(request, email=email, password=password)
+            if login_details.password == password:
+                user = authenticate(request, email=email, password=password)
 
-        if user is not None:
-            auth_login(request, user)
-            request.session['email'] = email
+                if user is not None:
+                    auth_login(request, user)
 
-            if user.role == 'Admin':
-                messages.success(request, "Login successful!")
-                return redirect("a_dashboard")
-            elif user.role == 'Customer':
-                messages.success(request, "Login successful!")
-                return redirect("c_dashboard")
-            elif user.role == 'Seller':
-                messages.success(request, "Login successful!")
-                return redirect("s_dashboard")
-    
-    # Handle login failure
-    messages.error(request, "Login failed. Please check your credentials.")
+                    # Store the user's ID in the session
+                    request.session['user_id'] = user.id
+
+                    if login_details.role == 'Admin':
+                        messages.success(request, "Login successful!")
+                        return redirect("a_dashboard")
+                    elif login_details.role == 'Customer':
+                        messages.success(request, "Login successful!")
+                        return redirect("c_dashboard")
+                    elif login_details.role == 'Seller':
+                        messages.success(request, "Login successful!")
+                        return redirect("s_dashboard")
+                else:
+                    messages.error(request, "Login failed. Please check your credentials")
+            else:
+                messages.error(request, "Login failed. Please check your credentials")
+        except Login.DoesNotExist:
+            messages.error(request, "Login failed. Please check your credentials")
     return render(request, 'login.html')
-
 # Customer registration view
 def c_register(request):
     if request.method == "POST":
@@ -56,20 +62,20 @@ def c_register(request):
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirmpassword')
 
-        # Validate and save seller registration data
-        if CustomUser.objects.filter(email=email).exists():
+        if Login.objects.filter(email=email).exists():
             messages.error(request, "Email already exists")
         elif password != confirm_password:
             messages.error(request, "Passwords do not match")
         else:
-            # Create a user with the role 'Seller' and save first name, last name, and mobile
-            user = CustomUser.objects.create_user(email=email, password=password, role='Customer')
-            customer = Seller(user=user, first_name=firstname, last_name=lastname, mobile=mobile)
+            user = CustomUser.objects.create_user(email=email, role='Customer')
+            customer = Customer(user=user, first_name=firstname, last_name=lastname, mobile=mobile)
             customer.save()
+            # Save login details to the Login model
+            login = Login(email=email, password=password, role='Customer')
+            login.save()
             messages.success(request, "Registered successfully")
-            showAlert("Registered successfully");
-            return redirect("login")  # Redirect to the login page
-
+            return redirect("login")  # Redirect to the registration page
+    
     return render(request, 'c_register.html')
 
 
@@ -80,60 +86,35 @@ def s_register(request):
         firstname = request.POST.get('firstname')
         lastname = request.POST.get('lastname')
         email = request.POST.get('email')
+        cattle_license = request.POST.get('cattle_license')
         mobile = request.POST.get('mobile')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirmpassword')
 
-        # Validate and save seller registration data
-        if CustomUser.objects.filter(email=email).exists():
+        if Login.objects.filter(email=email).exists():
             messages.error(request, "Email already exists")
         elif password != confirm_password:
             messages.error(request, "Passwords do not match")
         else:
-            # Create a user with the role 'Seller' and save first name, last name, and mobile
-            user = CustomUser.objects.create_user(email=email, password=password, role='Seller')
-            seller = Seller(user=user, first_name=firstname, last_name=lastname, mobile=mobile)
+            # Create a user with the role 'Seller'
+            user = CustomUser.objects.create_user(email=email, role='Seller')
+            seller = Seller(user=user, first_name=firstname, last_name=lastname, mobile=mobile, cattle_license=cattle_license)
             seller.save()
-            messages.success(request, "Registered successfully")
-            return redirect("s_register")  # Redirect to the registration page
 
+            # Save login details to the Login model
+            login = Login(email=email, password=password, role='Seller')
+            login.save()
+
+            messages.success(request, "Registered successfully")
+            return redirect("login")  # Redirect to the registration page
 
     return render(request, 's_register.html')
-
-def s_prof_edit(request, user_id):
-    # Check if the user is authenticated
-    if not request.user.is_authenticated:
-        return redirect('login')  # Redirect to the login page if the user is not authenticated
-
-    # Check if the user object is available and has the correct user_id
-    if request.user.id != user_id:
-        raise Http404("User does not exist or you don't have permission to edit this profile.")
-    # Get the current user
-    user = request.user
-
-    # Check if a SellerEditProfile object exists for the user
-    try:
-        seller_profile = SellerEditProfile.objects.get(user=user)
-    except SellerEditProfile.DoesNotExist:
-        # If it doesn't exist, create a new SellerEditProfile object
-        seller_profile = SellerEditProfile(user=user)
-
-    if request.method == 'POST':
-        form = SellerProfileEditForm(request.POST, request.FILES, instance=seller_profile)
-        if form.is_valid():
-            form.save()  # This should save the pin_code as well
-            return redirect('s_view')  # Redirect to a success page or another appropriate URL
-    else:
-        form = SellerProfileEditForm(instance=seller_profile)
-
-    return render(request, 'profile_edit/s_prof_edit.html', {'form': form})
-
 
     
 def logout(request):
     auth_logout(request)
     return redirect('home')
-
+    
 def c_dashboard(request):
     if 'email' in request.session:
         response = render(request, 'dash/c_dashboard.html')
@@ -142,7 +123,6 @@ def c_dashboard(request):
     else:
         return redirect('home')
 
-#@user_passes_test(lambda u: u.is_authenticated and u.is_seller)
 def s_dashboard(request):
     if 'email' in request.session:
         response = render(request, 'dash/s_dashboard.html')
@@ -151,8 +131,6 @@ def s_dashboard(request):
     else:
         return redirect('home')
 
-# Admin dashboard view
-#@user_passes_test(lambda u: u.is_authenticated and u.is_admin)
 def a_dashboard(request):
     if 'email' in request.session:
         response = render(request, 'dash/a_dashboard.html')
@@ -160,6 +138,7 @@ def a_dashboard(request):
         return response
     else:
         return redirect('home')
+
 # views.py
 
 # Other views
@@ -177,88 +156,70 @@ def c_view(request):
     
 def profile(request):
     admin = CustomUser.objects.get(id=request.user.id)  # Assuming you have an 'id' field for the user
-
-    # You can customize this based on your user model and how you store profile information
     context = {
         'admin': admin,
     }
 
     return render(request, 'profile.html', context)
+
+def select(request):
+    return render(request, 'select.html')
     
 
-# ...
-
-def get_breed_names(request):
-    cattle_type = request.GET.get('cattle_type')
-    if cattle_type:
-        breed_names = Breed.objects.filter(cattle_type__cattle_type=cattle_type).values_list('breed_name', flat=True)
-        return JsonResponse(list(breed_names), safe=False)
-    return JsonResponse([], safe=False)
 
 def add_cattle(request):
     if request.method == 'POST':
         form = CattleForm(request.POST, request.FILES)
-
         if form.is_valid():
-            # Create and save the cattle object
-            cattle = form.save(commit=False)
-
-            # Get the selected cattle type and breed name from the form
-            cattle_type = request.POST.get('cattle_type')
-            breed_name = request.POST.get('breed_name')
-
-            # Retrieve the cattle type and breed objects from the database
-            cattle_type_obj = CattleType.objects.get(cattle_type=cattle_type)
-
-            # Associate the breed name with the selected cattle type
-            breed_obj = Breed.objects.get(breed_name=breed_name, cattle_type=cattle_type_obj)
-
-            # Set the cattle type and breed for the cattle object
-            cattle.cattle_type = cattle_type_obj
-            cattle.breed_name = breed_obj
-
-            # Fetch health status options from the Health table
-            health_status_options = Health.objects.values_list('health_status', flat=True).distinct()
-
-            cattle.save()
-            return redirect('add_cattle')
+            form.save()
+            return redirect('view_cattle')
     else:
         form = CattleForm()
+    return render(request, 'cattle/add_cattle.html', {'form': form})
 
-        # Retrieve cattle types from the database
-        cattle_types = CattleType.objects.all()
+def edit_cattle(request):
+    if request.method == 'POST':
+        # Retrieve the selected cattle_license from the form
+        cattle_license = request.POST.get('cattle_license')
+        cattle = Cattle.objects.get(cattle_license=cattle_license)
 
-        # Initialize health status options as empty
-        health_status_options = []
+        form = CattleForm(request.POST, request.FILES, instance=cattle)
+        vacc_form = CattleVaccinationForm(instance=cattle)
+        insur_form = CattleInsuranceForm(instance=cattle)
 
-    return render(request, 'cattle_details/add_cattle.html', {'form': form, 'cattle_types': cattle_types, 'health_status_options': health_status_options})
+        if form.is_valid():
+            form.save()
 
+        if 'vaccination' in request.POST:
+            vacc_form = CattleVaccinationForm(request.POST, instance=cattle)
+            if vacc_form.is_valid():
+                vacc_form.save()
 
-def cattle_view(request, user_id):
-    # Retrieve the specific seller using the provided user_id
-    seller = get_object_or_404(CustomUser, id=user_id, role='Seller')
+        if 'insurance' in request.POST:
+            insur_form = CattleInsuranceForm(request.POST, instance=cattle)
+            if insur_form.is_valid():
+                insur_form.save()
 
-    # Retrieve the cattles associated with the seller
-    seller_cattles = Cattle.objects.filter(seller=seller)
+        return redirect('/view_cattle')
 
-    # Pass the seller and their cattles to the template
-    context = {
-        'seller': seller,
-        'seller_cattles': seller_cattles,
-    }
+    else:
+        # Retrieve a list of available cattle for the dropdown
+        cattle_list = Cattle.objects.all()
+        return render(request, 'cattle/edit_cattle.html', {'cattle_list': cattle_list})
 
-    return render(request, 'cattle_details/cattle_view.html', context)
+def view_cattle(request):
+    if request.user.is_authenticated:
+        user = request.user
+        cattle_list = Cattle.objects.filter(seller__user=user)  # Assuming seller is related to Cattle
+    else:
+        cattle_list = []
+    return render(request, 'cattle/view_cattle.html', {'cattle_list': cattle_list})
 
-def s_profile(request):
-    user = request.user  # Get the currently logged-in user
-    try:
-        seller_profile = SellerEditProfile.objects.get(user=user)
-        data = {
-            'user': user,
-            'seller_profile': seller_profile,
-        }
-        return render(request, 'profile_edit/s_profile.html', data)
-    except SellerEditProfile.DoesNotExist:
-        return render(request, 'profile_edit/incomplete_profile.html')
+def delete_cattle(request, cattle_id):
+    cattle = get_object_or_404(Cattle, cattle_license=cattle_id)
+    if request.method == 'POST':
+        cattle.delete()
+        return redirect('view_cattle')
 
+    return render(request, 'cattle/delete_cattle.html', {'cattle': cattle})
 
