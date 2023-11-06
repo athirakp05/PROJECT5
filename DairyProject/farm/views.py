@@ -12,9 +12,8 @@ from django.urls import reverse
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import Permission
 from .forms import CustomerRegistrationForm, SellerRegistrationForm
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Cattle,Login
-from .forms import CattleRegistrationForm
+from django.shortcuts import render, redirect
+from .models import Cattle,Login_Details
 from .forms import CattleForm, CattleVaccinationForm, CattleInsuranceForm
 
 def index(request):
@@ -23,34 +22,30 @@ def loginn(request):
     if request.method == "POST":
         email = request.POST.get('email')
         password = request.POST.get('password')
-        try:
-            login_details = Login.objects.get(email=email)
 
-            if login_details.password == password:
-                user = authenticate(request, email=email, password=password)
+        user = authenticate(request, email=email, password=password)
 
-                if user is not None:
-                    auth_login(request, user)
+        if user is not None:
+            auth_login(request, user)
+            request.session['email'] = email
 
-                    # Store the user's ID in the session
-                    request.session['user_id'] = user.id
-
-                    if login_details.role == 'Admin':
-                        messages.success(request, "Login successful!")
-                        return redirect("a_dashboard")
-                    elif login_details.role == 'Customer':
-                        messages.success(request, "Login successful!")
-                        return redirect("c_dashboard")
-                    elif login_details.role == 'Seller':
-                        messages.success(request, "Login successful!")
-                        return redirect("s_dashboard")
-                else:
-                    messages.error(request, "Login failed. Please check your credentials")
+            if user.role == 'Admin':
+                messages.success(request, "Login successful!")
+                return redirect("a_dashboard")  # Redirect to the admin dashboard
+            elif user.role == 'Customer':
+                messages.success(request, "Login successful!")
+                return redirect("c_dashboard")  # Redirect to the customer dashboard
+            elif user.role == 'Seller':
+                messages.success(request, "Login successful!")
+                return redirect("s_dashboard")  # Redirect to the seller dashboard
             else:
-                messages.error(request, "Login failed. Please check your credentials")
-        except Login.DoesNotExist:
-            messages.error(request, "Login failed. Please check your credentials")
+                # Handle unknown or unsupported roles here
+                messages.error(request, "Unknown user role or unsupported role.")
+    
+    # Handle login failure
+    messages.error(request, "Login failed. Please check your credentials.")
     return render(request, 'login.html')
+
 # Customer registration view
 def c_register(request):
     if request.method == "POST":
@@ -62,16 +57,16 @@ def c_register(request):
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirmpassword')
 
-        if Login.objects.filter(email=email).exists():
+        if Login_Details.objects.filter(email=email).exists():
             messages.error(request, "Email already exists")
         elif password != confirm_password:
             messages.error(request, "Passwords do not match")
         else:
-            user = CustomUser.objects.create_user(email=email, role='Customer')
+            user = CustomUser.objects.create_user(email=email, password=password, role='Customer')
             customer = Customer(user=user, first_name=firstname, last_name=lastname, mobile=mobile)
             customer.save()
             # Save login details to the Login model
-            login = Login(email=email, password=password, role='Customer')
+            login = Login_Details(email=email, password=password, role='Customer')
             login.save()
             messages.success(request, "Registered successfully")
             return redirect("login")  # Redirect to the registration page
@@ -91,23 +86,20 @@ def s_register(request):
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirmpassword')
 
-        if Login.objects.filter(email=email).exists():
+        if Login_Details.objects.filter(email=email).exists():
             messages.error(request, "Email already exists")
         elif password != confirm_password:
             messages.error(request, "Passwords do not match")
         else:
-            # Create a user with the role 'Seller'
-            user = CustomUser.objects.create_user(email=email, role='Seller')
-            seller = Seller(user=user, first_name=firstname, last_name=lastname, mobile=mobile, cattle_license=cattle_license)
+            user = CustomUser.objects.create_user(email=email, password=password, role='Seller')
+            seller = Seller(user=user, first_name=firstname, last_name=lastname, mobile=mobile)
             seller.save()
-
             # Save login details to the Login model
-            login = Login(email=email, password=password, role='Seller')
+            login = Login_Details(email=email, password=password, role='Seller')
             login.save()
-
             messages.success(request, "Registered successfully")
             return redirect("login")  # Redirect to the registration page
-
+    
     return render(request, 's_register.html')
 
     
@@ -115,6 +107,14 @@ def logout(request):
     auth_logout(request)
     return redirect('home')
     
+def a_dashboard(request):
+    if 'email' in request.session:
+        response = render(request, 'dash/a_dashboard.html')
+        response['Cache-Control'] = 'no-store, must-revalidate'
+        return response
+    else:
+        return redirect('home')
+
 def c_dashboard(request):
     if 'email' in request.session:
         response = render(request, 'dash/c_dashboard.html')
@@ -126,14 +126,6 @@ def c_dashboard(request):
 def s_dashboard(request):
     if 'email' in request.session:
         response = render(request, 'dash/s_dashboard.html')
-        response['Cache-Control'] = 'no-store, must-revalidate'
-        return response
-    else:
-        return redirect('home')
-
-def a_dashboard(request):
-    if 'email' in request.session:
-        response = render(request, 'dash/a_dashboard.html')
         response['Cache-Control'] = 'no-store, must-revalidate'
         return response
     else:
@@ -200,7 +192,7 @@ def edit_cattle(request):
             if insur_form.is_valid():
                 insur_form.save()
 
-        return redirect('/view_cattle')
+        return redirect('view_cattle')
 
     else:
         # Retrieve a list of available cattle for the dropdown
@@ -223,3 +215,12 @@ def delete_cattle(request, cattle_id):
 
     return render(request, 'cattle/delete_cattle.html', {'cattle': cattle})
 
+def common_search(request):
+    if request.method == 'GET':
+        s_t = request.GET.get('search')
+        if s_t is not None:
+            results = Name.objects.filter(cattle=s_t)  # Replace 'name' with the actual field you want to search
+            return render(request, 'search_results.html', {'results': results})
+
+    # If no search term provided, return to the dashboard or another appropriate page
+    return redirect('a_dashboard') 

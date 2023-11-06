@@ -1,11 +1,11 @@
 from django.contrib import admin
-from .models import Customer,Seller,Login
+from .models import Customer,Seller,Login_Details
 from .models import CustomUser, SellerEditProfile, Society, IFSCCode,CattleType,Breed,Cattle,Insurance,Vaccination
 
 
 # Register your models here.
 admin.site.register(CustomUser)
-admin.site.register(Login)
+admin.site.register(Login_Details)
 admin.site.register(SellerEditProfile)
 admin.site.register(Society)
 admin.site.register(Customer)

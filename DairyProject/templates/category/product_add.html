@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -68,57 +69,57 @@
 </head>
 <body>
     <h1>Add Product</h1>
-    <form method="post" action="{% url 'product_add' %}" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="category">Category:</label>
-            <select name="categories" id="category"> <!-- Use "categories" here -->
-                {% for category in categories %}
-                    <option value="{{ category.0 }}">{{ category.1 }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label for="product_name">Product Name:</label>
-            <input type="text" name="p_name" id="product_name" required>
-        </div>
-        <div class="form-group">
-            <label for="mfg_date">Manufacturing Date:</label>
-            <input type="date" name="mfg_date" id="mfg_date" required>
-        </div>
-        <div class="form-group">
-            <label for="expiry_date">Expiry Date:</label>
-            <input type="date" name="expiry_date" id="expiry_date" required>
-        </div>
-        <div class="form-group">
-            <label for="grade_level">Grade Level:</label>
-            <select name="grade_level" id="grade_level">
-                {% for choice in form.grade_level.choices %}
-                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label for="quantity">Quantity:</label>
-            <input type="number" name="quantity" id="quantity" required>
-        </div>
-        <div class="form-group">
-            <label for="price">Price:</label>
-            <input type="number" name="price" id="price" step="0.01" required>
-        </div>
-        <div class="form-group">
-            <label for="description">Description:</label> <!-- Added Description field -->
-            <textarea name="description" id="description" rows="4"></textarea>
-        </div>
-        <div class="form-group">
-            <label for="image">Product Image:</label>
-            <input type="file" name="image" id="image">
-        </div>
-        <div class="form-group">
-            <input type="submit" value="Add Product">
-        </div>
-    </form>
+    <!-- product_add.html -->
+<form method="post" action="{% url 'product_add' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="category">Category:</label>
+        <select name="categories" id="category">
+            {% for choice in form.categories.field.choices %}
+                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="product_name">Product Name:</label>
+        {{ form.p_name }}
+    </div>
+    <div class="form-group">
+        <label for="mfg_date">Manufacturing Date:</label>
+        {{ form.mfg_date }}
+    </div>
+    <div class="form-group">
+        <label for="expiry_date">Expiry Date:</label>
+        {{ form.expiry_date }}
+    </div>
+    <div class="form-group">
+        <label for="grade_level">Grade Level:</label>
+        <select name="grade_level" id="grade_level">
+            {% for choice in form.grade_level.field.choices %}
+                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="quantity">Quantity:</label>
+        {{ form.quantity }}
+    </div>
+    <div class="form-group">
+        <label for="price">Price:</label>
+        {{ form.price }}
+    </div>
+    <div class="form-group">
+        <label for="description">Description:</label>
+        {{ form.Description }}
+    </div>
+    <div class="form-group">
+        <label for="image">Product Image:</label>
+        {{ form.image }}
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Add Product">
+    </div>
+</form>
+
 </body>
 </html>

@@ -1,4 +1,3 @@
-from django.contrib import admin
 from django.urls import path
 from . import views  
 from django.contrib.auth.views import PasswordResetView,PasswordResetDoneView,PasswordResetConfirmView,PasswordResetCompleteView
@@ -11,8 +10,8 @@ urlpatterns = [
     path('s_register/', views.s_register, name='s_register'),
     path('logout',views.logout,name='logout'),
     path('about',views.logout,name='about'),
-    path('c_dashboard/', views.c_dashboard, name='c_dashboard'),
-    path('s_dashboard/', views.s_dashboard, name='s_dashboard'),
+    path('c_dashboard', views.c_dashboard, name='c_dashboard'),
+    path('s_dashboard', views.s_dashboard, name='s_dashboard'),
     path('a_dashboard/', views.a_dashboard, name='a_dashboard'),
     path('add_cattle', views.add_cattle, name='add_cattle'),
     path('edit_cattle/', views.edit_cattle, name='edit_cattle'),

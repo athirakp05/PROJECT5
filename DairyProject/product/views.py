@@ -1,21 +1,8 @@
 # views.py
 from django.shortcuts import render, redirect
 from .models import Product
-from .forms import ProductForm  # Import your ProductForm
+from .forms import ProductForm
 
-CATEGORY_CHOICES = [
-    ('Milk', 'Milk'),
-    ('Curd', 'Curd'),
-    ('Paneer', 'Paneer'),
-    ('Ghee', 'Ghee'),
-    ('Butter', 'Butter'),
-    ('Cheese', 'Cheese'),
-]
-GRADE_CHOICES = [
-        ('A', 'A'),
-        ('B', 'B'),
-        ('C', 'C'),
-]
 def product_add(request):
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
@@ -25,10 +12,7 @@ def product_add(request):
     else:
         form = ProductForm()
 
-    categories = [choice for choice in CATEGORY_CHOICES]
-    grade_level = [choice for choice in GRADE_CHOICES]
-
-    return render(request, 'category/product_add.html', {'form': form, 'categories': categories})
+    return render(request, 'category/product_add.html', {'form': form})
 
 def prod_view(request):
     products = Product.objects.all()

@@ -140,7 +140,7 @@
             <a href="{% url 'home' %}">
                 <img class="img-fluid" src="{% static '/img/logo.jpeg' %}" height="100" width="100" alt="Logo" id="fixed-logo">
             </a>
-            <form method="POST" id="login-form" action="{% url 'login' %}">
+            <form method="POST" id="login-form">
                 {% csrf_token %}
                 <div class="form-group">
                     <input type="text" id="email" name="email" placeholder="Email" required>

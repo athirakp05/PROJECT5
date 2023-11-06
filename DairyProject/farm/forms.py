@@ -17,10 +17,6 @@ class SellerRegistrationForm(forms.Form):
     mobile = forms.CharField(max_length=15)
     cattle_license = forms.CharField(max_length=50)  # Add the cattle_license field
 
-class CattleRegistrationForm(forms.ModelForm):
-    class Meta:
-        model = Cattle
-        fields = '__all__'
 class CattleForm(forms.ModelForm):
     class Meta:
         model = Cattle

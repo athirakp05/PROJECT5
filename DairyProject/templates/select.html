@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+    {% load static %}  <!-- Load the static tag -->
     <style>
         body {
-            background-image: url('1.jpg');
+            background-image: url("{% static 'img/cus.jpg' %}");  
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
@@ -33,9 +34,12 @@
     </style>
 </head>
 <body>
-    <div class="button-container">
-        <a href="{% url 's_register' %}" class="btn">Seller</a>
-        <a href="{% url 'c_register' %}" class="btn">Customer</a>
-    </div>
+    <center><h1>what's your role ?</h1></center>
+    
+        <div class="button-container">
+            <a href="{% url 's_register' %}" class="btn">Seller</a>
+            <a href="{% url 'c_register' %}" class="btn">Customer</a>
+        </div>
+    
 </body>
 </html>

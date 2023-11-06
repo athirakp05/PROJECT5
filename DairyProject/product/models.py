@@ -8,14 +8,14 @@ class Product(models.Model):
     mfg_date = models.DateField()
     expiry_date = models.DateField()
     GRADE_CHOICES = [
-        ('A', 'A'),
-        ('B', 'B'),
-        ('C', 'C'),
+        ('1', 'A'),
+        ('2', 'B'),
+        ('3', 'C'),
 ]
-    grade_level = models.CharField(max_length=1, choices=GRADE_CHOICES,default='A')
+    grade_level = models.CharField(max_length=10, choices=GRADE_CHOICES,default='A')
     quantity = models.PositiveIntegerField()
     price = models.FloatField()
-    Description = models.TextField()
+    description = models.TextField()
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE, default=1)
     
     CATEGORY_CHOICES = [

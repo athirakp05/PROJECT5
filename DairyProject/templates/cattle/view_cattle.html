@@ -1,32 +1,100 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>View Cattle</title>
-</head>
-<body>
-    <h1>View Cattle</h1>
-    <table>
-        <tr>
-            <th>Cattle License</th>
-            <th>Ear Tag ID</th>
-            <th>Cattle Type</th>
-            <th>Breed Name</th>
-            <th>Weight</th>
-            <th>Actions</th>
-        </tr>
-        {% for cattle in cattle_list %}
-        <tr>
-            <td>{{ cattle.cattle_license }}</td>
-            <td>{{ cattle.EarTagID }}</td>
-            <td>{{ cattle.CattleType }}</td>
-            <td>{{ cattle.BreedName }}</td>
-            <td>{{ cattle.weight }}</td>
-            <td>
-                <a href="{% url 'edit_cattle' cattle.cattle_license %}">Edit</a> |
-                <a href="{% url 'delete_cattle' cattle.cattle_license %}">Delete</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-</body>
-</html>
+{% load static %}
+{% block content %}
+    <div class="container">
+        <style>
+            /* Customize DataTables CSS */
+            #cattle-table {
+                width: 100%;
+                margin: 0 auto;
+                clear: both;
+                border-collapse: separate;
+                border-spacing: 0;
+            }
+
+            #cattle-table th,
+            #cattle-table td {
+                padding: 8px;
+                text-align: left;
+            }
+
+            #cattle-table thead th {
+                background-color: #f2f2f2;
+            }
+
+            #cattle-table tbody tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+
+            /* Pagination Styling */
+            .dataTables_paginate {
+                text-align: center;
+            }
+
+            .dataTables_paginate a {
+                display: inline-block;
+                padding: 5px 10px;
+                margin: 2px;
+                border: 1px solid #ccc;
+                text-decoration: none;
+                background-color: #f2f2f2;
+                color: #333;
+            }
+
+            .dataTables_paginate a.current {
+                background-color: #007bff;
+                color: #fff;
+            }
+        </style>
+        <h1>Cattle Details</h1>
+
+        <table id="cattle-table" class="display">
+            <thead>
+                <tr>
+                    <th>Cattle License</th>
+                    <th>Ear Tag ID</th>
+                    <th>Cattle Type</th>
+                    <th>Breed Name</th>
+                    <th>Weight</th>
+                    <th>Height</th>
+                    <th>Age</th>
+                    <th>Colour</th>
+                    <th>Feed</th>
+                    <th>Milk Obtained</th>
+                    <th>Health Status</th>
+                    <th>Seller</th>
+                    <th>Vaccination</th>
+                    <th>Insurance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cattle in cattle_data %}
+                    <tr>
+                        <td>{{ cattle.cattle_license }}</td>
+                        <td>{{ cattle.EarTagID }}</td>
+                        <td>{{ cattle.CattleType.name }}</td>
+                        <td>{{ cattle.BreedName.name }}</td>
+                        <td>{{ cattle.weight }}</td>
+                        <td>{{ cattle.height }}</td>
+                        <td>{{ cattle.Age }}</td>
+                        <td>{{ cattle.Colour }}</td>
+                        <td>{{ cattle.feed }}</td>
+                        <td>{{ cattle.milk_obtained }}</td>
+                        <td>{{ cattle.health_status }}</td>
+                        <td>{{ cattle.seller }}</td>
+                        <td>{{ cattle.vaccination }}</td>
+                        <td>{{ cattle.insurance }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+<script>
+    $(document).ready( function () {
+        $('#cattle-table').DataTable();
+    });
+</script>
+
+{% endblock %}

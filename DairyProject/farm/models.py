@@ -37,7 +37,7 @@ class CustomUser(AbstractUser):
         (ADMIN, 'Admin'),
     ]
     
-    role = models.CharField(max_length=15, choices=ROLE_CHOICES, default=CUSTOMER)
+    role = models.CharField(max_length=15, choices=ROLE_CHOICES)
     forget_password_token = models.UUIDField(null=True, blank=True)
     email = models.EmailField(unique=True)
     USERNAME_FIELD = 'email'
@@ -46,19 +46,28 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
     username = None
     mobile = models.CharField(max_length=20, blank=True, null=True)
-    is_customer = models.BooleanField(default=True)
+    is_customer = models.BooleanField(default=False)
     is_seller = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     groups = models.ManyToManyField(CustomGroup, blank=True, related_name='custom_user_groups')
     user_permissions = models.ManyToManyField(Permission, blank=True, related_name='custom_user_permissions')
+    def save(self, *args, **kwargs):
+        # Set is_customer, is_seller, or is_admin based on the role
+        if self.role == CustomUser.CUSTOMER:
+            self.is_customer = True
+        elif self.role == CustomUser.SELLER:
+            self.is_seller = True
+        elif self.role == CustomUser.ADMIN:
+            self.is_admin = True
 
+        super().save(*args, **kwargs)
     def __str__(self):
         return self.email
         
-class Login(models.Model):
+class Login_Details(models.Model):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)  # You may want to use a more secure field like PasswordField
-    role = models.CharField(max_length=15, choices=CustomUser.ROLE_CHOICES, default=CustomUser.CUSTOMER)
+    role = models.CharField(max_length=15, choices=CustomUser.ROLE_CHOICES)
 
     def __str__(self):
         return self.email
@@ -69,11 +78,15 @@ class Society(models.Model):
     subdistrict = models.CharField(max_length=50)
     panchayath = models.CharField(max_length=50)
     ward_no = models.IntegerField()
-
+    def __str__(self):
+        return self.society_code
 class IFSCCode(models.Model):
     bankname = models.CharField(max_length=50)
     branch = models.CharField(max_length=50)
     ifsccode = models.CharField(max_length=50,default=False)
+    def __str__(self):
+        return self.ifsccode
+
 class SellerEditProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
     first_name = models.CharField(max_length=50)
@@ -90,7 +103,10 @@ class SellerEditProfile(models.Model):
     acc_no = models.IntegerField()
     society = models.ForeignKey(Society, on_delete=models.CASCADE, related_name='farmers')
     profile_photo = models.ImageField(upload_to='seller_profile_photos/', null=True, blank=True)
+    cattle_license = models.CharField(max_length=50, unique=True)
 
+    def __str__(self):
+        return self.first_name
     # Add any other fields you need for your Seller model
 
 class Customer(models.Model):
@@ -98,6 +114,8 @@ class Customer(models.Model):
     first_name = models.CharField(max_length=50)  # Added for Customer's first name
     last_name = models.CharField(max_length=50)  # Added for Customer's last name
     mobile = models.CharField(max_length=20, blank=True, null=True)
+    def __str__(self):
+        return self.first_name
 
 class Seller(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
@@ -106,7 +124,8 @@ class Seller(models.Model):
     mobile = models.CharField(max_length=15,blank=True, null=True)
     cattle_license = models.CharField(max_length=50, unique=True)
 
-
+    def __str__(self):
+        return self.first_name
 class CustomerEditProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
     mobile = models.CharField(max_length=20, blank=True, null=True)
@@ -132,7 +151,7 @@ class Breed(models.Model):
 
 
 class Cattle(models.Model):
-    cattle_license = models.CharField(max_length=50, unique=True, primary_key=True)
+    cattle_license = models.CharField(max_length=10, unique=True, primary_key=True)  # Use CharField for alphanumeric values
     EarTagID = models.IntegerField()
     CattleType = models.ForeignKey(CattleType, on_delete=models.CASCADE)
     BreedName = models.ForeignKey(Breed, on_delete=models.CASCADE)
@@ -154,7 +173,7 @@ class Cattle(models.Model):
     insurance = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Cattle License: {self.cattle_license}"
+        return self.cattle_license
 class Insurance(models.Model):
     cattle = models.ForeignKey(Cattle, on_delete=models.CASCADE, related_name='insurances')
     provider_name = models.CharField(max_length=100)
@@ -167,7 +186,7 @@ class Insurance(models.Model):
     notes = models.TextField(blank=True)
 
     def __str__(self):
-        return f"Insurance for {self.cattle.cattle_license}"
+        return self.policy_number
 
 class Vaccination(models.Model):
     cattle = models.ForeignKey(Cattle, on_delete=models.CASCADE, related_name='vaccinations')
@@ -179,7 +198,7 @@ class Vaccination(models.Model):
     notes = models.TextField(blank=True)
 
     def __str__(self):
-        return f"Vaccination for {self.cattle.cattle_license}"
+        return self.vaccine_name
         
 
 
