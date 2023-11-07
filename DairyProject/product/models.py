@@ -31,3 +31,28 @@ class Product(models.Model):
 
     def __str__(self):
         return self.p_name
+
+class MilkCollection(models.Model):
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, default=1)
+    CATTLE_CHOICES = [
+        ('1', 'Cow'),
+        ('2', 'Buffalo'),
+        ('3', 'Goat'),
+        # Add more cattle types as needed
+    ]
+    cattle = models.CharField(max_length=10, choices=CATTLE_CHOICES, default='1')
+    collection_date = models.DateField()
+    COLLECTION_CHOICES = [
+        ('1', 'ForeNoon'),
+        ('2', 'AfterNoon'),
+]
+    collection_time = models.CharField(max_length=50,  choices=COLLECTION_CHOICES,default='1.027-1.03')
+    quantity = models.PositiveIntegerField()
+    DENSITY_CHOICES = [
+        ('1', '1.03+'),
+        ('2', '1.027-1.03'),
+        ('3', '1.03-'),
+]
+    density_level = models.CharField(max_length=10, choices=DENSITY_CHOICES,default='1.027-1.03')
+    price = models.FloatField()
+    description = models.TextField()

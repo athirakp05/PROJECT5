@@ -1,9 +1,10 @@
+<!-- milk_edit.html -->
 
 {% block content %}
-  <h2>Add Milk Collection</h2>
+  <h2>Edit Milk Collection</h2>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Add Collection</button>
+    <button type="submit">Save Changes</button>
   </form>
 {% endblock %}

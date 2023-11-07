@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.utils import IntegrityError
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from .models import CustomUser, Customer, Seller
@@ -75,24 +76,28 @@ def c_register(request):
 
 
 # Seller registration view
+
 def s_register(request):
     if request.method == "POST":
         # Retrieve seller registration data
         firstname = request.POST.get('firstname')
         lastname = request.POST.get('lastname')
+        farmer_license = request.POST.get('farmer_license')
         email = request.POST.get('email')
-        cattle_license = request.POST.get('cattle_license')
         mobile = request.POST.get('mobile')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirmpassword')
+        if Seller.objects.filter(farmer_license=farmer_license).exists():
+            messages.error(request, "Seller with this farmer license already exists. Please use a different license.")
+            return redirect("s_register")
 
-        if Login_Details.objects.filter(email=email).exists():
+        if CustomUser.objects.filter(email=email).exists():
             messages.error(request, "Email already exists")
         elif password != confirm_password:
             messages.error(request, "Passwords do not match")
         else:
-            user = CustomUser.objects.create_user(email=email, password=password, role='Seller')
-            seller = Seller(user=user, first_name=firstname, last_name=lastname, mobile=mobile)
+            user = CustomUser.objects.create_user(email=email, password=password,role='Seller')
+            seller = Seller(user=user, first_name=firstname, last_name=lastname,farmer_license=farmer_license,  mobile=mobile)
             seller.save()
             # Save login details to the Login model
             login = Login_Details(email=email, password=password, role='Seller')
@@ -171,9 +176,9 @@ def add_cattle(request):
 
 def edit_cattle(request):
     if request.method == 'POST':
-        # Retrieve the selected cattle_license from the form
-        cattle_license = request.POST.get('cattle_license')
-        cattle = Cattle.objects.get(cattle_license=cattle_license)
+        # Retrieve the selected farmer_license from the form
+        farmer_license = request.POST.get('farmer_license')
+        cattle = Cattle.objects.get(farmer_license=farmer_license)
 
         form = CattleForm(request.POST, request.FILES, instance=cattle)
         vacc_form = CattleVaccinationForm(instance=cattle)
@@ -208,7 +213,7 @@ def view_cattle(request):
     return render(request, 'cattle/view_cattle.html', {'cattle_list': cattle_list})
 
 def delete_cattle(request, cattle_id):
-    cattle = get_object_or_404(Cattle, cattle_license=cattle_id)
+    cattle = get_object_or_404(Cattle, farmer_license=cattle_id)
     if request.method == 'POST':
         cattle.delete()
         return redirect('view_cattle')
@@ -216,11 +221,9 @@ def delete_cattle(request, cattle_id):
     return render(request, 'cattle/delete_cattle.html', {'cattle': cattle})
 
 def common_search(request):
-    if request.method == 'GET':
-        s_t = request.GET.get('search')
-        if s_t is not None:
-            results = Name.objects.filter(cattle=s_t)  # Replace 'name' with the actual field you want to search
+        firstname = request.GET.get('name')
+        if firstname is not None:
+            results = Seller.objects.filter(firstname=firstname)  # Replace 'name' with the actual field you want to search
             return render(request, 'search_results.html', {'results': results})
-
     # If no search term provided, return to the dashboard or another appropriate page
-    return redirect('a_dashboard') 
+        return redirect('a_dashboard') 

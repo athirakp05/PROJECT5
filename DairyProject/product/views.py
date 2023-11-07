@@ -2,6 +2,9 @@
 from django.shortcuts import render, redirect
 from .models import Product
 from .forms import ProductForm
+from .models import MilkCollection
+from .forms import MilkCollectionForm
+from django.urls import reverse
 
 def product_add(request):
     if request.method == 'POST':
@@ -20,3 +23,39 @@ def prod_view(request):
         'products': products,
     }
     return render(request, 'category/prod_view.html', context)
+
+def milk_details(request):
+    if request.method == 'POST':
+        form = MilkCollectionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('milk_view')
+    else:
+        form = MilkCollectionForm()
+    context = {'form': form}
+    return render(request, 'category/milk_details.html', {'form': form})
+
+def milk_edit(request, pk):
+    collection = MilkCollection.objects.get(pk=collection_id)
+    
+    if request.method == 'POST':
+        form = MilkCollectionForm(request.POST, instance=collection)
+        if form.is_valid():
+            form.save()
+            # Redirect to a success page or the updated collection details page
+    else:
+        form = MilkCollectionForm(instance=collection)
+    
+    context = {'form': form}
+    return render(request, 'category/milk_edit.html', {'form': form})
+
+
+def milk_list(request):
+    collections = MilkCollection.objects.all()
+    context = {'collections': collections}
+    return render(request, 'category/milk_view.html', context)
+
+def milk_view(request, pk):
+    collection = MilkCollection.objects.get(pk=pk)
+    context = {'collection': collection}
+    return render(request, 'category/milk_view.html', context)

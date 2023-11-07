@@ -118,7 +118,6 @@
         <button id="search-button"><i class="fas fa-search"></i></button>
     </div>
 </div>
-
 <body>
     <div class="dashboard">
         <!-- sidebar.html -->
@@ -126,11 +125,12 @@
             <ul class="menu">
                 <li><a href="{% url 'profile' %}"><i class="fas fa-home"></i> Profile</a></li>
                 <li><a href="{% url 'prod_view' %}"><i class="fas fa-chart-bar"></i> View Product</a></li>
-                <li><a href="{% url 's_view' %}"><i class="fas fa-users"></i> View Seller</a></li>
-                <li><a href="{% url 'add_cattle' %}"><i class="fas fa-users"></i> View Seller</a></li>
-                <li><a href="{% url 'c_view' %}"><i class="fas fa-users"></i> View monthly Statistics</a></li>
-                <li><a href="{% url 'c_view' %}"><i class="fas fa-users"></i> View Availability</a></li>
-                <li><a href="{% url 'c_view' %}"><i class="fas fa-users"></i> View Orders</a></li>
+                <li><a href="{% url 's_view' %}"><i class="fas fa-users"></i>Seller</a></li>
+                <li><a href="{% url 'add_cattle' %}"><i class="fas fa-users"></i> Cattle</a></li>
+                <li><a href="{% url 'c_view' %}"><i class="fas fa-users"></i>monthly Statistics</a></li>
+                <li><a href="{% url 'c_view' %}"><i class="fas fa-users"></i> Product Availability</a></li>
+                <li><a href="{% url 'c_view' %}"><i class="fas fa-users"></i>Orders</a></li>
+                <li><a href="{% url 'milk_details' %}"><i class="fas fa-users"></i>Milk Collection</a></li>
                 <li>
                     <a href="#" id="reports-dropdown" class="dropdown-toggle">
                         <i class="fas fa-file"></i> Reports

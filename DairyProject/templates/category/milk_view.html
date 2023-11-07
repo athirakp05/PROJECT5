@@ -1,0 +1,31 @@
+
+{% block content %}
+  <h2>Milk Collection Details</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Cattle</th>
+        <th>Collection Date</th>
+        <th>Collection Time</th>
+        <th>Quantity</th>
+        <th>Density Level</th>
+        <th>Price</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for collection in collections %}
+        <tr>
+          <td>{{ collection.get_cattle_display }}</td>
+          <td>{{ collection.collection_date }}</td>
+          <td>{{ collection.get_collection_time_display }}</td>
+          <td>{{ collection.quantity }}</td>
+          <td>{{ collection.get_density_level_display }}</td>
+          <td>{{ collection.price }}</td>
+          <td>{{ collection.description }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a href="{% url 'milk_details' %}">Add New Collection</a>
+{% endblock %}

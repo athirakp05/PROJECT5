@@ -1,4 +1,4 @@
-
+from django.core.validators import RegexValidator
 from django import forms
 from .models import Cattle
 
@@ -15,8 +15,12 @@ class SellerRegistrationForm(forms.Form):
     email = forms.EmailField()
     password = forms.CharField(widget=forms.PasswordInput)
     mobile = forms.CharField(max_length=15)
-    cattle_license = forms.CharField(max_length=50)  # Add the cattle_license field
-
+    farmer_license = forms.CharField(max_length=7, validators=[
+        RegexValidator(
+            regex=r'^F\d{5}$',
+            message='Seller license must be in the format FXXXXX, where X is a digit (0-9).',
+        ),
+    ])
 class CattleForm(forms.ModelForm):
     class Meta:
         model = Cattle

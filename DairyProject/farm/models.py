@@ -3,6 +3,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
 from .custom_models import CustomGroup  # Import your custom models from custom_models.py
+from django.core.validators import RegexValidator
 
 
 class CustomUserManager(BaseUserManager):
@@ -103,7 +104,7 @@ class SellerEditProfile(models.Model):
     acc_no = models.IntegerField()
     society = models.ForeignKey(Society, on_delete=models.CASCADE, related_name='farmers')
     profile_photo = models.ImageField(upload_to='seller_profile_photos/', null=True, blank=True)
-    cattle_license = models.CharField(max_length=50, unique=True)
+    farmer_license = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.first_name
@@ -122,7 +123,8 @@ class Seller(models.Model):
     first_name = models.CharField(max_length=50)  # Added for Seller's first name
     last_name = models.CharField(max_length=50)  # Added for Seller's last name
     mobile = models.CharField(max_length=15,blank=True, null=True)
-    cattle_license = models.CharField(max_length=50, unique=True)
+    farmer_license = models.CharField(max_length=20, unique=True)  # Add 'unique=True'
+
 
     def __str__(self):
         return self.first_name
@@ -151,7 +153,18 @@ class Breed(models.Model):
 
 
 class Cattle(models.Model):
-    cattle_license = models.CharField(max_length=10, unique=True, primary_key=True)  # Use CharField for alphanumeric values
+    farmer_license = models.CharField(
+        max_length=7,
+        unique=True,
+        primary_key=True,
+        validators=[
+            RegexValidator(
+                regex=r'^F\d{5}$',
+                message='Seller license must be in the format FXXXXX, where X is a digit (0-9).',
+            ),
+        ],
+    )
+
     EarTagID = models.IntegerField()
     CattleType = models.ForeignKey(CattleType, on_delete=models.CASCADE)
     BreedName = models.ForeignKey(Breed, on_delete=models.CASCADE)
@@ -173,7 +186,7 @@ class Cattle(models.Model):
     insurance = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.cattle_license
+        return self.farmer_license
 class Insurance(models.Model):
     cattle = models.ForeignKey(Cattle, on_delete=models.CASCADE, related_name='insurances')
     provider_name = models.CharField(max_length=100)
