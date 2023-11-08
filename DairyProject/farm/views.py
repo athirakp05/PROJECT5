@@ -164,16 +164,19 @@ def select(request):
     
 
 
+
 def add_cattle(request):
     if request.method == 'POST':
         form = CattleForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            cattle = form.save(commit=False)  # Create an instance without saving to the database
+            cattle.seller = request.user.seller  # Set the seller to the currently logged-in user
+            cattle.save()  # Save the cattle object
             return redirect('view_cattle')
     else:
         form = CattleForm()
+    
     return render(request, 'cattle/add_cattle.html', {'form': form})
-
 def edit_cattle(request):
     if request.method == 'POST':
         # Retrieve the selected farmer_license from the form
@@ -204,14 +207,16 @@ def edit_cattle(request):
         cattle_list = Cattle.objects.all()
         return render(request, 'cattle/edit_cattle.html', {'cattle_list': cattle_list})
 
+
 def view_cattle(request):
     if request.user.is_authenticated:
         user = request.user
         cattle_list = Cattle.objects.filter(seller__user=user)  # Assuming seller is related to Cattle
+        print(cattle_list)  # Add this line for debugging
+        return render(request, 'cattle/view_cattle.html', {'cattle_list': cattle_list})
     else:
-        cattle_list = []
-    return render(request, 'cattle/view_cattle.html', {'cattle_list': cattle_list})
-
+        return render(request, 'cattle/view_cattle.html', {'cattle_list': []})
+     
 def delete_cattle(request, cattle_id):
     cattle = get_object_or_404(Cattle, farmer_license=cattle_id)
     if request.method == 'POST':

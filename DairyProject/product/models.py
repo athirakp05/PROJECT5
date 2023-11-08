@@ -27,7 +27,7 @@ class Product(models.Model):
     ('Cheese', 'Cheese'),
 ]
     categories = models.CharField(max_length=10, choices=CATEGORY_CHOICES,default='milk')
-    image = models.ImageField(upload_to='products/', default='default.jpg')
+    image = models.ImageField(upload_to='products/', null=True, blank=True)
 
     def __str__(self):
         return self.p_name
@@ -35,12 +35,12 @@ class Product(models.Model):
 class MilkCollection(models.Model):
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE, default=1)
     CATTLE_CHOICES = [
-        ('1', 'Cow'),
-        ('2', 'Buffalo'),
-        ('3', 'Goat'),
+        ('Cow', 'Cow'),
+        ('Buffalo', 'Buffalo'),
+        ('Goat', 'Goat'),
         # Add more cattle types as needed
     ]
-    cattle = models.CharField(max_length=10, choices=CATTLE_CHOICES, default='1')
+    cattle = models.CharField(max_length=10, choices=CATTLE_CHOICES, default='Cow')
     collection_date = models.DateField()
     COLLECTION_CHOICES = [
         ('1', 'ForeNoon'),

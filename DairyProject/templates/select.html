@@ -1,45 +1,71 @@
+{% extends 'layout/main.html' %}
+{% load static %}  <!-- Load the static tag -->
+
 <!DOCTYPE html>
 <html>
-<head>
-    {% load static %}  <!-- Load the static tag -->
-    <style>
-        body {
-            background-image: url("{% static 'img/cus.jpg' %}");  
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }
+    {% block body %}     
+    <head>
+        <style>
+            body {
+                background-image: url("{% static 'img/7.jpg' %}");
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+            }
 
-        .button-container {
-            text-align: center;
-            padding-top: 50px;
-        }
+            .button-container {
+                text-align: center;
+                padding-top: 100px;
+            }
 
-        .btn {
-            display: inline-block;
-            text-decoration: none;
-            background-color: #007bff;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 50px;
-            margin: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
-            transition: background-color 0.3s;
-        }
+            /* Style for the Seller button */
+            .seller-btn {
+                background-image: url("{% static 'img/farmer.jpg' %}");
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-color: transparent;
+                color: #fff;
+                padding: 100px 100px;
+                border-radius: 50px;
+                margin: 10px;
+                font-weight: bold;
+                text-transform: uppercase;
+                transition: background-color 0.3s;
+                text-decoration: none;
+            }
 
-        .btn:hover {
-            background-color: #0056b3;
-        }
-    </style>
-</head>
-<body>
-    <center><h1>what's your role ?</h1></center>
-    
+            .seller-btn:hover {
+                background-color: #0056b3;
+            }
+
+            /* Style for the Customer button */
+            .customer-btn {
+                background-image: url("{% static 'img/customer.jpg' %}");
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-color: transparent;
+                color: #fff;
+                padding: 100px 100px;
+                border-radius: 50px;
+                margin: 10px;
+                font-weight: bold;
+                text-transform: uppercase;
+                transition: background-color 0.3s;
+                text-decoration: none;
+            }
+
+            .customer-btn:hover {
+                background-color: #0056b3;
+            }
+        </style>
+    </head>
+    <body>
+        <center><h1>What's your role?</h1></center>
+
         <div class="button-container">
-            <a href="{% url 's_register' %}" class="btn">Seller</a>
-            <a href="{% url 'c_register' %}" class="btn">Customer</a>
+            <a href="{% url 's_register' %}" class="seller-btn">Seller</a>
+            <a href="{% url 'c_register' %}" class="customer-btn">Customer</a>
         </div>
-    
-</body>
+        {% endblock %}
+    </body>
 </html>

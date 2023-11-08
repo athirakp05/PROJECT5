@@ -184,6 +184,7 @@ class Cattle(models.Model):
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)  # Link to the Seller model
     vaccination = models.BooleanField(default=False)
     insurance = models.BooleanField(default=False)
+    photo = models.ImageField(upload_to='cattle_photos/', null=True, blank=True)
 
     def __str__(self):
         return self.farmer_license

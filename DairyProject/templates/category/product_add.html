@@ -1,125 +1,85 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Product</title>
     <style>
-        /* Reset some default browser styles */
-        * {
+        /* Reset default margin and padding */
+        body, h1, h2, p, ul, li {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
-        /* Apply a simple layout to the form */
-        form {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f7f7f7;
+        /* Set a background color for the entire page */
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
         }
 
-        /* Style form labels and inputs */
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        input[type="date"],
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            font-size: 16px;
-            box-shadow: none;
-        }
-
-        input[type="file"] {
-            width: 100%;
-        }
-
-        /* Style the submit button */
-        input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            background-color: #007BFF;
+        /* Style for the header */
+        header {
             color: #fff;
-            border: none;
-            border-radius: 3px;
-            font-size: 16px;
-            cursor: pointer;
+            text-align: center;
+            font-size: 20px;
+            padding: 1px 0;
         }
 
-        input[type="submit"]:hover {
+        /* Center the header text */
+        header h2 {
+            margin: 0;
+        }
+
+        /* Style for the product cards */
+        .product-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            margin: 10px;
+            padding: 10px;
+            width: 300px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        /* Style for product images */
+        img {
+            max-width: 100px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* Style for buttons */
+        .btn {
+            display: inline-block;
+            background-color: #0074b4;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+            margin: 5px;
+        }
+
+        .btn:hover {
             background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <h1>Add Product</h1>
-    <!-- product_add.html -->
-<form method="post" action="{% url 'product_add' %}" enctype="multipart/form-data">
-    {% csrf_token %}
-    <div class="form-group">
-        <label for="category">Category:</label>
-        <select name="categories" id="category">
-            {% for choice in form.categories.field.choices %}
-                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-            {% endfor %}
-        </select>
+    <header>
+        <h2>Our Dairy Products</h2>
+    </header>
+    <div class="products">
+        {% for product in products %}
+        <div class="product-card">
+            <img src="{{ product.image.url }}" alt="{{ product.p_name }}">
+            <h3>{{ product.p_name }}</h3>
+            <p>Price: ${{ product.price }}</p>
+            <p>{{ product.description }}</p>
+            <a href="{% url 'product_detail' product.id %}" class="btn">View Details</a>
+        </div>
+        {% endfor %}
     </div>
-    <div class="form-group">
-        <label for="product_name">Product Name:</label>
-        {{ form.p_name }}
-    </div>
-    <div class="form-group">
-        <label for="mfg_date">Manufacturing Date:</label>
-        {{ form.mfg_date }}
-    </div>
-    <div class="form-group">
-        <label for="expiry_date">Expiry Date:</label>
-        {{ form.expiry_date }}
-    </div>
-    <div class="form-group">
-        <label for="grade_level">Grade Level:</label>
-        <select name="grade_level" id="grade_level">
-            {% for choice in form.grade_level.field.choices %}
-                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="quantity">Quantity:</label>
-        {{ form.quantity }}
-    </div>
-    <div class="form-group">
-        <label for="price">Price:</label>
-        {{ form.price }}
-    </div>
-    <div class="form-group">
-        <label for="description">Description:</label>
-        {{ form.Description }}
-    </div>
-    <div class="form-group">
-        <label for="image">Product Image:</label>
-        {{ form.image }}
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Add Product">
-    </div>
-</form>
-
 </body>
 </html>

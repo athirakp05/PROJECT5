@@ -1,67 +1,112 @@
 <!DOCTYPE html>
 <html>
-<style>
-    /* Style for the header */
-    header {
-        background-color: hsl(240, 7%, 97%);
-        text-align: center;
-        font-size: 24px;
-    }
+<head>
+    <style>
+        /* Reset default margin and padding */
+        body, h1, h2, p, ul, li {
+            margin: 0;
+            padding: 0;
+        }
 
-    /* Style for the table */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
+        /* Set a background color for the entire page */
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
 
-    /* Style for table headings */
-    th {
-        background-color: #3eacdb;
-        color: #fff;
-        text-align: left;
-        padding: 10px;
-    }
+        /* Style for the header */
+        header {
+            color: #fff;
+            text-align: center;
+            font-size: 20px;
+            padding: 1px 0;
+        }
 
-    /* Style for table cells */
-    td {
-        padding: 10px;
-        border: 1px solid #ddd;
-    }
+        /* Center the header text */
+        header h2 {
+            margin: 0;
+        }
 
-    /* Style for product images */
-    img {
-        max-width: 100px;
-        height: auto;
-        display: block;
-        margin: 0 auto;
-    }
+        /* Style for the table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+        }
 
-    /* Style for pagination */
-    .pagination {
-        display: flex;
-        list-style: none;
-        padding: 0;
-        justify-content: center;
-    }
+        /* Style for table headings */
+        th {
+            background-color: #0074b4;
+            color: #fff;
+            text-align: left;
+            padding: 10px;
+        }
 
-    .page-item {
-        margin: 10px 1px;
-    }
+        /* Style for table cells */
+        td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
 
-    .page-link {
-        text-decoration: none;
-        background-color: white;
-        color: #1d1818;
-        padding: 4px 10px;
-        border-radius: 0px;
-    }
+        /* Style for product images */
+        img {
+            max-width: 100px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
 
-    .page-link:hover {
-        background-color: #0056b3;
-    }
-</style>
+        /* Style for pagination */
+        .pagination {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .page-item {
+            margin: 0 5px;
+        }
+
+        .page-link {
+            text-decoration: none;
+            background-color: #0074b4;
+            color: #fff;
+            padding: 6px 12px;
+            border: 1px solid #0056b3;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .page-link:hover {
+            background-color: #0056b3;
+        }
+
+        /* Style for buttons */
+        .btn {
+            display: inline-block;
+            background-color: #0074b4;
+            color: #fff;
+            padding: 0px 1px;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
 <body>
-    <header>Products</header>
+    <header>
+        <h2>Products</h2>
+    </header>
     <table>
         <thead>
             <tr>
@@ -70,27 +115,32 @@
                 <th>Manufacturing Date</th>
                 <th>Expiry Date</th>
                 <th>Grade Level</th>
-                <th>Quantity(ltrs/kgms)</th>
+                <th>Quantity (ltrs/kgms)</th>
                 <th>Price</th>
-                <th>Description</th> <!-- Added Description column -->
+                <th>Description</th>
                 <th>Category</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for product in products %}
-                <tr>
-                    <td>
-                        <img src="{{ product.image.url }}" alt="{{ product.p_name }}" width="100">
-                    </td>
-                    <td>{{ product.p_name }}</td>
-                    <td>{{ product.mfg_date }}</td>
-                    <td>{{ product.expiry_date }}</td>
-                    <td>{{ product.grade_level }}</td>
-                    <td>{{ product.quantity }}</td>
-                    <td>{{ product.price }}</td>
-                    <td>{{ product.Description }}</td> <!-- Added Description field -->
-                    <td>{{ product.category.category }}</td>
-                </tr>
+            <tr>
+                <td>
+                    <img src="{{ product.image.url }}" alt="{{ product.p_name }}">
+                </td>
+                <td>{{ product.p_name }}</td>
+                <td>{{ product.mfg_date }}</td>
+                <td>{{ product.expiry_date }}</td>
+                <td>{{ product.grade_level }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.description }}</td>
+                <td>{{ product.categories }}</td>
+                <td>
+                    <a href="#" class="btn">Edit</a>
+                    <a href="#" class="btn">Delete</a>
+                </td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
@@ -103,5 +153,8 @@
             <li class="page-item"><a class="page-link" href="#">Next</a></li>
         </ul>
     </nav>
+    <a href="{% url 'product_add' %}" class="btn">Add Product</a>
+    <a href="{% url 'product_detail' product.id %}">View Details</a>
+
 </body>
 </html>

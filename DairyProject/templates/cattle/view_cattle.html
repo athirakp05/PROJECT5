@@ -1,50 +1,6 @@
 {% load static %}
 {% block content %}
     <div class="container">
-        <style>
-            /* Customize DataTables CSS */
-            #cattle-table {
-                width: 100%;
-                margin: 0 auto;
-                clear: both;
-                border-collapse: separate;
-                border-spacing: 0;
-            }
-
-            #cattle-table th,
-            #cattle-table td {
-                padding: 8px;
-                text-align: left;
-            }
-
-            #cattle-table thead th {
-                background-color: #f2f2f2;
-            }
-
-            #cattle-table tbody tr:nth-child(even) {
-                background-color: #f2f2f2;
-            }
-
-            /* Pagination Styling */
-            .dataTables_paginate {
-                text-align: center;
-            }
-
-            .dataTables_paginate a {
-                display: inline-block;
-                padding: 5px 10px;
-                margin: 2px;
-                border: 1px solid #ccc;
-                text-decoration: none;
-                background-color: #f2f2f2;
-                color: #333;
-            }
-
-            .dataTables_paginate a.current {
-                background-color: #007bff;
-                color: #fff;
-            }
-        </style>
         <h1>Cattle Details</h1>
 
         <table id="cattle-table" class="display">
@@ -64,6 +20,7 @@
                     <th>Seller</th>
                     <th>Vaccination</th>
                     <th>Insurance</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -80,21 +37,26 @@
                         <td>{{ cattle.feed }}</td>
                         <td>{{ cattle.milk_obtained }}</td>
                         <td>{{ cattle.health_status }}</td>
-                        <td>{{ cattle.seller }}</td>
+                        <td>{{ cattle.seller.user.first_name }} {{ cattle.seller.user.last_name }}</td>
                         <td>{{ cattle.vaccination }}</td>
                         <td>{{ cattle.insurance }}</td>
+                        <td>
+                            <a href="{% url 'edit_cattle' cattle.farmer_license %}">Edit</a> |
+                            <a href="{% url 'delete_cattle' cattle.farmer_license %}">Delete</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <script>
+        $(document).ready( function () {
+            $('#cattle-table').DataTable();
+        });
+    </script>
 </div>
-
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
-<script>
-    $(document).ready( function () {
-        $('#cattle-table').DataTable();
-    });
-</script>
-
 {% endblock %}

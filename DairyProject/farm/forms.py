@@ -1,6 +1,6 @@
 from django.core.validators import RegexValidator
 from django import forms
-from .models import Cattle
+from .models import Cattle,Insurance,Vaccination
 
 class CustomerRegistrationForm(forms.Form):
     first_name = forms.CharField(max_length=50)
@@ -30,13 +30,13 @@ class CattleForm(forms.ModelForm):
             'insurance': forms.RadioSelect(choices=[(True, 'Yes'), (False, 'No')]),
         }
 
-
 class CattleVaccinationForm(forms.ModelForm):
     class Meta:
-        model = Cattle
+        model = Vaccination
         fields = '__all__'
+
 
 class CattleInsuranceForm(forms.ModelForm):
     class Meta:
-        model = Cattle
+        model = Insurance
         fields = '__all__'
