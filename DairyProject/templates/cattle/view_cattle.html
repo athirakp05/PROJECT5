@@ -1,5 +1,4 @@
 {% load static %}
-{% block content %}
     <div class="container">
         <h1>Cattle Details</h1>
 
@@ -41,8 +40,8 @@
                         <td>{{ cattle.vaccination }}</td>
                         <td>{{ cattle.insurance }}</td>
                         <td>
-                            <a href="{% url 'edit_cattle' cattle.farmer_license %}">Edit</a> |
-                            <a href="{% url 'delete_cattle' cattle.farmer_license %}">Delete</a>
+                            <a href="{% url 'edit_cattle' %}">Edit</a> |
+                            <a href="{% url 'delete_cattle' %}">Delete</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -59,4 +58,3 @@
         });
     </script>
 </div>
-{% endblock %}

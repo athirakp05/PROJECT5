@@ -18,3 +18,5 @@ class MilkCollectionForm(forms.ModelForm):
         widgets = {
             'collection_date': forms.DateInput(attrs={'type': 'date'}),
         }
+class ProductSearchForm(forms.Form):
+    query = forms.CharField(label='Search', max_length=100)

@@ -232,3 +232,10 @@ def common_search(request):
             return render(request, 'search_results.html', {'results': results})
     # If no search term provided, return to the dashboard or another appropriate page
         return redirect('a_dashboard') 
+    
+def contact(request):
+    # Add your view logic here
+    return render(request, 'contact.html')
+def about(request):
+    # Add your view logic here
+    return render(request, 'about.html')

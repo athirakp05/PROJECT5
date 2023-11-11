@@ -1,0 +1,13 @@
+{% extends "layout/main.html" %}
+
+{% block body %}
+    <h1>My Wishlist</h1>
+    <ul>
+        {% for item in wishlist_items %}
+            <li>
+                <a href="{% url 'product_detail' item.product.p_code %}">{{ item.product.p_name }}</a>
+                <a href="{% url 'remove_from_wishlist' item.product.p_code %}">Remove</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

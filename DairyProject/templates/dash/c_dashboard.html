@@ -78,7 +78,8 @@
         <div class="logo">Dashboard</div>
         <ul class="menu">
             <li><a href="#"><i class="fas fa-home"></i> Profile</a></li>
-            <li><a href="#"><i class="fas fa-chart-bar"></i> View Product</a></li>
+            <li><a href="{% url 'product_detail' %}"><i class="fas fa-chart-bar"></i>Product</a></li>
+            <li><a href="{% url 'wishlist' %}"><i class="fas fa-users"></i> Wishlist</a></li>
             <li><a href="#"><i class="fas fa-users"></i> Order History</a></li>
             <li><a href="#"><i class="fas fa-users"></i> Payment History</a></li>
             <li><a href="{% url 'logout' %}"><i class="fas fa-cog"></i> Logout</a></li>
@@ -88,7 +89,7 @@
     <!-- Main Content -->
     <div class="content">
         <header>
-            <h1>Welcome to {{ user.first_name }}</h1>
+            <h1>Welcome to {{ user.email }}</h1>
         </header>
         <main>
             <p></p>

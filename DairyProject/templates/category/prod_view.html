@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -154,7 +155,7 @@
         </ul>
     </nav>
     <a href="{% url 'product_add' %}" class="btn">Add Product</a>
-    <a href="{% url 'product_detail' product.id %}">View Details</a>
+    <a href="{% url 'product_detail' %}">View Details</a>
 
 </body>
 </html>

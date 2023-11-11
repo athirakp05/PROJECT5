@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,15 +9,12 @@
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
-
     </form>
-
     <script>
         document.getElementById("vaccination_yes").addEventListener("change", function() {
             var vaccinationDetails = document.getElementById("vaccination_details");
             vaccinationDetails.style.display = this.checked ? "block" : "none";
         });
-
         document.getElementById("insurance_yes").addEventListener("change", function() {
             var insuranceDetails = document.getElementById("insurance_details");
             insuranceDetails.style.display = this.checked ? "block" : "none";

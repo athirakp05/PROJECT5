@@ -25,5 +25,8 @@ urlpatterns = [
     path('select', views.select, name='select'),
     path('profile', views.profile, name='profile'),
     path('common_search', views.common_search, name='common_search'),
+    path('contact/', views.contact, name='contact'),
+    path('about/', views.about, name='about'),
+
 ]
 

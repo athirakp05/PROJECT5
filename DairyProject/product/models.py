@@ -1,6 +1,8 @@
 from django.db import models
 from farm.models import Seller
-
+from django.contrib.auth.models import AbstractUser
+from django.conf import settings
+from django.utils import timezone
 
 class Product(models.Model):
     p_code = models.AutoField(primary_key=True, unique=True)
@@ -17,7 +19,7 @@ class Product(models.Model):
     price = models.FloatField()
     description = models.TextField()
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE, default=1)
-    
+    upload_datetime=models.DateTimeField(default=timezone.now)
     CATEGORY_CHOICES = [
     ('Milk', 'Milk'),
     ('Curd', 'Curd'),
@@ -56,3 +58,12 @@ class MilkCollection(models.Model):
     density_level = models.CharField(max_length=10, choices=DENSITY_CHOICES,default='1.027-1.03')
     price = models.FloatField()
     description = models.TextField()
+    
+
+
+class Wishlists(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)  # Assuming you have a Product model
+
+    def __str__(self):
+        return f"{self.user.email}'s wishlist: {self.product.p_name}"

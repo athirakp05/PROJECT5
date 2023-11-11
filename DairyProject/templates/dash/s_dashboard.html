@@ -116,7 +116,6 @@
 .logout-link i {
     margin-right: 10px;
 }
-
     /* You can add more specific styles based on your project design as needed. */
     </style>
 <body>
@@ -130,33 +129,29 @@
 
     <!-- Sidebar -->
     <div>{{ user.first_name }}</div>
-
 <div class="sidebar">
     <div class="user-info">
         <div class="user-avatar">
-            <img src="{% static '/img/service.png' %}" alt="Profile Picture">
+            <img src="{% static '/img/team-2.jpg' %}" alt="Profile Picture">
         </div>
         <div class="user-name">
             {{ user.first_name }}
         </div>
     </div>
-        <a href="$" data-url="$"><i class="fas fa-user"></i> View Profile</a>
         <a href="$" data-url="$"><i class="fas fa-user-edit"></i> Complete Profile</a>
-        <a href="$" data-url="$"><i class="fas fa-key"></i> Change Password</a>
+        <a href="{% url 'milk_view' %}" data-url="{% url 'milk_view' %}"><i class="fas fa-key"></i> Todays Collection</a>
         <a href="{% url 'prod_view' %}" data-url="{% url 'prod_view' %}"><i class="fas fa-chart-bar"></i> Product</a>
-        <a href="{% url 'add_cattle' %}" data-url="{% url 'add_cattle' %}"><i class="fas fa-chart-bar"></i>Cattle</a>
+        <a href="{% url 'view_cattle' %}" data-url="{% url 'add_cattle' %}"><i class="fas fa-chart-bar"></i>Cattle</a>
     </div>
-
     <!-- Main Content -->
     <div class="content">
         <header>
             <h1> </h1>
         </header>
         <main>
-            <div id="dashboard-content">Content loaded via AJAX will be displayed here.</div>
+            <div id="dashboard-content"></div>
         </main>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const sidebarLinks = document.querySelectorAll('.sidebar a');
@@ -171,7 +166,6 @@
                     }
                 });
             });
-
             function loadContent(url) {
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
