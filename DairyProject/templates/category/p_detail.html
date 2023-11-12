@@ -1,0 +1,53 @@
+<!-- p_detail.html -->
+
+{% extends "layout/main.html" %}
+{% load static %}
+{% block body %}
+
+<div class="container mt-5">
+    <h2>{{ product.name }}</h2>
+    <p>Price: ₹{{ product.price }}</p>
+    <p>Manufactured on: {{ product.upload_datetime|date:"F j, Y, g:i a" }}</p>
+    <p>{{ product.description }}</p>
+
+    {% if product.discounted_price %}
+        <p>Discounted Price: ₹{{ product.discounted_price }}</p>
+    {% endif %}
+
+    <!-- Wishlist Option -->
+    <button onclick="addToWishlist('{{ product.id }}')">Add to Wishlist</button>
+
+    <!-- Order Option -->
+    <button onclick="placeOrder('{{ product.id }}')">Place Order</button>
+
+    <!-- Remove from Wishlist Option -->
+    <button onclick="removeFromWishlist('{{ product.id }}')">Remove from Wishlist</button>
+
+    <!-- Cancel Order Option -->
+    <button onclick="cancelOrder('{{ product.id }}')">Cancel Order</button>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function addToWishlist(productId) {
+        // Placeholder: Implement logic to add the product to the wishlist (AJAX request)
+        console.log("Adding to Wishlist: " + productId);
+    }
+
+    function placeOrder(productId) {
+        // Placeholder: Implement logic to place an order for the product (AJAX request)
+        console.log("Placing Order: " + productId);
+    }
+
+    function removeFromWishlist(productId) {
+        // Placeholder: Implement logic to remove the product from the wishlist (AJAX request)
+        console.log("Removing from Wishlist: " + productId);
+    }
+
+    function cancelOrder(productId) {
+        // Placeholder: Implement logic to cancel the order for the product (AJAX request)
+        console.log("Canceling Order: " + productId);
+    }
+</script>
+
+{% endblock %}

@@ -10,9 +10,9 @@ class Product(models.Model):
     mfg_date = models.DateField()
     expiry_date = models.DateField()
     GRADE_CHOICES = [
-        ('1', 'A'),
-        ('2', 'B'),
-        ('3', 'C'),
+        ('A', 'A'),
+        ('B', 'B'),
+        ('C', 'C'),
 ]
     grade_level = models.CharField(max_length=10, choices=GRADE_CHOICES,default='A')
     quantity = models.PositiveIntegerField()
@@ -63,7 +63,7 @@ class MilkCollection(models.Model):
 
 class Wishlists(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)  # Assuming you have a Product model
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.user.email}'s wishlist: {self.product.p_name}"

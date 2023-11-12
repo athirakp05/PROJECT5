@@ -1,85 +1,137 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        /* Reset default margin and padding */
-        body, h1, h2, p, ul, li {
-            margin: 0;
-            padding: 0;
-        }
+<!-- product_add.html -->
 
-        /* Set a background color for the entire page */
-        body {
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
-        }
+{% extends "layout/main.html" %}
 
-        /* Style for the header */
-        header {
-            color: #fff;
-            text-align: center;
-            font-size: 20px;
-            padding: 1px 0;
-        }
+{% block body %}
+<style>/* Add your custom styles here */
 
-        /* Center the header text */
-        header h2 {
-            margin: 0;
-        }
-
-        /* Style for the product cards */
-        .product-card {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            margin: 10px;
-            padding: 10px;
-            width: 300px;
-            display: inline-block;
-            text-align: center;
-        }
-
-        /* Style for product images */
-        img {
-            max-width: 100px;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-        }
-
-        /* Style for buttons */
-        .btn {
-            display: inline-block;
-            background-color: #0074b4;
-            color: #fff;
-            padding: 5px 10px;
-            border: none;
-            border-radius: 2px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background-color 0.3s, color 0.3s;
-            margin: 5px;
-        }
-
-        .btn:hover {
-            background-color: #0056b3;
-        }
+    body {
+        font-family: 'Arial', sans-serif;
+    }
+    
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    h2 {
+        color: #333;
+    }
+    
+    form {
+        margin-top: 20px;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    
+    input,
+    select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+    
+    small {
+        color: #666;
+    }
+    
+    button {
+        background-color: #007BFF;
+        color: #fff;
+        padding: 10px 15px;
+        border: none;
+        cursor: pointer;
+    }
+    
+    button:hover {
+        background-color: #0056b3;
+    }
+    
+    /* Add more styles as needed */
     </style>
-</head>
-<body>
-    <header>
-        <h2>Our Dairy Products</h2>
-    </header>
-    <div class="products">
-        {% for product in products %}
-        <div class="product-card">
-            <img src="{{ product.image.url }}" alt="{{ product.p_name }}">
-            <h3>{{ product.p_name }}</h3>
-            <p>Price: ${{ product.price }}</p>
-            <p>{{ product.description }}</p>
-            <a href="{% url 'product_detail' product.id %}" class="btn">Detailed view</a>
-        </div>
-        {% endfor %}
+    <div class="container mt-5">
+        <h2 class="mb-4">Add Product</h2>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Product Name -->
+            <div class="mb-3">
+                <label for="{{ form.p_name.id_for_label }}">Product Name:</label>
+                {{ form.p_name }}
+                <small class="text-muted">Enter the name of the product.</small>
+            </div>
+
+            <!-- Manufacturing Date -->
+            <div class="mb-3">
+                <label for="{{ form.mfg_date.id_for_label }}">Manufacturing Date:</label>
+                {{ form.mfg_date }}
+                <small class="text-muted">Select the manufacturing date.</small>
+            </div>
+
+            <!-- Expiry Date -->
+            <div class="mb-3">
+                <label for="{{ form.expiry_date.id_for_label }}">Expiry Date:</label>
+                {{ form.expiry_date }}
+                <small class="text-muted">Select the expiry date.</small>
+            </div>
+
+            <!-- Grade Level -->
+            <div class="mb-3">
+                <label for="{{ form.grade_level.id_for_label }}">Grade Level:</label>
+                {{ form.grade_level }}
+                <small class="text-muted">Select the grade level.</small>
+            </div>
+
+            <!-- Quantity -->
+            <div class="mb-3">
+                <label for="{{ form.quantity.id_for_label }}">Quantity:</label>
+                {{ form.quantity }}
+                <small class="text-muted">Enter the quantity of the product.</small>
+            </div>
+
+            <!-- Price -->
+            <div class="mb-3">
+                <label for="{{ form.price.id_for_label }}">Price:</label>
+                {{ form.price }}
+                <small class="text-muted">Enter the price of the product.</small>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-3">
+                <label for="{{ form.description.id_for_label }}">Description:</label>
+                {{ form.description }}
+                <small class="text-muted">Enter a description of the product.</small>
+            </div>
+
+            <!-- Seller -->
+            <div class="mb-3">
+                <label for="{{ form.seller.id_for_label }}">Seller:</label>
+                {{ form.seller }}
+                <small class="text-muted">Select the seller of the product.</small>
+            </div>
+
+            <!-- Categories -->
+            <div class="mb-3">
+                <label for="{{ form.categories.id_for_label }}">Categories:</label>
+                {{ form.categories }}
+                <small class="text-muted">Select the category of the product.</small>
+            </div>
+
+            <!-- Image -->
+            <div class="mb-3">
+                <label for="{{ form.image.id_for_label }}">Image:</label>
+                {{ form.image }}
+                <small class="text-muted">Upload an image of the product.</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3">Add Product</button>
+        </form>
     </div>
-</body>
-</html>
+
+{% endblock %}
