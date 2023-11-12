@@ -1,0 +1,84 @@
+<!-- complete_prof.html -->
+
+<h1>Complete Seller Profile</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Display each form field separately -->
+    <div class="form-group">
+        <label for="{{ form.first_name.id_for_label }}">First Name:</label>
+        {{ form.first_name }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.last_name.id_for_label }}">Last Name:</label>
+        {{ form.last_name }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.house_name.id_for_label }}">House Name:</label>
+        {{ form.house_name }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.city.id_for_label }}">City:</label>
+        {{ form.city }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.pin_code.id_for_label }}">Pin Code:</label>
+        {{ form.pin_code }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.occupation.id_for_label }}">Occupation:</label>
+        {{ form.occupation }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.gender.id_for_label }}">Gender:</label>
+        {{ form.gender }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.dob.id_for_label }}">Date of Birth:</label>
+        {{ form.dob }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.rationcard_no.id_for_label }}">Ration Card Number:</label>
+        {{ form.rationcard_no }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.email.id_for_label }}">Email:</label>
+        {{ form.email }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.mobile.id_for_label }}">Mobile:</label>
+        {{ form.mobile }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.acc_no.id_for_label }}">Account Number:</label>
+        {{ form.acc_no }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.society.id_for_label }}">Society:</label>
+        {{ form.society }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.profile_photo.id_for_label }}">Profile Photo:</label>
+        {{ form.profile_photo }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.farmer_license.id_for_label }}">Farmer License:</label>
+        {{ form.farmer_license }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

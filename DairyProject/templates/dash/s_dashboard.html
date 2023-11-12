@@ -166,6 +166,7 @@
                     }
                 });
             });
+            loadContent("{% url 's_profile' %}");
             function loadContent(url) {
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {

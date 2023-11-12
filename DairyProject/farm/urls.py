@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views  
 from django.contrib.auth.views import PasswordResetView,PasswordResetDoneView,PasswordResetConfirmView,PasswordResetCompleteView
+from .views import s_profile, complete_prof
+
 
 urlpatterns = [
     path('',views.index,name='home'),
@@ -27,6 +29,6 @@ urlpatterns = [
     path('common_search', views.common_search, name='common_search'),
     path('contact/', views.contact, name='contact'),
     path('about/', views.about, name='about'),
-
+    path('s_profile/', s_profile, name='s_profile'),
+    path('complete_prof/', complete_prof, name='complete_prof'),
 ]
-

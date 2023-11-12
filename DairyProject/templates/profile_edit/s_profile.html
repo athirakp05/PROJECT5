@@ -1,56 +1,69 @@
+<!-- s_profile.html -->
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>User Profile</title>
-<style>/* Add your CSS styles here */
-    .profile-container {
-        width: 80%;
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    
-    .profile-details {
-        margin-right: 150px;  /* Adjust the margin based on your design */
-    }
-    
-    .profile-photo {
-        float: right;
-        width: 150px;
-        height: 150px;
-        overflow: hidden;
-        border-radius: 50%;
-    }
-    
-    .profile-photo img {
-        width: 100%;
-        height: auto;
-    }
-    </style></head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Profile</title>
+
+    <!-- Add your CSS file or styles here -->
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .profile-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #555;
+        }
+
+        a.btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        a.btn:hover {
+            background-color: #217dbb;
+        }
+    </style>
+</head>
 <body>
-    <div class="profile-container">
-        <h1>User Profile</h1>
-        <div class="profile-details">
-            <p>First Name: {{ seller_profile.first_name }}</p>
-            <p>Last Name: {{ seller_profile.last_name }}</p>
-            <p>House Name: {{ seller_profile.house_name }}</p>
-            <p>City: {{ seller_profile.city }}</p>
-            <p>Pin Code: {{ seller_profile.pin_code }}</p>
-            <p>Occupation: {{ seller_profile.occupation }}</p>
-            <p>Gender: {{ seller_profile.gender }}</p>
-            <p>Date of Birth: {{ seller_profile.dob }}</p>
-            <p>Ration Card No: {{ seller_profile.rationcard_no }}</p>
-            <p>Email: {{ user.email }}</p>
-            <p>Mobile: {{ seller_profile.mobile }}</p>
-            <p>Account No: {{ seller_profile.acc_no }}</p>
-            <p>Society: {{ seller_profile.society }}</p>
-        </div>
-        <div class="profile-photo">
-            <img src="{{ seller_profile.profile_photo.url }}" alt="Profile Photo">
-        </div>
+
+<div class="profile-container">
+    <h1>Profile</h1>
+    <div>
+        <p>Name: {{ seller_profile.first_name }} {{ seller_profile.last_name }}</p>
+        <p>Email: {{ seller_profile.user.email }}</p>
+        <p>Mobile: {{ seller_profile.mobile }}</p>
+        <p>Farmer License: {{ seller_profile.farmer_license }}</p>
+        <!-- Add other fields you want to display -->
     </div>
+    <a href="{% url 'complete_prof' %}" class="btn btn-primary">Complete Profile</a>
+</div>
+
 </body>
 </html>

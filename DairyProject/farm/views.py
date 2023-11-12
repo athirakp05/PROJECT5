@@ -6,15 +6,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.utils import IntegrityError
 from django.core.mail import send_mail
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,HttpResponse
 from .models import CustomUser, Customer, Seller
 from django.http import JsonResponse
 from django.urls import reverse
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test,login_required
 from django.contrib.auth.models import Permission
-from .forms import CustomerRegistrationForm, SellerRegistrationForm
-from django.shortcuts import render, redirect
-from .models import Cattle,Login_Details
+from .forms import CustomerRegistrationForm, SellerRegistrationForm,SellerProfileForm
+from .models import Cattle,Login_Details,SellerEditProfile
 from .forms import CattleForm, CattleVaccinationForm, CattleInsuranceForm
 
 def index(request):
@@ -107,7 +106,31 @@ def s_register(request):
     
     return render(request, 's_register.html')
 
-    
+@login_required(login_url='login')
+def s_profile(request):
+    # Assuming the seller profile is associated with the logged-in user
+    seller_profile = SellerEditProfile.objects.get(user=request.user)
+
+    context = {
+        'seller_profile': seller_profile,
+    }
+    return render(request, 'profile_edit/s_profile.html', context)
+
+@login_required(login_url='login')  
+@user_passes_test(lambda u: u.is_seller, login_url='login')  
+def complete_prof(request):
+    seller_profile = SellerEditProfile.objects.get(user=request.user.seller.user)
+
+    if request.method == 'POST':
+        form = SellerProfileForm(request.POST, request.FILES, instance=seller_profile)
+
+        if form.is_valid():
+            form.save()
+            return redirect('s_profile')
+    else:
+        form = SellerProfileForm(instance=seller_profile, seller_profile=seller_profile)
+
+    return render(request, 'profile_edit/complete_prof.html', {'form': form})
 def logout(request):
     auth_logout(request)
     return redirect('home')
@@ -127,14 +150,27 @@ def c_dashboard(request):
         return response
     else:
         return redirect('home')
-
 def s_dashboard(request):
     if 'email' in request.session:
-        response = render(request, 'dash/s_dashboard.html')
+        user = request.user
+        seller_profile, created = SellerEditProfile.objects.get_or_create(user=user.seller.user)
+        context = {
+            'seller_profile': seller_profile,
+        }
+
+        return render(request, 'dash/s_dashboard.html', context)
         response['Cache-Control'] = 'no-store, must-revalidate'
-        return response
+
     else:
         return redirect('home')
+# def s_dashboard(request):
+#     if 'email' in request.session:
+#         response = render(request, 'dash/s_dashboard.html')
+#         response['Cache-Control'] = 'no-store, must-revalidate'
+#         return response
+#     else:
+#         return redirect('home')
+
 
 # views.py
 
