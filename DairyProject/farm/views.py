@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import user_passes_test,login_required
 from django.contrib.auth.models import Permission
 from .forms import CustomerRegistrationForm, SellerRegistrationForm,SellerProfileForm
 from .models import Cattle,Login_Details,SellerEditProfile
-from .forms import CattleForm, CattleVaccinationForm, CattleInsuranceForm
+from .forms import CattleRegistrationForm, CattleVaccinationForm, CattleInsuranceForm
 
 def index(request):
     return render(request, 'index.html')
@@ -153,14 +153,25 @@ def c_dashboard(request):
 def s_dashboard(request):
     if 'email' in request.session:
         user = request.user
-        seller_profile, created = SellerEditProfile.objects.get_or_create(user=user.seller.user)
+        seller_profile = SellerEditProfile.objects.get(user=user.seller.user)
+
+        # Check if the form is submitted
+        if request.method == 'POST':
+            form = SellerProfileForm(request.POST, request.FILES, instance=seller_profile)
+            if form.is_valid():
+                form.save()
+                # Redirect to a success page or stay on the current page
+                return redirect('success_page')  # Change 'success_page' to your actual success page
+        else:
+            # Populate the form with the seller's data
+            form = SellerProfileForm(instance=seller_profile)
+
         context = {
             'seller_profile': seller_profile,
+            'form': form,
         }
 
         return render(request, 'dash/s_dashboard.html', context)
-        response['Cache-Control'] = 'no-store, must-revalidate'
-
     else:
         return redirect('home')
 # def s_dashboard(request):
@@ -200,59 +211,37 @@ def select(request):
     
 
 
-
 def add_cattle(request):
     if request.method == 'POST':
-        form = CattleForm(request.POST, request.FILES)
+        form = CattleRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
-            cattle = form.save(commit=False)  # Create an instance without saving to the database
-            cattle.seller = request.user.seller  # Set the seller to the currently logged-in user
-            cattle.save()  # Save the cattle object
-            return redirect('view_cattle')
+            cattle = form.save(commit=False)
+            # Additional processing or validation can be done here
+            cattle.seller = request.user.seller  # Assuming the user is a seller
+            cattle.save()
+            return redirect('view_cattle', cattle.farmer_license)  # Redirect to cattle detail page
     else:
-        form = CattleForm()
-    
+        form = CattleRegistrationForm()
+
     return render(request, 'cattle/add_cattle.html', {'form': form})
-def edit_cattle(request):
+
+def edit_cattle(request, farmer_license):
+    cattle = get_object_or_404(Cattle, farmer_license=farmer_license)
+
     if request.method == 'POST':
-        # Retrieve the selected farmer_license from the form
-        farmer_license = request.POST.get('farmer_license')
-        cattle = Cattle.objects.get(farmer_license=farmer_license)
-
-        form = CattleForm(request.POST, request.FILES, instance=cattle)
-        vacc_form = CattleVaccinationForm(instance=cattle)
-        insur_form = CattleInsuranceForm(instance=cattle)
-
+        form = CattleRegistrationForm(request.POST, request.FILES, instance=cattle)
         if form.is_valid():
             form.save()
-
-        if 'vaccination' in request.POST:
-            vacc_form = CattleVaccinationForm(request.POST, instance=cattle)
-            if vacc_form.is_valid():
-                vacc_form.save()
-
-        if 'insurance' in request.POST:
-            insur_form = CattleInsuranceForm(request.POST, instance=cattle)
-            if insur_form.is_valid():
-                insur_form.save()
-
-        return redirect('view_cattle')
-
+            return redirect('view_cattle', farmer_license)
     else:
-        # Retrieve a list of available cattle for the dropdown
-        cattle_list = Cattle.objects.all()
-        return render(request, 'cattle/edit_cattle.html', {'cattle_list': cattle_list})
+        form = CattleRegistrationForm(instance=cattle)
 
+    return render(request, 'cattle/edit_cattle.html', {'form': form, 'cattle': cattle})
 
 def view_cattle(request):
-    if request.user.is_authenticated:
-        user = request.user
-        cattle_list = Cattle.objects.filter(seller__user=user)  # Assuming seller is related to Cattle
-        print(cattle_list)  # Add this line for debugging
-        return render(request, 'cattle/view_cattle.html', {'cattle_list': cattle_list})
-    else:
-        return render(request, 'cattle/view_cattle.html', {'cattle_list': []})
-     
+    cattle_data = Cattle.objects.all()
+    return render(request, 'cattle/view_cattle.html', {'cattle_data': cattle_data})
+
 def delete_cattle(request, cattle_id):
     cattle = get_object_or_404(Cattle, farmer_license=cattle_id)
     if request.method == 'POST':

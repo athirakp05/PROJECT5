@@ -138,7 +138,12 @@ class CustomerEditProfile(models.Model):
     profile_photo = models.ImageField(upload_to='Your_Profile/', null=True, blank=True)
 
 class CattleType(models.Model):
-    name = models.CharField(max_length=50, unique=True, primary_key=True)
+    CATTLETYPE_CHOICES = [
+        ('cow', 'COW'),
+        ('goat', 'GOAT'),
+        ('buffalo', 'BUFFALO'),
+    ]
+    name = models.CharField(max_length=50, unique=True, primary_key=True,choices=CATTLETYPE_CHOICES,default='')
     status=models.BooleanField(default=False,help_text="0=default,1=hidden")
     def __str__(self):
         return self.name

@@ -1,7 +1,6 @@
 from django.core.validators import RegexValidator
 from django import forms
-from .models import Cattle,Insurance,Vaccination,SellerEditProfile
-
+from .models import Cattle,Insurance,Vaccination,SellerEditProfile,Breed,CattleType
 class CustomerRegistrationForm(forms.Form):
     first_name = forms.CharField(max_length=50)
     last_name = forms.CharField(max_length=50)
@@ -46,15 +45,15 @@ class SellerProfileForm(forms.ModelForm):
             self.fields['last_name'].widget.attrs['readonly'] = True
             self.fields['email'].widget.attrs['readonly'] = True
             self.fields['mobile'].widget.attrs['readonly'] = True
-class CattleForm(forms.ModelForm):
+class CattleRegistrationForm(forms.ModelForm):
     class Meta:
         model = Cattle
-        fields = '__all__'
-        widgets = {
-            'vaccination': forms.RadioSelect(choices=[(True, 'Yes'), (False, 'No')]),
-            'insurance': forms.RadioSelect(choices=[(True, 'Yes'), (False, 'No')]),
-        }
-
+        fields = ['EarTagID', 'CattleType', 'BreedName', 'weight', 'height', 'Age', 'Colour', 'feed', 'milk_obtained', 'health_status', 'vaccination', 'insurance', 'photo']
+        
+    def __init__(self, *args, **kwargs):
+        super(CattleRegistrationForm, self).__init__(*args, **kwargs)
+        self.fields['CattleType'].queryset = CattleType.objects.filter(status=True)
+        self.fields['BreedName'].queryset = Breed.objects.filter(status=True)
 class CattleVaccinationForm(forms.ModelForm):
     class Meta:
         model = Vaccination

@@ -5,11 +5,15 @@
     <title>Edit Cattle</title>
 </head>
 <body>
-    <h1>Edit Cattle</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-    </form>
+<!-- edit_cattle.html -->
+<h1>Edit Cattle</h1>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Changes</button>
+</form>
+
     <script>
         document.getElementById("vaccination_yes").addEventListener("change", function() {
             var vaccinationDetails = document.getElementById("vaccination_details");

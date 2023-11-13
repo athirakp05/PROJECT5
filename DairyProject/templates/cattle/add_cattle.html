@@ -1,80 +1,8 @@
-{% load static %}
+<!-- cattle_registration.html -->
+<h1>Cattle Registration</h1>
 
-{% block body %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/cat.css' %}">
-    <div class="container">
-        <h2>Cattle Registration</h2>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="{{ form.farmer_license.id_for_label }}">Farmer License:</label>
-                        {{ form.farmer_license }}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.EarTagID.id_for_label }}">Ear Tag ID:</label>
-                        {{ form.EarTagID }}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.CattleType.id_for_label }}">Cattle Type:</label>
-                        {{ form.CattleType }}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.BreedName.id_for_label }}">Breed Name:</label>
-                        {{ form.BreedName }}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.weight.id_for_label }}">Weight:</label>
-                        {{ form.weight }}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.height.id_for_label }}">Height:</label>
-                        {{ form.height }}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="{{ form.Age.id_for_label }}">Age:</label>
-                        {{ form.Age }}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.Colour.id_for_label }}">Colour:</label>
-                        {{ form.Colour }}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.feed.id_for_label }}">Feed:</label>
-                        {{ form.feed }}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.milk_obtained.id_for_label }}">Milk Obtained:</label>
-                        {{ form.milk_obtained }}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.health_status.id_for_label }}">Health Status:</label>
-                        {{ form.health_status }}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.photo.id_for_label }}">Cattle Photo:</label>
-                        {{ form.photo }}
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="{{ form.vaccination.id_for_label }}">Vaccination:</label>
-                        {{ form.vaccination }}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="{{ form.insurance.id_for_label }}">Insurance:</label>
-                        {{ form.insurance }}
-                    </div>
-                </div>
-            </div>
-            <button type="submit">Register Cattle</button>
-        </form>
-    </div>
-{% endblock %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Register Cattle</button>
+</form>
