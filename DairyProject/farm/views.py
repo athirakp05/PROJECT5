@@ -12,9 +12,10 @@ from django.http import JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import user_passes_test,login_required
 from django.contrib.auth.models import Permission
-from .forms import CustomerRegistrationForm, SellerRegistrationForm,SellerEditProfileForm
+from .forms import CustomerRegistrationForm, SellerRegistrationForm
+from .forms import SellerEditProfileForm
 from .models import Cattle,Login_Details,SellerEditProfile
-from .forms import CattleForm, CattleVaccinationForm, CattleInsuranceForm,SellerProfileForm
+from .forms import CattleForm, CattleVaccinationForm, CattleInsuranceForm
 from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
 
 def index(request):
@@ -128,17 +129,17 @@ def s_profile(request):
 def complete_s_profile(request):
     user = request.user
     seller_profile, created = SellerEditProfile.objects.get_or_create(user=user.seller.user)
-
     if request.method == 'POST':
         form = SellerEditProfileForm(request.POST, request.FILES, instance=seller_profile)
         if form.is_valid():
             form.save()
-            return redirect('seller_profile')  # Replace 's_dashboard' with your desired redirect URL after profile completion
+            return redirect('seller_profile')  # Redirect to a seller profile view after completion
     else:
         form = SellerEditProfileForm(instance=seller_profile)
     return render(request, 'profile_edit/complete_s_profile.html', {'form': form})
 
 def seller_profile(request):
+    # Fetch the seller profile details
     seller_profile = SellerEditProfile.objects.get(user=request.user.seller.user)
     return render(request, 'profile_edit/seller_profile.html', {'seller_profile': seller_profile})
 
@@ -169,14 +170,14 @@ def s_dashboard(request):
 
         # Check if the form is submitted
         if request.method == 'POST':
-            form = SellerProfileForm(request.POST, request.FILES, instance=seller_profile)
+            form = SellerEditProfileForm(request.POST, request.FILES, instance=seller_profile)
             if form.is_valid():
                 form.save()
                 # Redirect to a success page or stay on the current page
                 return redirect('seller_profile')
         else:
             # Populate the form with the seller's data
-            form = SellerProfileForm(instance=seller_profile)
+            form = SellerEditProfileForm(instance=seller_profile)
         context = {
             'seller_profile': seller_profile,
             'form': form,

@@ -59,6 +59,11 @@
     <div class="container">
         <h1>Seller Profile</h1>
         <div class="profile-section">
+        {% if seller_profile.profile_photo %}
+            <img src="{{ seller_profile.profile_photo.url }}" alt="Profile Photo" height="100" width="100">
+        {% else %}
+            <p>No Profile Photo Available</p>
+        {% endif %}
             <p>First Name: {{ seller_profile.first_name }}</p>
             <p>Last Name: {{ seller_profile.last_name }}</p>
             <p>Email: {{ seller_profile.email }}</p>
@@ -67,13 +72,12 @@
             <p>City: {{ seller_profile.city }}</p>
             <p>Pin Code: {{ seller_profile.pin_code }}</p>
             <p>Occupation: {{ seller_profile.occupation }}</p>
-            <p>Gender: {{ seller_profile.get_gender_display }}</p>
+            <p>Gender: {{ seller_profile.gender }}</p>
             <p>Date of Birth: {{ seller_profile.dob }}</p>
             <p>Ration Card No: {{ seller_profile.rationcard_no }}</p>
             <p>Account No: {{ seller_profile.acc_no }}</p>
             <p>Society: {{ seller_profile.society }}</p>
-            <p>Profile Photo: <img src="{{ seller_profile.profile_photo.url }}" alt="Profile Photo" height="100" width="100"></p>
-            <!-- Add other details as needed -->
+ 
             <a href="{% url 'complete_s_profile' %}" class="edit-profile-link">Edit Profile</a>
         </div>
     </div>

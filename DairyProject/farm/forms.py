@@ -21,19 +21,20 @@ class SellerRegistrationForm(forms.Form):
         ),
     ])
 
-class SellerProfileForm(forms.ModelForm):
-    class Meta:
-        model = SellerEditProfile
-        fields = '__all__'
 class SellerEditProfileForm(forms.ModelForm):
     class Meta:
         model = SellerEditProfile
-        fields = ['first_name', 'last_name', 'house_name', 'city', 'pin_code', 'occupation', 'gender', 'dob', 'rationcard_no', 'email', 'mobile', 'acc_no', 'society', 'profile_photo', 'farmer_license']
+        fields = '__all__'
+        widgets = {
+            'dob': forms.DateInput(attrs={'type': 'date'}),
+            'gender': forms.Select(choices=[('---', '---'), ('Male', 'Male'), ('Female', 'Female'), ('Others', 'Others')]),
+        }
 
 class CattleForm(forms.ModelForm):
     class Meta:
         model = Cattle
         fields = '__all__'
+
 class CattleRegistrationForm(forms.ModelForm):
     class Meta:
         model = Cattle
