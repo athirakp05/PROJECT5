@@ -21,39 +21,32 @@ class SellerRegistrationForm(forms.Form):
         ),
     ])
 
-
 class SellerProfileForm(forms.ModelForm):
     class Meta:
         model = SellerEditProfile
-        fields = ['first_name', 'last_name', 'house_name', 'city', 'pin_code', 'occupation', 'gender', 'dob',
-                  'rationcard_no', 'email', 'mobile', 'acc_no', 'society', 'profile_photo', 'farmer_license']
+        fields = '__all__'
+class SellerEditProfileForm(forms.ModelForm):
+    class Meta:
+        model = SellerEditProfile
+        fields = ['first_name', 'last_name', 'house_name', 'city', 'pin_code', 'occupation', 'gender', 'dob', 'rationcard_no', 'email', 'mobile', 'acc_no', 'society', 'profile_photo', 'farmer_license']
 
-    def __init__(self, *args, **kwargs):
-        # Get the logged-in user's seller profile
-        seller_profile = kwargs.pop('seller_profile', None)
-        super().__init__(*args, **kwargs)
-
-        if seller_profile:
-            # Set initial values for specific fields from the seller's profile
-            self.fields['first_name'].initial = seller_profile.first_name
-            self.fields['last_name'].initial = seller_profile.last_name
-            self.fields['email'].initial = seller_profile.email
-            self.fields['mobile'].initial = seller_profile.mobile
-
-            # Disable these fields to prevent modification
-            self.fields['first_name'].widget.attrs['readonly'] = True
-            self.fields['last_name'].widget.attrs['readonly'] = True
-            self.fields['email'].widget.attrs['readonly'] = True
-            self.fields['mobile'].widget.attrs['readonly'] = True
+class CattleForm(forms.ModelForm):
+    class Meta:
+        model = Cattle
+        fields = '__all__'
 class CattleRegistrationForm(forms.ModelForm):
     class Meta:
         model = Cattle
         fields = ['EarTagID', 'CattleType', 'BreedName', 'weight', 'height', 'Age', 'Colour', 'feed', 'milk_obtained', 'health_status', 'vaccination', 'insurance', 'photo']
-        
+        widgets = {
+            'CattleType': forms.Select(attrs={'class': 'form-control'}),
+            'BreedName': forms.Select(attrs={'class': 'form-control'}),
+            # Add more widgets as needed
+        }
+
     def __init__(self, *args, **kwargs):
         super(CattleRegistrationForm, self).__init__(*args, **kwargs)
         self.fields['CattleType'].queryset = CattleType.objects.filter(status=True)
-        self.fields['BreedName'].queryset = Breed.objects.filter(status=True)
 class CattleVaccinationForm(forms.ModelForm):
     class Meta:
         model = Vaccination

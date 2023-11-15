@@ -138,10 +138,11 @@
             {{ user.first_name }}
         </div>
     </div>
-        <a href="{% url 'complete_prof' %}" data-url="{% url 'complete_prof' %}"><i class="fas fa-user-edit"></i> Complete Profile</a>
+        <a href="{% url 'complete_s_profile' %}" data-url="{% url 'complete_s_profile' %}"><i class="fas fa-user-edit"></i> Complete Profile</a>
+        <a href="{% url 'seller_profile' %}" data-url="{% url 'seller_profile' %}"><i class="fas fa-user-edit"></i> Profile</a>
         <a href="{% url 'milk_view' %}" data-url="{% url 'milk_view' %}"><i class="fas fa-key"></i> Todays Collection</a>
         <a href="{% url 'prod_view' %}" data-url="{% url 'prod_view' %}"><i class="fas fa-chart-bar"></i> Product</a>
-        <a href="{% url 'view_cattle' %}" data-url="{% url 'add_cattle' %}"><i class="fas fa-chart-bar"></i>Cattle</a>
+        <a href="{% url 'view_cattle' %}" data-url="{% url 'view_cattle' %}"><i class="fas fa-chart-bar"></i>Cattle</a>
     </div>
     <!-- Main Content -->
     <div class="content">
@@ -166,7 +167,7 @@
                     }
                 });
             });
-            loadContent("{% url 's_profile' %}");
+           loadContent("{% url 's_profile' %}");
             function loadContent(url) {
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {

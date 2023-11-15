@@ -157,7 +157,6 @@
                     <a href="{% url 'password_reset' %}">Forgot Password ?</a>
                 </div>
             </form>
-            <!-- Google Login Button -->
             <button class="google-login">
                 <img src="{% static 'img/google.jpeg' %}"  height="20" width="20" class="google-icon" >
                 Sign in with Google
@@ -172,7 +171,6 @@
                 </ul>
             {% endif %}
         </div>
-        <!-- Site Status -->
         <script>  
             function togglePasswordVisibility(inputId) {
                 const passwordInput = document.querySelector(`input[name="${inputId}"]`);

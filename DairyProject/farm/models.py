@@ -74,22 +74,31 @@ class Login_Details(models.Model):
         return self.email
 
 class Society(models.Model):
-    society_code = models.CharField(max_length=20,default=False)
-    district = models.CharField(max_length=20)
-    subdistrict = models.CharField(max_length=50)
-    panchayath = models.CharField(max_length=50)
-    ward_no = models.IntegerField()
+    society_code = models.CharField(max_length=20, default='default_value_here')
+    district = models.CharField(max_length=20,default='')
+    subdistrict = models.CharField(max_length=50,default='')
+    location = models.CharField(max_length=50, default='default_location')
+
     def __str__(self):
         return self.society_code
+
 class IFSCCode(models.Model):
     bankname = models.CharField(max_length=50)
     branch = models.CharField(max_length=50)
     ifsccode = models.CharField(max_length=50,default=False)
     def __str__(self):
         return self.ifsccode
-
+class Seller(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    first_name = models.CharField(max_length=50)  # Added for Seller's first name
+    last_name = models.CharField(max_length=50)  # Added for Seller's last name
+    mobile = models.CharField(max_length=15,blank=True, null=True)
+    farmer_license = models.CharField(max_length=20, unique=True)  # Add 'unique=True'
+    def __str__(self):
+        return self.first_name
 class SellerEditProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    seller = models.OneToOneField(Seller, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     house_name = models.CharField(max_length=200)
@@ -118,16 +127,9 @@ class Customer(models.Model):
     def __str__(self):
         return self.first_name
 
-class Seller(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
-    first_name = models.CharField(max_length=50)  # Added for Seller's first name
-    last_name = models.CharField(max_length=50)  # Added for Seller's last name
-    mobile = models.CharField(max_length=15,blank=True, null=True)
-    farmer_license = models.CharField(max_length=20, unique=True)  # Add 'unique=True'
 
 
-    def __str__(self):
-        return self.first_name
+
 class CustomerEditProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
     mobile = models.CharField(max_length=20, blank=True, null=True)

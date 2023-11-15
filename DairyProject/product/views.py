@@ -85,42 +85,12 @@ def milk_view(request, pk):
     context = {'collection': collection}
     return render(request, 'category/milk_view.html', context)
 
-def view_wishlist(request):
-    User = get_user_model()  # Get the User model dynamically
 
-    if request.user.is_authenticated:
-        user = request.user.get()  # Force the lazy object to evaluate
-        wishlist_items = Wishlists.objects.filter(user=user)
-        return render(request, 'category/wishlist.html', {'wishlist_items': wishlist_items})
-    else:
-        # Handle the case of an anonymous user (optional)
-        raise Http404("You must be logged in to view your wishlist.")
-        
-def add_wishlist(request, product_id):
-    user = request.user
-    product = Product.objects.get(p_code=product_id)
-
-    # Check if the product is already in the wishlist
-    if not Wishlists.objects.filter(user=user, product=product).exists():
-        Wishlists.objects.create(user=user, product=product)
-    
-    return redirect('category/wishlist.html')
-
-# View to remove a product from the user's wishlist
-def rmv_wishlist(request, product_id):
-    user = request.user
-    product = Product.objects.get(p_code=product_id)
-    wishlist_item = Wishlists.objects.get(user=user, product=product)
-    wishlist_item.delete()
-
-    return redirect('category/wishlist.html')
-
-
-def common_search(request):
-    if request.method=='GET':
-        query = request.GET.get('query','')
-        products=Product.objects.filter(Q(p_name__icontains=query))
-        context={
-        'products' : products,
-        }
-        return render(request,'category/product_detail.html',context)
+# def common_search(request):
+#     if request.method=='GET':
+#         query = request.GET.get('query','')
+#         products=Product.objects.filter(Q(p_name__icontains=query))
+#         context={
+#         'products' : products,
+#         }
+#         return render(request,'category/product_detail.html',context)

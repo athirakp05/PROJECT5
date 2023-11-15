@@ -7,14 +7,15 @@ from django.contrib import messages
 from django.db.utils import IntegrityError
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect,HttpResponse
-from .models import CustomUser, Customer, Seller
+from .models import CustomUser, Customer, Seller,CattleType
 from django.http import JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import user_passes_test,login_required
 from django.contrib.auth.models import Permission
-from .forms import CustomerRegistrationForm, SellerRegistrationForm,SellerProfileForm
+from .forms import CustomerRegistrationForm, SellerRegistrationForm,SellerEditProfileForm
 from .models import Cattle,Login_Details,SellerEditProfile
-from .forms import CattleRegistrationForm, CattleVaccinationForm, CattleInsuranceForm
+from .forms import CattleForm, CattleVaccinationForm, CattleInsuranceForm,SellerProfileForm
+from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
 
 def index(request):
     return render(request, 'index.html')
@@ -98,6 +99,8 @@ def s_register(request):
             user = CustomUser.objects.create_user(email=email, password=password,role='Seller')
             seller = Seller(user=user, first_name=firstname, last_name=lastname,farmer_license=farmer_license,  mobile=mobile)
             seller.save()
+            seller_edit_profile = SellerEditProfile(user=user, seller=seller, first_name=firstname, last_name=lastname, mobile=mobile, email=email, farmer_license=farmer_license)
+            seller_edit_profile.save()
             # Save login details to the Login model
             login = Login_Details(email=email, password=password, role='Seller')
             login.save()
@@ -108,32 +111,41 @@ def s_register(request):
 
 @login_required(login_url='login')
 def s_profile(request):
-    # Assuming the seller profile is associated with the logged-in user
-    seller_profile = SellerEditProfile.objects.get(user=request.user)
+    # Get the logged-in user
+    user = request.user
 
-    context = {
-        'seller_profile': seller_profile,
-    }
-    return render(request, 'profile_edit/s_profile.html', context)
+    # Check if the user is a seller
+    if user.is_seller:
+        # Retrieve the seller profile details from SellerEditProfile model
+        seller_profile = SellerEditProfile.objects.get(user=user)
 
-@login_required(login_url='login')  
-@user_passes_test(lambda u: u.is_seller, login_url='login')  
-def complete_prof(request):
-    seller_profile = SellerEditProfile.objects.get(user=request.user.seller.user)
+        return render(request, 'profile_edit/s_profile.html', {'seller_profile': seller_profile})
+    else:
+        # Redirect to a different page for non-seller users
+        return redirect('home')  # Change 'home' to the appropriate URL for your home page
+
+@login_required
+def complete_s_profile(request):
+    user = request.user
+    seller_profile, created = SellerEditProfile.objects.get_or_create(user=user.seller.user)
 
     if request.method == 'POST':
-        form = SellerProfileForm(request.POST, request.FILES, instance=seller_profile)
-
+        form = SellerEditProfileForm(request.POST, request.FILES, instance=seller_profile)
         if form.is_valid():
             form.save()
-            return redirect('s_profile')
+            return redirect('seller_profile')  # Replace 's_dashboard' with your desired redirect URL after profile completion
     else:
-        form = SellerProfileForm(instance=seller_profile, seller_profile=seller_profile)
+        form = SellerEditProfileForm(instance=seller_profile)
+    return render(request, 'profile_edit/complete_s_profile.html', {'form': form})
 
-    return render(request, 'profile_edit/complete_prof.html', {'form': form})
+def seller_profile(request):
+    seller_profile = SellerEditProfile.objects.get(user=request.user.seller.user)
+    return render(request, 'profile_edit/seller_profile.html', {'seller_profile': seller_profile})
+
 def logout(request):
     auth_logout(request)
     return redirect('home')
+
     
 def a_dashboard(request):
     if 'email' in request.session:
@@ -161,17 +173,17 @@ def s_dashboard(request):
             if form.is_valid():
                 form.save()
                 # Redirect to a success page or stay on the current page
-                return redirect('success_page')  # Change 'success_page' to your actual success page
+                return redirect('seller_profile')
         else:
             # Populate the form with the seller's data
             form = SellerProfileForm(instance=seller_profile)
-
         context = {
             'seller_profile': seller_profile,
             'form': form,
         }
-
         return render(request, 'dash/s_dashboard.html', context)
+        response['Cache-Control'] = 'no-store, must-revalidate'
+        return response
     else:
         return redirect('home')
 # def s_dashboard(request):
@@ -210,18 +222,14 @@ def select(request):
     return render(request, 'select.html')
     
 
-
 def add_cattle(request):
     if request.method == 'POST':
-        form = CattleRegistrationForm(request.POST, request.FILES)
+        form = CattleForm(request.POST)
         if form.is_valid():
-            cattle = form.save(commit=False)
-            # Additional processing or validation can be done here
-            cattle.seller = request.user.seller  # Assuming the user is a seller
-            cattle.save()
-            return redirect('view_cattle', cattle.farmer_license)  # Redirect to cattle detail page
+            form.save()
+            return redirect('view_cattle')
     else:
-        form = CattleRegistrationForm()
+        form = CattleForm()
 
     return render(request, 'cattle/add_cattle.html', {'form': form})
 
@@ -229,27 +237,23 @@ def edit_cattle(request, farmer_license):
     cattle = get_object_or_404(Cattle, farmer_license=farmer_license)
 
     if request.method == 'POST':
-        form = CattleRegistrationForm(request.POST, request.FILES, instance=cattle)
+        form = CattleForm(request.POST, instance=cattle)
         if form.is_valid():
             form.save()
-            return redirect('view_cattle', farmer_license)
+            return redirect('view_cattle')
     else:
-        form = CattleRegistrationForm(instance=cattle)
+        form = CattleForm(instance=cattle)
 
     return render(request, 'cattle/edit_cattle.html', {'form': form, 'cattle': cattle})
+
+def delete_cattle(request, farmer_license):
+    cattle = get_object_or_404(Cattle, farmer_license=farmer_license)
+    cattle.delete()
+    return redirect('view_cattle')
 
 def view_cattle(request):
     cattle_data = Cattle.objects.all()
     return render(request, 'cattle/view_cattle.html', {'cattle_data': cattle_data})
-
-def delete_cattle(request, cattle_id):
-    cattle = get_object_or_404(Cattle, farmer_license=cattle_id)
-    if request.method == 'POST':
-        cattle.delete()
-        return redirect('view_cattle')
-
-    return render(request, 'cattle/delete_cattle.html', {'cattle': cattle})
-
 def common_search(request):
         firstname = request.GET.get('name')
         if firstname is not None:

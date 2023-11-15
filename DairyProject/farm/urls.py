@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views  
 from django.contrib.auth.views import PasswordResetView,PasswordResetDoneView,PasswordResetConfirmView,PasswordResetCompleteView
-from .views import s_profile, complete_prof
+from .views import s_profile, complete_s_profile
 
 
 urlpatterns = [
@@ -16,8 +16,9 @@ urlpatterns = [
     path('s_dashboard', views.s_dashboard, name='s_dashboard'),
     path('a_dashboard/', views.a_dashboard, name='a_dashboard'),
     path('add_cattle', views.add_cattle, name='add_cattle'),
-    path('edit_cattle/', views.edit_cattle, name='edit_cattle'),
+    path('edit_cattle/<str:farmer_license>/', views.edit_cattle, name='edit_cattle'),
     path('view_cattle/', views.view_cattle, name='view_cattle'),
+    path('delete_cattle/<str:farmer_license>/', views.delete_cattle, name='delete_cattle'),
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
@@ -30,5 +31,6 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('about/', views.about, name='about'),
     path('s_profile/', s_profile, name='s_profile'),
-    path('complete_prof/', complete_prof, name='complete_prof'),
+    path('seller_profile/', views.seller_profile, name='seller_profile'),
+    path('complete_s_profile/', complete_s_profile, name='complete_s_profile'),
 ]

@@ -1,61 +1,56 @@
-<!-- cattle_details.html -->
+<!-- view_cattle.html -->
 
-    {% load static %}
-    <div class="container">
-        <h1>Cattle Details</h1>
+<h2>Cattle List</h2>
 
-        <table id="cattle-table" class="display">
-            <thead>
-                <tr>
-                    <th>Cattle License</th>
-                    <th>Ear Tag ID</th>
-                    <th>Cattle Type</th>
-                    <th>Breed Name</th>
-                    <th>Weight</th>
-                    <th>Height</th>
-                    <th>Age</th>
-                    <th>Colour</th>
-                    <th>Feed</th>
-                    <th>Milk Obtained</th>
-                    <th>Health Status</th>
-                    <th>Seller</th>
-                    <th>Vaccination</th>
-                    <th>Insurance</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for cattle in cattle_data %}
-                    <tr>
-                        <td>{{ cattle.farmer_license }}</td>
-                        <td>{{ cattle.EarTagID }}</td>
-                        <td>{{ cattle.CattleType.name }}</td>
-                        <td>{{ cattle.BreedName.name }}</td>
-                        <td>{{ cattle.weight }}</td>
-                        <td>{{ cattle.height }}</td>
-                        <td>{{ cattle.Age }}</td>
-                        <td>{{ cattle.Colour }}</td>
-                        <td>{{ cattle.feed }}</td>
-                        <td>{{ cattle.milk_obtained }}</td>
-                        <td>{{ cattle.health_status }}</td>
-                        <td>{{ cattle.seller.user.first_name }} {{ cattle.seller.user.last_name }}</td>
-                        <td>{{ cattle.vaccination }}</td>
-                        <td>{{ cattle.insurance }}</td>
-                        <td>
-                            <a href="{% url 'edit_cattle' %}">Edit</a> |
-                            <a href="{% url 'delete_cattle' %}">Delete</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+<table id="cattle-table" class="display">
+    <thead>
+        <tr>
+            <th>Cattle License</th>
+            <th>Ear Tag ID</th>
+            <th>Cattle Type</th>
+            <th>Breed Name</th>
+            <th>Weight</th>
+            <th>Height</th>
+            <th>Age</th>
+            <th>Colour</th>
+            <th>Feed</th>
+            <th>Milk Obtained</th>
+            <th>Health Status</th>
+            <th>Seller</th>
+            <th>Vaccination</th>
+            <th>Insurance</th>
+            <th>Photo</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cattle in cattle_data %}
+            <tr>
+                <td>{{ cattle.farmer_license }}</td>
+                <td>{{ cattle.EarTagID }}</td>
+                <td>{{ cattle.CattleType.name }}</td>
+                <td>{{ cattle.BreedName.name }}</td>
+                <td>{{ cattle.weight }}</td>
+                <td>{{ cattle.height }}</td>
+                <td>{{ cattle.Age }}</td>
+                <td>{{ cattle.Colour }}</td>
+                <td>{{ cattle.feed }}</td>
+                <td>{{ cattle.milk_obtained }}</td>
+                <td>{{ cattle.health_status }}</td>
+                <td>{{ cattle.seller.user.first_name }} {{ cattle.seller.user.last_name }}</td>
+                <td>{{ cattle.vaccination }}</td>
+                <td>{{ cattle.insurance }}</td>
+                <td>
+                    <img src="{{ cattle.photo.url }}" alt="Cattle Photo" width="100" height="100">
+                </td>
+                <td>
+                    <a href="{% url 'edit_cattle' farmer_license=cattle.farmer_license %}">Edit</a> |
+                    <a href="{% url 'delete_cattle' farmer_license=cattle.farmer_license %}">Delete</a>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
-    <script>
-        $(document).ready( function () {
-            $('#cattle-table').DataTable();
-        });
-    </script>
+                </td>
+            </tr>
+            <a href="{% url 'add_cattle' %}" data-url="{% url 'add_cattle' %}"><i class="fas fa-user-edit"></i> Add</a>
+
+        {% endfor %}
+    </tbody>
+</table>

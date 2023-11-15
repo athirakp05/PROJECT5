@@ -86,7 +86,7 @@
         // Send an AJAX request to save the product details to the wishlist table
         $.ajax({
             type: "POST",
-            url: "{% url 'wishlist' %}",  // Replace with your Django URL for adding to the wishlist
+            url: "$",  // Replace with your Django URL for adding to the wishlist
             data: {
                 product_id: productId,
                 csrfmiddlewaretoken: csrftoken,  // Include the CSRF token in the data
