@@ -1,21 +1,40 @@
-<form method="POST" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ cattle_form.as_p }}
+    
+    <div id="vaccination-form" style="display: none;">
+      {{ vaccination_form.as_p }}
+    </div>
+    
+    <div id="insurance-form" style="display: none;">
+      {{ insurance_form.as_p }}
+    </div>
+    
     <input type="submit" value="Add Cattle">
-</form>
-
-{% if cattle_form.instance.vaccination %}
-    <form method="POST">
-        {% csrf_token %}
-        {{ vaccination_form.as_p }}
-        <input type="submit" value="Add Vaccination">
-    </form>
-{% endif %}
-
-{% if cattle_form.instance.insurance %}
-    <form method="POST">
-        {% csrf_token %}
-        {{ insurance_form.as_p }}
-        <input type="submit" value="Add Insurance">
-    </form>
-{% endif %}
+  </form>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const cattleVaccination = document.querySelector('#id_vaccination');
+      const cattleInsurance = document.querySelector('#id_insurance');
+      const vaccinationForm = document.querySelector('#vaccination-form');
+      const insuranceForm = document.querySelector('#insurance-form');
+  
+      cattleVaccination.addEventListener('change', function () {
+        if (this.checked) {
+          vaccinationForm.style.display = 'block';
+        } else {
+          vaccinationForm.style.display = 'none';
+        }
+      });
+  
+      cattleInsurance.addEventListener('change', function () {
+        if (this.checked) {
+          insuranceForm.style.display = 'block';
+        } else {
+          insuranceForm.style.display = 'none';
+        }
+      });
+    });
+  </script>
+  

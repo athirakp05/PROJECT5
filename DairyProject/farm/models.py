@@ -98,7 +98,6 @@ class Seller(models.Model):
         return self.first_name
 class SellerEditProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
-    seller = models.OneToOneField(Seller, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     house_name = models.CharField(max_length=200)
@@ -162,7 +161,7 @@ class Breed(models.Model):
 class Cattle(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True,default=True)
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)  # Link to the Seller model
-    cattle_license = models.CharField(max_length=10,default=False,unique=True)  # Field to store farmer license number
+    cattle_license = models.CharField(max_length=10,unique=True)  # Field to store farmer license number
     EarTagID = models.IntegerField()
     CattleType = models.ForeignKey(CattleType, on_delete=models.CASCADE)
     BreedName = models.ForeignKey(Breed, on_delete=models.CASCADE)

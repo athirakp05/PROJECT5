@@ -12,9 +12,9 @@ from django.http import JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import user_passes_test,login_required
 from django.contrib.auth.models import Permission
-from .forms import CustomerRegistrationForm, SellerRegistrationForm
+from .forms import CustomerRegistrationForm, SellerRegistrationForm,BreedForm
 from .forms import SellerEditProfileForm
-from .models import Cattle,Login_Details,SellerEditProfile
+from .models import Cattle,Login_Details,SellerEditProfile,Breed
 from .forms import CattleForm, VaccinationForm, InsuranceForm
 from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
 
@@ -222,67 +222,100 @@ def profile(request):
 def select(request):
     return render(request, 'select.html')
     
+def add_breed(request):
+    if request.method == 'POST':
+        form = BreedForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('view_breed')  # Redirect to view breed page
+    else:
+        form = BreedForm()
+    
+    return render(request, 'add_breed.html', {'form': form})
 
+def view_breed(request):
+    breeds = Breed.objects.all()
+    return render(request, 'view_breed.html', {'breeds': breeds})
+
+def delete_breed(request, breed_id):
+    breed = get_object_or_404(Breed, pk=breed_id)
+    if request.method == 'POST':
+        breed.delete()
+        return redirect('view_breed')  # Redirect to view breed page
+    
+    return render(request, 'delete_breed.html', {'breed': breed})
 
 def add_cattle(request):
-    seller = request.user.seller  # Assuming the seller is logged in
     if request.method == 'POST':
         cattle_form = CattleForm(request.POST, request.FILES)
+        vaccination_form = VaccinationForm(request.POST)
+        insurance_form = InsuranceForm(request.POST)
+        
         if cattle_form.is_valid():
             cattle = cattle_form.save(commit=False)
-            cattle.user = request.user
-            cattle.seller = seller
+            cattle.user = request.user  # Get logged-in user
+            cattle.seller = request.user.seller  # Assuming seller profile is associated with user
             cattle.save()
+
             if cattle.vaccination:
-                vaccination_form = VaccinationForm(request.POST)
                 if vaccination_form.is_valid():
                     vaccination = vaccination_form.save(commit=False)
                     vaccination.cattle = cattle
                     vaccination.save()
+
             if cattle.insurance:
-                insurance_form = InsuranceForm(request.POST)
                 if insurance_form.is_valid():
                     insurance = insurance_form.save(commit=False)
                     insurance.cattle = cattle
                     insurance.save()
+
             return redirect('view_cattle')  # Redirect to view cattle page
+
     else:
         cattle_form = CattleForm()
         vaccination_form = VaccinationForm()
         insurance_form = InsuranceForm()
+
     return render(request, 'cattle/add_cattle.html', {
         'cattle_form': cattle_form,
         'vaccination_form': vaccination_form,
         'insurance_form': insurance_form,
     })
 
-def view_cattle(request):
-    seller = request.user.seller  # Assuming the seller is logged in
-    cattle = Cattle.objects.filter(seller=seller)
-    return render(request, 'cattle/view_cattle.html', {'cattle': cattle})
-
-def edit_cattle(request, farmer_license):
-    cattle = get_object_or_404(Cattle, farmer_license=farmer_license)
-
+def edit_cattle(request, cattle_id):
+    cattle = Cattle.objects.get(pk=cattle_id)
     if request.method == 'POST':
-        form = CattleForm(request.POST, instance=cattle)
-        if form.is_valid():
-            form.save()
-            return redirect('view_cattle')
+        cattle_form = CattleForm(request.POST, request.FILES, instance=cattle)
+        # Process forms for Vaccination and Insurance similarly as in add_cattle view
+
+        if cattle_form.is_valid():
+            cattle = cattle_form.save(commit=False)
+            cattle.save()
+
+            # Process Vaccination and Insurance forms
+
+            return redirect('view_cattle')  # Redirect to view cattle page
+
     else:
-        form = CattleForm(instance=cattle)
+        cattle_form = CattleForm(instance=cattle)
+        # Generate Vaccination and Insurance forms with their respective instances
 
-    return render(request, 'cattle/edit_cattle.html', {'form': form, 'cattle': cattle})
+    return render(request, 'cattle/edit_cattle.html', {
+        'cattle_form': cattle_form,
+        # Include vaccination_form and insurance_form here similarly as in add_cattle view
+    })
 
-def delete_cattle(request, farmer_license):
-    cattle = get_object_or_404(Cattle, farmer_license=farmer_license)
-    cattle.delete()
-    return redirect('view_cattle')
+def delete_cattle(request, cattle_id):
+    cattle = Cattle.objects.get(pk=cattle_id)
+    if request.method == 'POST':
+        cattle.delete()
+        return redirect('view_cattle')  # Redirect to view cattle page
+
+    return render(request, 'cattle/delete_cattle.html', {'cattle': cattle})
 
 def view_cattle(request):
-    seller = request.user.seller  # Assuming the seller is logged in
-    cattle = Cattle.objects.filter(seller=seller)
-    return render(request, 'cattle/view_cattle.html', {'cattle': cattle})
+    seller_cattles = Cattle.objects.filter(seller=request.user.seller)  # Assuming seller profile is associated with user
+    return render(request, 'cattle/view_cattle.html', {'seller_cattles': seller_cattles})
 
 def common_search(request):
         firstname = request.GET.get('name')
