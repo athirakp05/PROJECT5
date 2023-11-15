@@ -15,7 +15,7 @@ from django.contrib.auth.models import Permission
 from .forms import CustomerRegistrationForm, SellerRegistrationForm
 from .forms import SellerEditProfileForm
 from .models import Cattle,Login_Details,SellerEditProfile
-from .forms import CattleForm, CattleVaccinationForm, CattleInsuranceForm
+from .forms import CattleForm, VaccinationForm, InsuranceForm
 from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
 
 def index(request):
@@ -102,8 +102,6 @@ def s_register(request):
             seller.save()
             seller_edit_profile = SellerEditProfile(user=user, seller=seller, first_name=firstname, last_name=lastname, mobile=mobile, email=email, farmer_license=farmer_license)
             seller_edit_profile.save()
-            cattle = Cattle.objects.create(user=user,email=email)
-            cattle.save()
             # Save login details to the Login model
             login = Login_Details(email=email, password=password, role='Seller')
             login.save()
@@ -225,16 +223,43 @@ def select(request):
     return render(request, 'select.html')
     
 
-def add_cattle(request):
-    if request.method == 'POST':
-        form = CattleForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('view_cattle')
-    else:
-        form = CattleForm()
 
-    return render(request, 'cattle/add_cattle.html', {'form': form})
+def add_cattle(request):
+    seller = request.user.seller  # Assuming the seller is logged in
+    if request.method == 'POST':
+        cattle_form = CattleForm(request.POST, request.FILES)
+        if cattle_form.is_valid():
+            cattle = cattle_form.save(commit=False)
+            cattle.user = request.user
+            cattle.seller = seller
+            cattle.save()
+            if cattle.vaccination:
+                vaccination_form = VaccinationForm(request.POST)
+                if vaccination_form.is_valid():
+                    vaccination = vaccination_form.save(commit=False)
+                    vaccination.cattle = cattle
+                    vaccination.save()
+            if cattle.insurance:
+                insurance_form = InsuranceForm(request.POST)
+                if insurance_form.is_valid():
+                    insurance = insurance_form.save(commit=False)
+                    insurance.cattle = cattle
+                    insurance.save()
+            return redirect('view_cattle')  # Redirect to view cattle page
+    else:
+        cattle_form = CattleForm()
+        vaccination_form = VaccinationForm()
+        insurance_form = InsuranceForm()
+    return render(request, 'cattle/add_cattle.html', {
+        'cattle_form': cattle_form,
+        'vaccination_form': vaccination_form,
+        'insurance_form': insurance_form,
+    })
+
+def view_cattle(request):
+    seller = request.user.seller  # Assuming the seller is logged in
+    cattle = Cattle.objects.filter(seller=seller)
+    return render(request, 'cattle/view_cattle.html', {'cattle': cattle})
 
 def edit_cattle(request, farmer_license):
     cattle = get_object_or_404(Cattle, farmer_license=farmer_license)
@@ -255,8 +280,10 @@ def delete_cattle(request, farmer_license):
     return redirect('view_cattle')
 
 def view_cattle(request):
-    cattle_data = Cattle.objects.all()
-    return render(request, 'cattle/view_cattle.html', {'cattle_data': cattle_data})
+    seller = request.user.seller  # Assuming the seller is logged in
+    cattle = Cattle.objects.filter(seller=seller)
+    return render(request, 'cattle/view_cattle.html', {'cattle': cattle})
+
 def common_search(request):
         firstname = request.GET.get('name')
         if firstname is not None:

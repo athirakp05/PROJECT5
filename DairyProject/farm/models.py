@@ -74,10 +74,10 @@ class Login_Details(models.Model):
         return self.email
 
 class Society(models.Model):
-    society_code = models.CharField(max_length=20, default='default_value_here')
+    society_code = models.CharField(max_length=20, default='')
     district = models.CharField(max_length=20,default='')
     subdistrict = models.CharField(max_length=50,default='')
-    location = models.CharField(max_length=50, default='default_location')
+    location = models.CharField(max_length=50, default='')
 
     def __str__(self):
         return self.society_code
@@ -141,9 +141,9 @@ class CustomerEditProfile(models.Model):
 
 class CattleType(models.Model):
     CATTLETYPE_CHOICES = [
-        ('cow', 'COW'),
-        ('goat', 'GOAT'),
-        ('buffalo', 'BUFFALO'),
+        ('Cow', 'COW'),
+        ('Goat', 'GOAT'),
+        ('Guffalo', 'BUFFALO'),
     ]
     name = models.CharField(max_length=50, unique=True, primary_key=True,choices=CATTLETYPE_CHOICES,default='')
     status=models.BooleanField(default=False,help_text="0=default,1=hidden")
@@ -181,7 +181,16 @@ class Cattle(models.Model):
 
 class Insurance(models.Model):
     cattle = models.ForeignKey(Cattle, on_delete=models.CASCADE, related_name='insurances')
-    provider_name = models.CharField(max_length=100)
+    INSURANCE_CHOICES = [
+        ('Agriculture Insurance Company of India (AIC)', 'Agriculture Insurance Company of India (AIC)'),
+        ('National Insurance Company', 'National Insurance Company'),
+        ('United India Insurance Company', 'United India Insurance Company'),
+        ('HDFC ERGO', 'HDFC ERGO'),
+        ('ICICI Lombard', 'ICICI Lombard'),
+        ('Bajaj Allianz', 'Bajaj Allianz'),
+
+    ]
+    provider_name = models.CharField(max_length=100,unique=True,choices=INSURANCE_CHOICES,default='')
     policy_number = models.CharField(max_length=50)
     start_date = models.DateField()
     end_date = models.DateField()
@@ -195,7 +204,15 @@ class Insurance(models.Model):
 
 class Vaccination(models.Model):
     cattle = models.ForeignKey(Cattle, on_delete=models.CASCADE, related_name='vaccinations')
-    vaccine_name = models.CharField(max_length=100)
+    VACCINATION_CHOICES = [
+        ('Clostridial vaccines', 'Clostridial vaccines'),
+        ('Brucellosis vaccine', 'Brucellosis vaccine'),
+        ('Caseous lymphadenitis (CL) vaccine', 'Caseous lymphadenitis (CL) vaccine'),
+        ('Rinderpest vaccine', 'Rinderpest vaccine'),
+        ('Foot and mouth disease (FMD vaccine)', 'Foot and mouth disease (FMD) vaccine'),
+
+    ]
+    vaccine_name = models.CharField(max_length=50, unique=True,choices=VACCINATION_CHOICES,default='')
     date_administered = models.DateField()
     next_due_date = models.DateField()
     administered_by = models.CharField(max_length=100)

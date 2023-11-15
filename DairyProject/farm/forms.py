@@ -30,31 +30,23 @@ class SellerEditProfileForm(forms.ModelForm):
             'gender': forms.Select(choices=[('---', '---'), ('Male', 'Male'), ('Female', 'Female'), ('Others', 'Others')]),
         }
 
+
 class CattleForm(forms.ModelForm):
     class Meta:
         model = Cattle
-        fields = '__all__'
-
-class CattleRegistrationForm(forms.ModelForm):
-    class Meta:
-        model = Cattle
-        fields = ['EarTagID', 'CattleType', 'BreedName', 'weight', 'height', 'Age', 'Colour', 'feed', 'milk_obtained', 'vaccination', 'insurance', 'photo']
+        exclude = ['user', 'seller']
         widgets = {
-            'CattleType': forms.Select(attrs={'class': 'form-control'}),
-            'BreedName': forms.Select(attrs={'class': 'form-control'}),
-            # Add more widgets as needed
+            'CattleType': forms.Select(),
+            'BreedName': forms.Select(),
+            'feed': forms.Select(),
         }
 
-    def __init__(self, *args, **kwargs):
-        super(CattleRegistrationForm, self).__init__(*args, **kwargs)
-        self.fields['CattleType'].queryset = CattleType.objects.filter(status=True)
-class CattleVaccinationForm(forms.ModelForm):
+class VaccinationForm(forms.ModelForm):
     class Meta:
         model = Vaccination
-        fields = '__all__'
+        exclude = ['cattle']
 
-
-class CattleInsuranceForm(forms.ModelForm):
+class InsuranceForm(forms.ModelForm):
     class Meta:
         model = Insurance
-        fields = '__all__'
+        exclude = ['cattle']
