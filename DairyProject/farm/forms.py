@@ -38,7 +38,7 @@ class CattleForm(forms.ModelForm):
 class CattleRegistrationForm(forms.ModelForm):
     class Meta:
         model = Cattle
-        fields = ['EarTagID', 'CattleType', 'BreedName', 'weight', 'height', 'Age', 'Colour', 'feed', 'milk_obtained', 'health_status', 'vaccination', 'insurance', 'photo']
+        fields = ['EarTagID', 'CattleType', 'BreedName', 'weight', 'height', 'Age', 'Colour', 'feed', 'milk_obtained', 'vaccination', 'insurance', 'photo']
         widgets = {
             'CattleType': forms.Select(attrs={'class': 'form-control'}),
             'BreedName': forms.Select(attrs={'class': 'form-control'}),

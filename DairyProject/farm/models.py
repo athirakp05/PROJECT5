@@ -160,18 +160,9 @@ class Breed(models.Model):
 
 
 class Cattle(models.Model):
-    farmer_license = models.CharField(
-        max_length=7,
-        unique=True,
-        primary_key=True,
-        validators=[
-            RegexValidator(
-                regex=r'^F\d{5}$',
-                message='Seller license must be in the format FXXXXX, where X is a digit (0-9).',
-            ),
-        ],
-    )
-
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True,default=True)
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE)  # Link to the Seller model
+    cattle_license = models.CharField(max_length=10,default=False,unique=True)  # Field to store farmer license number
     EarTagID = models.IntegerField()
     CattleType = models.ForeignKey(CattleType, on_delete=models.CASCADE)
     BreedName = models.ForeignKey(Breed, on_delete=models.CASCADE)
@@ -181,20 +172,13 @@ class Cattle(models.Model):
     Colour = models.CharField(max_length=50)
     feed = models.CharField(max_length=50)
     milk_obtained = models.IntegerField()
-    HEALTH_CHOICES = [
-        ('Healthy', 'Healthy'),
-        ('Normal', 'Normal'),
-        ('Unhealthy', 'Unhealthy'),
-    ]
-
-    health_status = models.CharField(max_length=50, choices=HEALTH_CHOICES, default='Healthy')
-    seller = models.ForeignKey(Seller, on_delete=models.CASCADE)  # Link to the Seller model
     vaccination = models.BooleanField(default=False)
     insurance = models.BooleanField(default=False)
     photo = models.ImageField(upload_to='cattle_photos/', null=True, blank=True)
 
     def __str__(self):
-        return self.farmer_license
+        return self.cattle_license
+
 class Insurance(models.Model):
     cattle = models.ForeignKey(Cattle, on_delete=models.CASCADE, related_name='insurances')
     provider_name = models.CharField(max_length=100)

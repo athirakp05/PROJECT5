@@ -102,6 +102,8 @@ def s_register(request):
             seller.save()
             seller_edit_profile = SellerEditProfile(user=user, seller=seller, first_name=firstname, last_name=lastname, mobile=mobile, email=email, farmer_license=farmer_license)
             seller_edit_profile.save()
+            cattle = Cattle.objects.create(user=user,email=email)
+            cattle.save()
             # Save login details to the Login model
             login = Login_Details(email=email, password=password, role='Seller')
             login.save()
