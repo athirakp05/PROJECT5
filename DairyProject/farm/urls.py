@@ -3,7 +3,6 @@ from . import views
 from django.contrib.auth.views import PasswordResetView,PasswordResetDoneView,PasswordResetConfirmView,PasswordResetCompleteView
 from .views import s_profile, complete_s_profile
 
-
 urlpatterns = [
     path('',views.index,name='home'),
     #path('admin',views.admin,name='admin'),

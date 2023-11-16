@@ -231,11 +231,11 @@ def add_breed(request):
     else:
         form = BreedForm()
     
-    return render(request, 'add_breed.html', {'form': form})
+    return render(request, 'cattle/add_breed.html', {'form': form})
 
 def view_breed(request):
     breeds = Breed.objects.all()
-    return render(request, 'view_breed.html', {'breeds': breeds})
+    return render(request, 'cattle/view_breed.html', {'breeds': breeds})
 
 def delete_breed(request, breed_id):
     breed = get_object_or_404(Breed, pk=breed_id)
@@ -243,7 +243,7 @@ def delete_breed(request, breed_id):
         breed.delete()
         return redirect('view_breed')  # Redirect to view breed page
     
-    return render(request, 'delete_breed.html', {'breed': breed})
+    return render(request, 'cattle/delete_breed.html', {'breed': breed})
 
 def add_cattle(request):
     if request.method == 'POST':

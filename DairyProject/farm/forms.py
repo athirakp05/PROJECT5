@@ -33,6 +33,7 @@ class BreedForm(forms.ModelForm):
     class Meta:
         model = Breed
         fields = ['cattle_type', 'name', 'status']
+        
 class CattleForm(forms.ModelForm):
     class Meta:
         model = Cattle
