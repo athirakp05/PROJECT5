@@ -3,10 +3,11 @@
 {% if breeds %}
   <ul>
     {% for breed in breeds %}
-      <li>{{ breed.name }} - {{ breed.cattle_type }}</li>
-      <!-- Display other breed details as needed -->
-      <a href="{% url 'delete_breed' breed.id %}">Delete</a>
-    {% endfor %}
+    <li>{{ breed.name }} - {{ breed.cattle_type }}</li>
+    <!-- Other breed details -->
+    <a href="{% url 'delete_breed' breed.id %}">Delete</a> <!-- Check this line -->
+  {% endfor %}
+  
   </ul>
 {% else %}
   <p>No breeds found.</p>

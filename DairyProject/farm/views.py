@@ -226,7 +226,8 @@ def add_breed(request):
     if request.method == 'POST':
         form = BreedForm(request.POST)
         if form.is_valid():
-            form.save()
+            breed = form.save(commit=False)
+            breed.save()
             return redirect('view_breed')  # Redirect to view breed page
     else:
         form = BreedForm()

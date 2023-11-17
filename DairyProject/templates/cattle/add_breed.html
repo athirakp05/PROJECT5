@@ -1,6 +1,5 @@
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Add Breed">
-  </form>
-  
+<form method="post" action="{% url 'add_breed' %}">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="Add Breed">
+</form>

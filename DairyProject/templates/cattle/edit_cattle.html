@@ -1,6 +1,41 @@
-<h2>Edit Cattle</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save Changes</button>
-  </form>
+<!-- edit_cattle.html -->
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  
+  <!-- Cattle Details -->
+  {{ cattle_form.as_p }}
+
+  <!-- Checkbox for Vaccination -->
+  <input type="checkbox" id="vaccination_checkbox" name="vaccination_checkbox">
+  <label for="vaccination_checkbox">Require Vaccination?</label>
+  <div id="vaccination_form" style="display: none;">
+    <!-- Vaccination Form -->
+    {{ vaccination_form.as_p }}
+  </div>
+
+  <!-- Checkbox for Insurance -->
+  <input type="checkbox" id="insurance_checkbox" name="insurance_checkbox">
+  <label for="insurance_checkbox">Require Insurance?</label>
+  <div id="insurance_form" style="display: none;">
+    <!-- Insurance Form -->
+    {{ insurance_form.as_p }}
+  </div>
+
+  <!-- Submit Button -->
+  <button type="submit">Save Changes</button>
+</form>
+
+<script>
+  // Show/hide vaccination form based on checkbox selection
+  document.getElementById('vaccination_checkbox').addEventListener('change', function () {
+    const vaccinationForm = document.getElementById('vaccination_form');
+    vaccinationForm.style.display = this.checked ? 'block' : 'none';
+  });
+
+  // Show/hide insurance form based on checkbox selection
+  document.getElementById('insurance_checkbox').addEventListener('change', function () {
+    const insuranceForm = document.getElementById('insurance_form');
+    insuranceForm.style.display = this.checked ? 'block' : 'none';
+  });
+</script>

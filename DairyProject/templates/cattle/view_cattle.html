@@ -1,56 +1,45 @@
 <!-- view_cattle.html -->
 
-<h2>Cattle List</h2>
+<h2>Cattle Details</h2>
+<h3>Cattle Information</h3>
+<p>Cattle License: {{ cattle.cattle_license }}</p>
+<p>Ear Tag ID: {{ cattle.EarTagID }}</p>
+<p>Cattle Type: {{ cattle.CattleType }}</p>
+<p>Breed Name: {{ cattle.BreedName }}</p>
+<p>Weight: {{ cattle.weight }}</p>
+<p>Height: {{ cattle.height }}</p>
+<p>Age: {{ cattle.Age }}</p>
+<p>Colour: {{ cattle.Colour }}</p>
+<p>Feed: {{ cattle.feed }}</p>
+<p>Milk Obtained: {{ cattle.milk_obtained }}</p>
+<p>Vaccination: {% if cattle.vaccination %} Yes {% else %} No {% endif %}</p>
+<p>Insurance: {% if cattle.insurance %} Yes {% else %} No {% endif %}</p>
+{% if cattle.photo %}
+  <img src="{{ cattle.photo.url }}" alt="Cattle Photo" style="max-width: 300px;">
+{% endif %}
 
-<table id="cattle-table" class="display">
-    <thead>
-        <tr>
-            <th>Cattle License</th>
-            <th>Ear Tag ID</th>
-            <th>Cattle Type</th>
-            <th>Breed Name</th>
-            <th>Weight</th>
-            <th>Height</th>
-            <th>Age</th>
-            <th>Colour</th>
-            <th>Feed</th>
-            <th>Milk Obtained</th>
-            <th>Health Status</th>
-            <th>Seller</th>
-            <th>Vaccination</th>
-            <th>Insurance</th>
-            <th>Photo</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for cattle in cattle_data %}
-            <tr>
-                <td>{{ cattle.farmer_license }}</td>
-                <td>{{ cattle.EarTagID }}</td>
-                <td>{{ cattle.CattleType.name }}</td>
-                <td>{{ cattle.BreedName.name }}</td>
-                <td>{{ cattle.weight }}</td>
-                <td>{{ cattle.height }}</td>
-                <td>{{ cattle.Age }}</td>
-                <td>{{ cattle.Colour }}</td>
-                <td>{{ cattle.feed }}</td>
-                <td>{{ cattle.milk_obtained }}</td>
-                <td>{{ cattle.health_status }}</td>
-                <td>{{ cattle.seller.user.first_name }} {{ cattle.seller.user.last_name }}</td>
-                <td>{{ cattle.vaccination }}</td>
-                <td>{{ cattle.insurance }}</td>
-                <td>
-                    <img src="{{ cattle.photo.url }}" alt="Cattle Photo" width="100" height="100">
-                </td>
-                <td>
-                    <a href="{% url 'edit_cattle' farmer_license=cattle.farmer_license %}">Edit</a> |
-                    <a href="{% url 'delete_cattle' farmer_license=cattle.farmer_license %}">Delete</a>
+{% if cattle.vaccination %}
+  <h3>Vaccination Information</h3>
+  {% for vaccine in cattle.vaccinations.all %}
+    <p>Vaccine Name: {{ vaccine.vaccine_name }}</p>
+    <p>Date Administered: {{ vaccine.date_administered }}</p>
+    <p>Next Due Date: {{ vaccine.next_due_date }}</p>
+    <p>Administered By: {{ vaccine.administered_by }}</p>
+    <p>Dosage: {{ vaccine.dosage }}</p>
+    <p>Notes: {{ vaccine.notes }}</p>
+  {% endfor %}
+{% endif %}
 
-                </td>
-            </tr>
-            <a href="{% url 'add_cattle' %}" data-url="{% url 'add_cattle' %}"><i class="fas fa-user-edit"></i> Add</a>
-
-        {% endfor %}
-    </tbody>
-</table>
+{% if cattle.insurance %}
+  <h3>Insurance Information</h3>
+  {% for ins in cattle.insurances.all %}
+    <p>Provider Name: {{ ins.provider_name }}</p>
+    <p>Policy Number: {{ ins.policy_number }}</p>
+    <p>Start Date: {{ ins.start_date }}</p>
+    <p>End Date: {{ ins.end_date }}</p>
+    <p>Coverage Amount: {{ ins.coverage_amount }}</p>
+    <p>Premium Amount: {{ ins.premium_amount }}</p>
+    <p>Contact Info: {{ ins.contact_info }}</p>
+    <p>Notes: {{ ins.notes }}</p>
+  {% endfor %}
+{% endif %}
