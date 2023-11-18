@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Head content as in the provided HTML -->
+</head>
+<body>
+
+<h2>Add Insurance</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ insurance_form.as_p }}
+  <input type="submit" value="Save">
+</form>
+
+</body>
+</html>

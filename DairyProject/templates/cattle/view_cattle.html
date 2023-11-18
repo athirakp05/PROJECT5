@@ -1,45 +1,189 @@
 <!-- view_cattle.html -->
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Head content as in the provided HTML -->
+  <!-- Add your styles -->
+  <style>
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  /* Pagination Styles */
+  .pagination {
+    display: flex;
+    list-style: none;
+    justify-content: center;
+  }
+  
+  .pagination li {
+    margin: 0 5px;
+  }
+  
+  .pagination a {
+    text-decoration: none;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    background-color: #f2f2f2;
+    color: #333;
+  }
+  
+  .pagination .current {
+    background-color: #333;
+    color: #fff;
+  }
+  </style>
 <h2>Cattle Details</h2>
-<h3>Cattle Information</h3>
-<p>Cattle License: {{ cattle.cattle_license }}</p>
-<p>Ear Tag ID: {{ cattle.EarTagID }}</p>
-<p>Cattle Type: {{ cattle.CattleType }}</p>
-<p>Breed Name: {{ cattle.BreedName }}</p>
-<p>Weight: {{ cattle.weight }}</p>
-<p>Height: {{ cattle.height }}</p>
-<p>Age: {{ cattle.Age }}</p>
-<p>Colour: {{ cattle.Colour }}</p>
-<p>Feed: {{ cattle.feed }}</p>
-<p>Milk Obtained: {{ cattle.milk_obtained }}</p>
-<p>Vaccination: {% if cattle.vaccination %} Yes {% else %} No {% endif %}</p>
-<p>Insurance: {% if cattle.insurance %} Yes {% else %} No {% endif %}</p>
-{% if cattle.photo %}
-  <img src="{{ cattle.photo.url }}" alt="Cattle Photo" style="max-width: 300px;">
-{% endif %}
 
-{% if cattle.vaccination %}
-  <h3>Vaccination Information</h3>
-  {% for vaccine in cattle.vaccinations.all %}
-    <p>Vaccine Name: {{ vaccine.vaccine_name }}</p>
-    <p>Date Administered: {{ vaccine.date_administered }}</p>
-    <p>Next Due Date: {{ vaccine.next_due_date }}</p>
-    <p>Administered By: {{ vaccine.administered_by }}</p>
-    <p>Dosage: {{ vaccine.dosage }}</p>
-    <p>Notes: {{ vaccine.notes }}</p>
-  {% endfor %}
-{% endif %}
+<table>
+  <thead>
+    <tr>
+      <th>Cattle License</th>
+      <th>Ear Tag ID</th>
+      <th>Cattle Type</th>
+      <th>Breed Name</th>
+      <th>Weight</th>
+      <th>Height</th>
+      <th>Age</th>
+      <th>Colour</th>
+      <th>Feed</th>
+      <th>Milk Obtained</th>
+      <th>Vaccination</th>
+      <th>Insurance</th>
+      <th>Image</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for cattle in user_cattle %}
+      <tr>
+        <td>{{ cattle.cattle_license }}</td>
+        <td>{{ cattle.EarTagID }}</td>
+        <td>{{ cattle.CattleType }}</td>
+        <td>{{ cattle.BreedName }}</td>
+        <td>{{ cattle.weight }}</td>
+        <td>{{ cattle.height }}</td>
+        <td>{{ cattle.Age }}</td>
+        <td>{{ cattle.Colour }}</td>
+        <td>{{ cattle.feed }}</td>
+        <td>{{ cattle.milk_obtained }}</td>
+        <td>{% if cattle.vaccination %} Yes {% else %} No {% endif %}</td>
+        <td>{% if cattle.insurance %} Yes {% else %} No {% endif %}</td>
+        <td>
+          {% if cattle.photo %}
+            <img src="{{ cattle.photo.url }}" alt="Cattle Photo" style="max-width: 100px; max-height: 100px;">
+          {% else %}
+            No image available
+          {% endif %}       
+      </tr>
 
-{% if cattle.insurance %}
-  <h3>Insurance Information</h3>
-  {% for ins in cattle.insurances.all %}
-    <p>Provider Name: {{ ins.provider_name }}</p>
-    <p>Policy Number: {{ ins.policy_number }}</p>
-    <p>Start Date: {{ ins.start_date }}</p>
-    <p>End Date: {{ ins.end_date }}</p>
-    <p>Coverage Amount: {{ ins.coverage_amount }}</p>
-    <p>Premium Amount: {{ ins.premium_amount }}</p>
-    <p>Contact Info: {{ ins.contact_info }}</p>
-    <p>Notes: {{ ins.notes }}</p>
-  {% endfor %}
-{% endif %}
+      {% if cattle.vaccination %}
+        <tr>
+          <td colspan="13">
+            <h3>Vaccination Information</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Vaccine Name</th>
+                  <th>Date Administered</th>
+                  <th>Next Due Date</th>
+                  <th>Administered By</th>
+                  <th>Dosage</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for vaccine in cattle.vaccinations.all %}
+                  <tr>
+                    <td>{{ vaccine.vaccine_name }}</td>
+                    <td>{{ vaccine.date_administered }}</td>
+                    <td>{{ vaccine.next_due_date }}</td>
+                    <td>{{ vaccine.administered_by }}</td>
+                    <td>{{ vaccine.dosage }}</td>
+                    <td>{{ vaccine.notes }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      {% endif %}
+
+      {% if cattle.insurance %}
+        <tr>
+          <td colspan="13">
+            <h3>Insurance Information</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Provider Name</th>
+                  <th>Policy Number</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Coverage Amount</th>
+                  <th>Premium Amount</th>
+                  <th>Contact Info</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for ins in cattle.insurances.all %}
+                  <tr>
+                    <td>{{ ins.provider_name }}</td>
+                    <td>{{ ins.policy_number }}</td>
+                    <td>{{ ins.start_date }}</td>
+                    <td>{{ ins.end_date }}</td>
+                    <td>{{ ins.coverage_amount }}</td>
+                    <td>{{ ins.premium_amount }}</td>
+                    <td>{{ ins.contact_info }}</td>
+                    <td>{{ ins.notes }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      {% endif %}
+
+    {% endfor %}
+  </tbody>
+</table>
+
+
+<!-- Pagination section -->
+<div class="pagination">
+  <span class="step-links">
+    {% if user_cattle.has_previous %}
+      <a href="?page=1">&laquo; First</a>
+      <a href="?page={{ user_cattle.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    <span class="current">
+      Page {{ user_cattle.number }} of {{ user_cattle.paginator.num_pages }}.
+    </span>
+
+    {% if user_cattle.has_next %}
+      <a href="?page={{ user_cattle.next_page_number }}">Next</a>
+      <a href="?page={{ user_cattle.paginator.num_pages }}">Last &raquo;</a>
+    {% endif %}
+  </span>
+</div>
+
+<a href="{% url 'add_cattle' %}">Add Cattle</a>
+
+</body>
+</html>

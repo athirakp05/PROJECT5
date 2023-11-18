@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.db.utils import IntegrityError
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect,HttpResponse
-from .models import CustomUser, Customer, Seller,CattleType
+from .models import CustomUser, Customer, Seller,CattleType,Vaccination,Insurance
 from django.http import JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import user_passes_test,login_required
@@ -17,6 +17,7 @@ from .forms import SellerEditProfileForm
 from .models import Cattle,Login_Details,SellerEditProfile,Breed
 from .forms import CattleForm, VaccinationForm, InsuranceForm
 from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
+from django.core.paginator import Paginator
 
 def index(request):
     return render(request, 'index.html')
@@ -221,7 +222,8 @@ def profile(request):
 
 def select(request):
     return render(request, 'select.html')
-    
+
+@login_required
 def add_breed(request):
     if request.method == 'POST':
         form = BreedForm(request.POST)
@@ -246,6 +248,7 @@ def delete_breed(request, breed_id):
     
     return render(request, 'cattle/delete_breed.html', {'breed': breed})
 
+@login_required
 def add_cattle(request):
     if request.method == 'POST':
         cattle_form = CattleForm(request.POST, request.FILES)
@@ -258,13 +261,13 @@ def add_cattle(request):
             cattle.seller = request.user.seller  # Assuming seller profile is associated with user
             cattle.save()
 
-            if cattle.vaccination:
+            if request.POST.get('vaccination_checkbox'):
                 if vaccination_form.is_valid():
                     vaccination = vaccination_form.save(commit=False)
                     vaccination.cattle = cattle
                     vaccination.save()
 
-            if cattle.insurance:
+            if request.POST.get('insurance_checkbox'):
                 if insurance_form.is_valid():
                     insurance = insurance_form.save(commit=False)
                     insurance.cattle = cattle
@@ -315,8 +318,58 @@ def delete_cattle(request, cattle_id):
     return render(request, 'cattle/delete_cattle.html', {'cattle': cattle})
 
 def view_cattle(request):
-    seller_cattles = Cattle.objects.filter(seller=request.user.seller)  # Assuming seller profile is associated with user
-    return render(request, 'cattle/view_cattle.html', {'seller_cattles': seller_cattles})
+    
+    user_cattle=Cattle.objects.filter(user=request.user)
+    paginator = Paginator(user_cattle, 10)  # Show 10 cattle per page
+    page_number = request.GET.get('page')
+    user_cattle = paginator.get_page(page_number)
+
+    return render(request, 'cattle/view_cattle.html', {'user_cattle': user_cattle})
+    # # Fetching cattle details for the logged-in user
+    # user_cattle = Cattle.objects.filter(user=request.user)
+    
+    # # Fetching vaccination details for the user's cattle
+    # user_vaccinations = Vaccination.objects.filter(cattle__in=user_cattle)
+    
+    # # Fetching insurance details for the user's cattle
+    # user_insurances = Insurance.objects.filter(cattle__in=user_cattle)
+    
+    # return render(request, 'cattle/view_cattle.html', {
+    #     'user_cattle': user_cattle,
+    #     'user_vaccinations': user_vaccinations,
+    #     'user_insurances': user_insurances,
+    # })
+
+def vaccination(request):
+    if request.method == 'POST':
+        vaccination_form = VaccinationForm(request.POST)
+        if vaccination_form.is_valid():
+            vaccination_form.save()
+            # cattle_id = request.POST.get('cattle_id')  # Assuming you have a hidden input for cattle_id
+            # cattle = Cattle.objects.get(pk=cattle_id)
+            # vaccination = vaccination_form.save(commit=False)
+            # vaccination.cattle = cattle
+            # vaccination.save()
+            return redirect('view_cattle')  # Redirect to view cattle page after adding vaccination
+    else:
+        vaccination_form=VaccinationForm()
+    return render(request, 'cattle/vaccination.html', {'vaccination_form': vaccination_form})
+
+def insurance(request):
+    if request.method == 'POST':
+        insurance_form = InsuranceForm(request.POST)
+        if insurance_form.is_valid():
+            insurance_form.save()
+            # cattle_id = request.POST.get('cattle_id')  # Assuming you have a hidden input for cattle_id
+            # cattle = Cattle.objects.get(pk=cattle_id)
+            # insurance = insurance_form.save(commit=False)
+            # insurance.cattle = cattle
+            # insurance.save()
+            return redirect('view_cattle')  # Redirect to view cattle page after adding insurance
+    else:
+        insurance_form=InsuranceForm()
+    # Handle invalid form or GET request
+    return render(request, 'cattle/insurance.html', {'insurance_form': insurance_form})
 
 def common_search(request):
         firstname = request.GET.get('name')

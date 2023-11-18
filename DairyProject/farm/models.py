@@ -162,15 +162,15 @@ class Cattle(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True,default=True)
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)  # Link to the Seller model
     cattle_license = models.CharField(max_length=10,unique=True)  # Field to store farmer license number
-    EarTagID = models.IntegerField()
+    EarTagID = models.IntegerField(null=True)
     CattleType = models.ForeignKey(CattleType, on_delete=models.CASCADE)
     BreedName = models.ForeignKey(Breed, on_delete=models.CASCADE)
-    weight = models.IntegerField()
-    height = models.IntegerField()
-    Age = models.IntegerField()
-    Colour = models.CharField(max_length=50)
-    feed = models.CharField(max_length=50)
-    milk_obtained = models.IntegerField()
+    weight = models.IntegerField(null=True)
+    height = models.IntegerField(null=True)
+    Age = models.IntegerField(null=True)
+    Colour = models.CharField(max_length=50,null=True)
+    feed = models.CharField(max_length=50,null=True)
+    milk_obtained = models.IntegerField(null=True)
     vaccination = models.BooleanField(default=False)
     insurance = models.BooleanField(default=False)
     photo = models.ImageField(upload_to='cattle_photos/', null=True, blank=True)
@@ -189,14 +189,14 @@ class Insurance(models.Model):
         ('Bajaj Allianz', 'Bajaj Allianz'),
 
     ]
-    provider_name = models.CharField(max_length=100,unique=True,choices=INSURANCE_CHOICES,default='')
-    policy_number = models.CharField(max_length=50)
-    start_date = models.DateField()
-    end_date = models.DateField()
-    coverage_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    premium_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    contact_info = models.TextField(blank=True)
-    notes = models.TextField(blank=True)
+    provider_name = models.CharField(max_length=100,unique=True,choices=INSURANCE_CHOICES,default='',null=True)
+    policy_number = models.CharField(max_length=50,null=True)
+    start_date = models.DateField(null=True)
+    end_date = models.DateField(null=True)
+    coverage_amount = models.DecimalField(max_digits=10, decimal_places=2,null=True)
+    premium_amount = models.DecimalField(max_digits=10, decimal_places=2,null=True)
+    contact_info = models.TextField(blank=True,null=True)
+    notes = models.TextField(blank=True,null=True)
 
     def __str__(self):
         return self.policy_number
@@ -211,12 +211,12 @@ class Vaccination(models.Model):
         ('Foot and mouth disease (FMD vaccine)', 'Foot and mouth disease (FMD) vaccine'),
 
     ]
-    vaccine_name = models.CharField(max_length=50, unique=True,choices=VACCINATION_CHOICES,default='')
-    date_administered = models.DateField()
-    next_due_date = models.DateField()
-    administered_by = models.CharField(max_length=100)
-    dosage = models.CharField(max_length=50)
-    notes = models.TextField(blank=True)
+    vaccine_name = models.CharField(max_length=50, unique=True,choices=VACCINATION_CHOICES,default='',null=True)
+    date_administered = models.DateField(null=True)
+    next_due_date = models.DateField(null=True)
+    administered_by = models.CharField(max_length=100,null=True)
+    dosage = models.CharField(max_length=50,null=True)
+    notes = models.TextField(blank=True,null=True)
 
     def __str__(self):
         return self.vaccine_name

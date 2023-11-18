@@ -48,8 +48,16 @@ class VaccinationForm(forms.ModelForm):
     class Meta:
         model = Vaccination
         exclude = ['cattle']
+        widgets = {
+        'date_administered': forms.DateInput(attrs={'type': 'date'}),
+        'next_due_date': forms.DateInput(attrs={'type': 'date'}),
+        }
 
 class InsuranceForm(forms.ModelForm):
     class Meta:
         model = Insurance
         exclude = ['cattle']
+        widgets = {
+        'start_date': forms.DateInput(attrs={'type': 'date'}),
+        'end_date': forms.DateInput(attrs={'type': 'date'}),
+        }
