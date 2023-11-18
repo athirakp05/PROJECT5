@@ -159,9 +159,8 @@ class Breed(models.Model):
 
 
 class Cattle(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True,default=True)
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)  # Link to the Seller model
-    cattle_license = models.CharField(max_length=10,unique=True)  # Field to store farmer license number
+    cattle_license = models.CharField(max_length=10,unique=True,primary_key=True)  # Field to store farmer license number
     EarTagID = models.IntegerField(null=True)
     CattleType = models.ForeignKey(CattleType, on_delete=models.CASCADE)
     BreedName = models.ForeignKey(Breed, on_delete=models.CASCADE)

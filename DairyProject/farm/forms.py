@@ -37,7 +37,7 @@ class BreedForm(forms.ModelForm):
 class CattleForm(forms.ModelForm):
     class Meta:
         model = Cattle
-        exclude = ['user', 'seller']
+        exclude = ['seller']
         widgets = {
             'CattleType': forms.Select(),
             'BreedName': forms.Select(),

@@ -257,8 +257,8 @@ def add_cattle(request):
         
         if cattle_form.is_valid():
             cattle = cattle_form.save(commit=False)
-            cattle.user = request.user  # Get logged-in user
-            cattle.seller = request.user.seller  # Assuming seller profile is associated with user
+            seller = Seller.objects.get(user=request.user)
+            cattle.seller = seller  # Assuming seller profile is associated with user
             cattle.save()
 
             if request.POST.get('vaccination_checkbox'):
@@ -295,15 +295,11 @@ def edit_cattle(request, cattle_id):
         if cattle_form.is_valid():
             cattle = cattle_form.save(commit=False)
             cattle.save()
-
-            # Process Vaccination and Insurance forms
-
-            return redirect('view_cattle')  # Redirect to view cattle page
+            return redirect('view_cattle') 
 
     else:
         cattle_form = CattleForm(instance=cattle)
         # Generate Vaccination and Insurance forms with their respective instances
-
     return render(request, 'cattle/edit_cattle.html', {
         'cattle_form': cattle_form,
         # Include vaccination_form and insurance_form here similarly as in add_cattle view
@@ -319,7 +315,7 @@ def delete_cattle(request, cattle_id):
 
 def view_cattle(request):
     
-    user_cattle=Cattle.objects.filter(user=request.user)
+    user_cattle=Cattle.objects.filter(seller__user=request.user)
     paginator = Paginator(user_cattle, 10)  # Show 10 cattle per page
     page_number = request.GET.get('page')
     user_cattle = paginator.get_page(page_number)

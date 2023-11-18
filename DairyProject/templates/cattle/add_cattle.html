@@ -1,144 +1,166 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Add Cattle</title>
-  <!-- Add any necessary CSS styles or external CSS links here -->
-  <style>
-/* Standard CSS for Add Cattle form */
 
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <title>Add Cattle</title>
+      <style>
+/* Apply general styles */
 body {
   font-family: Arial, sans-serif;
-  margin: 20px;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 20px;
 }
 
 h2 {
-  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
 }
 
-form {
-  width: 60%;
-  margin: 0 auto;
+.cattle-form {
+  max-width: 600px;
+  margin: 20px auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-label {
-  display: block;
-  margin-bottom: 5px;
+/* Style form fields */
+.form-field {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
 }
 
-input[type="text"],
-input[type="number"],
-input[type="date"],
-input[type="file"],
-select {
-  width: calc(100% - 10px);
+.form-field label {
+  width: 150px;
+  padding-right: 10px;
+  font-weight: bold;
+}
+
+.form-field input,
+.form-field select {
+  width: calc(100% - 160px);
   padding: 8px;
-  margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  font-size: 14px;
 }
 
+.checkbox-field {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.additional-section {
+  display: none;
+  margin-left: 25px;
+}
+
+.checkbox-field input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+/* Style submit button */
 input[type="submit"] {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  background-color: #3498db;
-  color: white;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 16px;
 }
 
 input[type="submit"]:hover {
-  background-color: #2980b9;
+  background-color: #45a049;
 }
 
-/* Styling for checkbox labels */
-input[type="checkbox"] {
-  margin-right: 5px;
-}
-
-#vaccination_section,
-#insurance_section {
-  margin-top: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-  </style>
+      </style>
 </head>
 <body>
 
 <h2>Add Cattle</h2>
-
-<form method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data" class="cattle-form">
   {% csrf_token %}
   <!-- Cattle License -->
-  <label for="id_cattle_license">Cattle License:</label>
-  {{ cattle_form.cattle_license }}
-  <br>
+  <div class="form-field">
+    <label for="id_cattle_license">Cattle License:</label>
+    {{ cattle_form.cattle_license }}
+  </div>
   
   <!-- Ear Tag ID -->
-  <label for="id_EarTagID">Ear Tag ID:</label>
-  {{ cattle_form.EarTagID }}
-  <br>
+  <div class="form-field">
+    <label for="id_EarTagID">Ear Tag ID:</label>
+    {{ cattle_form.EarTagID }}
+  </div>
   
   <!-- Cattle Type -->
+  <div class="form-field">
   <label for="id_CattleType">Cattle Type:</label>
   {{ cattle_form.CattleType }}
-  <br>
+</div>
   
   <!-- Breed Name -->
+  <div class="form-field">
   <label for="id_BreedName">Breed Name:</label>
   {{ cattle_form.BreedName }}
-  <br>
+</div>
   
   <!-- Weight -->
-  <label for="id_weight">Weight:</label>
+  <div class="form-field">
+    <label for="id_weight">Weight:</label>
   {{ cattle_form.weight }}
-  <br>
+</div>
   
   <!-- Height -->
-  <label for="id_height">Height:</label>
+  <div class="form-field">
+    <label for="id_height">Height:</label>
   {{ cattle_form.height }}
-  <br>
+</div>
   
   <!-- Age -->
-  <label for="id_Age">Age:</label>
+  <div class="form-field">
+    <label for="id_Age">Age:</label>
   {{ cattle_form.Age }}
-  <br>
+</div>
   
   <!-- Colour -->
-  <label for="id_Colour">Colour:</label>
+  <div class="form-field">
+    <label for="id_Colour">Colour:</label>
   {{ cattle_form.Colour }}
-  <br>
+</div>
   
   <!-- Feed -->
-  <label for="id_feed">Feed:</label>
+  <div class="form-field">
+    <label for="id_feed">Feed:</label>
   {{ cattle_form.feed }}
-  <br>
+</div>
   
   <!-- Milk Obtained -->
-  <label for="id_milk_obtained">Milk Obtained:</label>
+  <div class="form-field">
+    <label for="id_milk_obtained">Milk Obtained:</label>
   {{ cattle_form.milk_obtained }}
-  <br>
-
+</div>
   <!-- Photo -->
-  <label for="id_photo">Photo:</label>
+  <div class="form-field">
+    <label for="id_photo">Photo:</label>
   {{ cattle_form.photo }}
-  <br>
-  <input type="checkbox" id="vaccination_checkbox" name="vaccination_checkbox">
+</div>
+<div><input type="checkbox" id="vaccination_checkbox" name="vaccination_checkbox">
   <label for="vaccination_checkbox">Add Vaccination</label><br>
   <div id="vaccination_section" style="display: none;">
     {% include 'cattle/vaccination.html' %}
-    <!-- {{ vaccination_form.as_p }} -->
   </div>
   <input type="checkbox" id="insurance_checkbox" name="insurance_checkbox">
   <label for="insurance_checkbox">Add Insurance</label><br>
   <div id="insurance_section" style="display: none;">
     {% include 'cattle/insurance.html' %}
-    <!-- {{ insurance_form.as_p }} -->
-  </div>
+  </div></div>
+
   <input type="submit" value="Add Cattle">
 </form>
 
