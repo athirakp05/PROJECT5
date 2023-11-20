@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vaccination Details</title>
+    <style>
+        /* CSS for Vaccination Details */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .details-container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            max-width: 400px;
+            text-align: center;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        a {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="details-container">
+        <h1>Vaccination Details</h1>
+        {% if vaccination %}
+            <p>Vaccine name: {{ vaccination.vaccine_name }}</p>
+            <p>Date administered: {{ vaccination.date_administered }}</p>
+            <p>Next due date: {{ vaccination.next_due_date }}</p>
+            <p>Administered by: {{ vaccination.administered_by }}</p>
+            <p>Dosage: {{ vaccination.dosage }}</p>
+            <p>Notes: {{ vaccination.notes }}</p>
+        {% else %}
+            <p>No vaccination details found.</p>
+        {% endif %}
+        <a href="{% url 'view_cattle' %}">Back to View Cattle</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Insurance Details</title>
+    <style>
+        /* CSS for Insurance Details */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .details-container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            max-width: 400px;
+            text-align: center;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        a {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="details-container">
+        <h1>Insurance Details</h1>
+        {% if insurance %}
+            <p>Provider name: {{ insurance.provider_name }}</p>
+            <p>Policy number: {{ insurance.policy_number }}</p>
+            <p>Start date: {{ insurance.start_date }}</p>
+            <p>End date: {{ insurance.end_date }}</p>
+            <p>Coverage amount: {{ insurance.coverage_amount }}</p>
+            <p>Premium amount: {{ insurance.premium_amount }}</p>
+            <p>Contact info: {{ insurance.contact_info }}</p>
+        {% else %}
+            <p>No insurance details found.</p>
+        {% endif %}
+        <a href="{% url 'view_cattle' %}">Back to View Cattle</a>
+    </div>
+</body>
+</html>

@@ -7,17 +7,16 @@ from django.contrib import messages
 from django.db.utils import IntegrityError
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect,HttpResponse
-from .models import CustomUser, Customer, Seller,CattleType,Vaccination,Insurance
+from .models import CustomUser, Customer, Seller,CattleType
 from django.http import JsonResponse
 from django.urls import reverse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import user_passes_test,login_required
 from django.contrib.auth.models import Permission
-from .forms import CustomerRegistrationForm, SellerRegistrationForm,BreedForm
-from .forms import SellerEditProfileForm
-from .models import Cattle,Login_Details,SellerEditProfile,Breed
-from .forms import CattleForm, VaccinationForm, InsuranceForm
+from .forms import CustomerRegistrationForm, SellerRegistrationForm,SellerEditProfileForm
+from .models import Cattle,Login_Details,SellerEditProfile,Breed,Insurance,Vaccination
+from .forms import CattleForm, VaccinationForm, InsuranceForm,SellerProfileForm,BreedForm
 from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
-from django.core.paginator import Paginator
 
 def index(request):
     return render(request, 'index.html')
@@ -130,17 +129,17 @@ def s_profile(request):
 def complete_s_profile(request):
     user = request.user
     seller_profile, created = SellerEditProfile.objects.get_or_create(user=user.seller.user)
+
     if request.method == 'POST':
         form = SellerEditProfileForm(request.POST, request.FILES, instance=seller_profile)
         if form.is_valid():
             form.save()
-            return redirect('seller_profile')  # Redirect to a seller profile view after completion
+            return redirect('seller_profile')  # Replace 's_dashboard' with your desired redirect URL after profile completion
     else:
         form = SellerEditProfileForm(instance=seller_profile)
     return render(request, 'profile_edit/complete_s_profile.html', {'form': form})
 
 def seller_profile(request):
-    # Fetch the seller profile details
     seller_profile = SellerEditProfile.objects.get(user=request.user.seller.user)
     return render(request, 'profile_edit/seller_profile.html', {'seller_profile': seller_profile})
 
@@ -171,14 +170,14 @@ def s_dashboard(request):
 
         # Check if the form is submitted
         if request.method == 'POST':
-            form = SellerEditProfileForm(request.POST, request.FILES, instance=seller_profile)
+            form = SellerProfileForm(request.POST, request.FILES, instance=seller_profile)
             if form.is_valid():
                 form.save()
                 # Redirect to a success page or stay on the current page
                 return redirect('seller_profile')
         else:
             # Populate the form with the seller's data
-            form = SellerEditProfileForm(instance=seller_profile)
+            form = SellerProfileForm(instance=seller_profile)
         context = {
             'seller_profile': seller_profile,
             'form': form,
@@ -222,150 +221,7 @@ def profile(request):
 
 def select(request):
     return render(request, 'select.html')
-
-@login_required
-def add_breed(request):
-    if request.method == 'POST':
-        form = BreedForm(request.POST)
-        if form.is_valid():
-            breed = form.save(commit=False)
-            breed.save()
-            return redirect('view_breed')  # Redirect to view breed page
-    else:
-        form = BreedForm()
     
-    return render(request, 'cattle/add_breed.html', {'form': form})
-
-def view_breed(request):
-    breeds = Breed.objects.all()
-    return render(request, 'cattle/view_breed.html', {'breeds': breeds})
-
-def delete_breed(request, breed_id):
-    breed = get_object_or_404(Breed, pk=breed_id)
-    if request.method == 'POST':
-        breed.delete()
-        return redirect('view_breed')  # Redirect to view breed page
-    
-    return render(request, 'cattle/delete_breed.html', {'breed': breed})
-
-@login_required
-def add_cattle(request):
-    if request.method == 'POST':
-        cattle_form = CattleForm(request.POST, request.FILES)
-        vaccination_form = VaccinationForm(request.POST)
-        insurance_form = InsuranceForm(request.POST)
-        
-        if cattle_form.is_valid():
-            cattle = cattle_form.save(commit=False)
-            seller = Seller.objects.get(user=request.user)
-            cattle.seller = seller  # Assuming seller profile is associated with user
-            cattle.save()
-
-            if request.POST.get('vaccination_checkbox'):
-                if vaccination_form.is_valid():
-                    vaccination = vaccination_form.save(commit=False)
-                    vaccination.cattle = cattle
-                    vaccination.save()
-
-            if request.POST.get('insurance_checkbox'):
-                if insurance_form.is_valid():
-                    insurance = insurance_form.save(commit=False)
-                    insurance.cattle = cattle
-                    insurance.save()
-
-            return redirect('view_cattle')  # Redirect to view cattle page
-
-    else:
-        cattle_form = CattleForm()
-        vaccination_form = VaccinationForm()
-        insurance_form = InsuranceForm()
-
-    return render(request, 'cattle/add_cattle.html', {
-        'cattle_form': cattle_form,
-        'vaccination_form': vaccination_form,
-        'insurance_form': insurance_form,
-    })
-
-def edit_cattle(request, cattle_id):
-    cattle = Cattle.objects.get(pk=cattle_id)
-    if request.method == 'POST':
-        cattle_form = CattleForm(request.POST, request.FILES, instance=cattle)
-        # Process forms for Vaccination and Insurance similarly as in add_cattle view
-
-        if cattle_form.is_valid():
-            cattle = cattle_form.save(commit=False)
-            cattle.save()
-            return redirect('view_cattle') 
-
-    else:
-        cattle_form = CattleForm(instance=cattle)
-        # Generate Vaccination and Insurance forms with their respective instances
-    return render(request, 'cattle/edit_cattle.html', {
-        'cattle_form': cattle_form,
-        # Include vaccination_form and insurance_form here similarly as in add_cattle view
-    })
-
-def delete_cattle(request, cattle_id):
-    cattle = Cattle.objects.get(pk=cattle_id)
-    if request.method == 'POST':
-        cattle.delete()
-        return redirect('view_cattle')  # Redirect to view cattle page
-
-    return render(request, 'cattle/delete_cattle.html', {'cattle': cattle})
-
-def view_cattle(request):
-    
-    user_cattle=Cattle.objects.filter(seller__user=request.user)
-    paginator = Paginator(user_cattle, 10)  # Show 10 cattle per page
-    page_number = request.GET.get('page')
-    user_cattle = paginator.get_page(page_number)
-
-    return render(request, 'cattle/view_cattle.html', {'user_cattle': user_cattle})
-    # # Fetching cattle details for the logged-in user
-    # user_cattle = Cattle.objects.filter(user=request.user)
-    
-    # # Fetching vaccination details for the user's cattle
-    # user_vaccinations = Vaccination.objects.filter(cattle__in=user_cattle)
-    
-    # # Fetching insurance details for the user's cattle
-    # user_insurances = Insurance.objects.filter(cattle__in=user_cattle)
-    
-    # return render(request, 'cattle/view_cattle.html', {
-    #     'user_cattle': user_cattle,
-    #     'user_vaccinations': user_vaccinations,
-    #     'user_insurances': user_insurances,
-    # })
-
-def vaccination(request):
-    if request.method == 'POST':
-        vaccination_form = VaccinationForm(request.POST)
-        if vaccination_form.is_valid():
-            vaccination_form.save()
-            # cattle_id = request.POST.get('cattle_id')  # Assuming you have a hidden input for cattle_id
-            # cattle = Cattle.objects.get(pk=cattle_id)
-            # vaccination = vaccination_form.save(commit=False)
-            # vaccination.cattle = cattle
-            # vaccination.save()
-            return redirect('view_cattle')  # Redirect to view cattle page after adding vaccination
-    else:
-        vaccination_form=VaccinationForm()
-    return render(request, 'cattle/vaccination.html', {'vaccination_form': vaccination_form})
-
-def insurance(request):
-    if request.method == 'POST':
-        insurance_form = InsuranceForm(request.POST)
-        if insurance_form.is_valid():
-            insurance_form.save()
-            # cattle_id = request.POST.get('cattle_id')  # Assuming you have a hidden input for cattle_id
-            # cattle = Cattle.objects.get(pk=cattle_id)
-            # insurance = insurance_form.save(commit=False)
-            # insurance.cattle = cattle
-            # insurance.save()
-            return redirect('view_cattle')  # Redirect to view cattle page after adding insurance
-    else:
-        insurance_form=InsuranceForm()
-    # Handle invalid form or GET request
-    return render(request, 'cattle/insurance.html', {'insurance_form': insurance_form})
 
 def common_search(request):
         firstname = request.GET.get('name')
@@ -381,3 +237,149 @@ def contact(request):
 def about(request):
     # Add your view logic here
     return render(request, 'about.html')
+
+@login_required
+def add_cattle(request):
+    if request.method == 'POST':
+        cattle_form = CattleForm(request.POST, request.FILES)
+        vaccination_form = VaccinationForm(request.POST)
+        insurance_form = InsuranceForm(request.POST)
+        
+        if cattle_form.is_valid():
+            cattle = cattle_form.save(commit=False)
+            cattle.user = request.user
+            cattle.seller = request.user.seller
+            if 'vaccination_checkbox' in request.POST:
+                cattle.vaccination = True
+            else:
+                cattle.vaccination = False
+            if 'insurance_checkbox' in request.POST:
+                cattle.insurance = True
+            else:
+                cattle.insurance = False
+            cattle.save()
+            
+            if 'vaccination_checkbox' in request.POST:
+                if vaccination_form.is_valid():
+                    vaccination = vaccination_form.save(commit=False)
+                    vaccination.cattle = cattle
+                    vaccination.status = True  # Set vaccination status as True
+                    vaccination.save()
+
+            if 'insurance_checkbox' in request.POST:
+                if insurance_form.is_valid():
+                    insurance = insurance_form.save(commit=False)
+                    insurance.cattle = cattle
+                    insurance.status = True  # Set insurance status as True
+                    insurance.save()
+
+            return redirect('view_cattle')
+    else:
+        cattle_form = CattleForm()
+        vaccination_form = VaccinationForm()
+        insurance_form = InsuranceForm()
+
+    return render(request, 'cattle/add_cattle.html', {
+        'cattle_form': cattle_form,
+        'vaccination_form': vaccination_form,
+        'insurance_form': insurance_form,
+    })
+
+@login_required
+def view_cattle(request):
+    user_cattle = Cattle.objects.filter(seller=request.user.seller)
+    paginator = Paginator(user_cattle, 5)  # Show 5 cattle per page
+    page_number = request.GET.get('page')
+    user_cattle = paginator.get_page(page_number)
+    return render(request, 'cattle/view_cattle.html', {'user_cattle': user_cattle})
+    
+@login_required
+def edit_cattle(request, cattle_id):
+    cattle = get_object_or_404(Cattle, pk=cattle_id)
+    if request.method == 'POST':
+        cattle_form = CattleForm(request.POST, request.FILES, instance=cattle)
+        if cattle_form.is_valid():
+            cattle = cattle_form.save()
+            return redirect('view_cattle')
+    else:
+        cattle_form = CattleForm(instance=cattle)
+    return render(request, 'cattle/edit_cattle.html', {'cattle_form': cattle_form})
+
+@login_required
+def delete_cattle(request, cattle_id):
+    cattle = get_object_or_404(Cattle, pk=cattle_id)
+    if request.method == 'POST':
+        cattle.delete()
+        return redirect('view_cattle')
+    return render(request, 'cattle/delete_cattle.html', {'cattle': cattle})
+@login_required
+def vaccination(request, cattle_id):
+    cattle = get_object_or_404(Cattle, pk=cattle_id)
+
+    if request.method == 'POST':
+        vaccination_form = VaccinationForm(request.POST)
+        if vaccination_form.is_valid():
+            vaccination = vaccination_form.save(commit=False)
+            vaccination.cattle = cattle
+            vaccination.save()
+            return redirect('add_cattle')  # Redirect to success page after successful submission
+    else:
+        vaccination_form = VaccinationForm()
+
+    context = {
+        'vaccination_form': vaccination_form,
+        'cattle_id': cattle_id,
+    }
+    return render(request, 'cattle/vaccination.html', context)
+@login_required
+def insurance(request, cattle_id):
+    cattle = get_object_or_404(Cattle, pk=cattle_id)
+
+    if request.method == 'POST':
+        insurance_form = InsuranceForm(request.POST)
+        if insurance_form.is_valid():
+            insurance = insurance_form.save(commit=False)
+            insurance.cattle = cattle
+            insurance.save()
+            return redirect('add_cattle')  # Redirect to success page after successful submission
+    else:
+        insurance_form = InsuranceForm()
+
+    context = {
+        'insurance_form': insurance_form,
+        'cattle_id': cattle_id,
+    }
+    return render(request, 'cattle/insurance.html', context)
+@login_required
+def vac_details(request, cattle_id):
+    cattle = get_object_or_404(Cattle, pk=cattle_id)
+    vaccination = Vaccination.objects.filter(cattle=cattle).first()  # Fetch the vaccination entry for the cattle if it exists
+    return render(request, 'cattle/vac_details.html', {'cattle': cattle, 'vaccination': vaccination})
+
+@login_required
+def ins_details(request, cattle_id):
+    cattle = get_object_or_404(Cattle, pk=cattle_id)
+    insurance = Insurance.objects.filter(cattle=cattle).first()  # Fetch the insurance entry for the cattle if it exists
+    return render(request, 'cattle/ins_details.html', {'cattle': cattle, 'insurance': insurance})
+@login_required
+def add_breed(request):
+    if request.method == 'POST':
+        form = BreedForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('view_breed')  # Redirect to view breed page
+    else:
+        form = BreedForm()
+    
+    return render(request, 'cattle/add_breed.html', {'form': form})
+def view_breed(request):
+    breeds = Breed.objects.all()
+    return render(request, 'cattle/view_breed.html', {'breeds': breeds})
+
+def delete_breed(request, breed_id):
+    breed = get_object_or_404(Breed, pk=breed_id)
+    if request.method == 'POST':
+        breed.delete()
+        return redirect('view_breed')  # Redirect to view breed page
+    
+    return render(request, 'cattle/delete_breed.html', {'breed': breed})

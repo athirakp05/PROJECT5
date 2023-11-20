@@ -1,6 +1,6 @@
 from django.core.validators import RegexValidator
 from django import forms
-from .models import Cattle,Insurance,Vaccination,SellerEditProfile,Breed, CattleType
+from .models import Cattle,Insurance,Vaccination,SellerEditProfile,Breed,CattleType
 class CustomerRegistrationForm(forms.Form):
     first_name = forms.CharField(max_length=50)
     last_name = forms.CharField(max_length=50)
@@ -21,6 +21,10 @@ class SellerRegistrationForm(forms.Form):
         ),
     ])
 
+class SellerProfileForm(forms.ModelForm):
+    class Meta:
+        model = SellerEditProfile
+        fields = '__all__'
 class SellerEditProfileForm(forms.ModelForm):
     class Meta:
         model = SellerEditProfile
@@ -33,15 +37,30 @@ class BreedForm(forms.ModelForm):
     class Meta:
         model = Breed
         fields = ['cattle_type', 'name', 'status']
-        
+        widgets = {
+            'cattle_type': forms.Select(choices=[
+                ('Cow', 'Cow'),
+                ('Goat', 'Goat'),
+                ('Buffalo', 'Buffalo'),
+            ]),
+        }
+
 class CattleForm(forms.ModelForm):
     class Meta:
         model = Cattle
-        exclude = ['seller']
+        exclude = ['user', 'seller', 'vaccination', 'insurance']
         widgets = {
             'CattleType': forms.Select(),
             'BreedName': forms.Select(),
-            'feed': forms.Select(choices=[('Wheat','Wheat',),('Soya hull','Soya hull',),('Hay','Hay',),('Rice Bran','Rice Bran',),('Corn','Corn',),('Maize','Maize',),('Pellete','Pellete',)]),
+            'feed': forms.Select(choices=[
+                ('Wheat', 'Wheat'),
+                ('Soya hull', 'Soya hull'),
+                ('Hay', 'Hay'),
+                ('Rice Bran', 'Rice Bran'),
+                ('Corn', 'Corn'),
+                ('Maize', 'Maize'),
+                ('Pellete', 'Pellete'),
+            ]),        
         }
 
 class VaccinationForm(forms.ModelForm):
@@ -49,15 +68,17 @@ class VaccinationForm(forms.ModelForm):
         model = Vaccination
         exclude = ['cattle']
         widgets = {
-        'date_administered': forms.DateInput(attrs={'type': 'date'}),
-        'next_due_date': forms.DateInput(attrs={'type': 'date'}),
-        }
-
+            'date_administered': forms.DateInput(attrs={'type': 'date'}),
+            'next_due_date': forms.DateInput(attrs={'type': 'date'}),
+          }
+        
 class InsuranceForm(forms.ModelForm):
     class Meta:
         model = Insurance
         exclude = ['cattle']
         widgets = {
-        'start_date': forms.DateInput(attrs={'type': 'date'}),
-        'end_date': forms.DateInput(attrs={'type': 'date'}),
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
         }
+
+     

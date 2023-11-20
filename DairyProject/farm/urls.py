@@ -3,6 +3,7 @@ from . import views
 from django.contrib.auth.views import PasswordResetView,PasswordResetDoneView,PasswordResetConfirmView,PasswordResetCompleteView
 from .views import s_profile, complete_s_profile
 
+
 urlpatterns = [
     path('',views.index,name='home'),
     #path('admin',views.admin,name='admin'),
@@ -14,15 +15,12 @@ urlpatterns = [
     path('c_dashboard', views.c_dashboard, name='c_dashboard'),
     path('s_dashboard', views.s_dashboard, name='s_dashboard'),
     path('a_dashboard/', views.a_dashboard, name='a_dashboard'),
-    path('add_breed', views.add_breed, name='add_breed'),
     path('add_cattle', views.add_cattle, name='add_cattle'),
+    path('view_cattle/', views.view_cattle, name='view_cattle'),
+    path('edit_cattle/<int:cattle_id>/', views.edit_cattle, name='edit_cattle'),
+    path('delete_cattle/<int:cattle_id>/', views.delete_cattle, name='delete_cattle'),    path('add_breed', views.add_breed, name='add_breed'),
     path('view_breed/', views.view_breed, name='view_breed'),  # Define URL for view_breed
     path('delete_breed/<int:breed_id>/', views.delete_breed, name='delete_breed'),
-    path('edit_cattle/<int:cattle_id>/', views.edit_cattle, name='edit_cattle'),
-    path('view_cattle/', views.view_cattle, name='view_cattle'),
-    path('delete_cattle/<str:farmer_license>/', views.delete_cattle, name='delete_cattle'),
-    path('vaccination/', views.vaccination, name='vaccination'),
-    path('insurance/', views.insurance, name='insurance'),
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
@@ -37,4 +35,6 @@ urlpatterns = [
     path('s_profile/', s_profile, name='s_profile'),
     path('seller_profile/', views.seller_profile, name='seller_profile'),
     path('complete_s_profile/', complete_s_profile, name='complete_s_profile'),
+    path('vaccination/<int:cattle_id>/', views.vac_details, name='vac_details'),
+    path('insurance/<int:cattle_id>/', views.ins_details, name='ins_details'),
 ]

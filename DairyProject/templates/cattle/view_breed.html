@@ -1,14 +1,73 @@
-<h1>Breeds</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Breeds</title>
+    <style>
+        /* CSS for Breeds */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
 
-{% if breeds %}
-  <ul>
-    {% for breed in breeds %}
-    <li>{{ breed.name }} - {{ breed.cattle_type }}</li>
-    <!-- Other breed details -->
-    <a href="{% url 'delete_breed' breed.id %}">Delete</a> <!-- Check this line -->
-  {% endfor %}
-  
-  </ul>
-{% else %}
-  <p>No breeds found.</p>
-{% endif %}
+        h1 {
+            text-align: center;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        li a {
+            color: #007bff;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        li a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            text-align: center;
+        }
+
+        .add-breed-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        .add-breed-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Breeds</h1>
+    {% if breeds %}
+        <ul>
+            {% for breed in breeds %}
+                <li>
+                    {{ breed.name }} - {{ breed.cattle_type }}
+                    <a href="{% if breed.id %}{% url 'delete_breed' breed.id %}{% endif %}">Delete</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No breeds available.</p>
+    {% endif %}
+    <a class="add-breed-link" href="{% url 'add_breed' %}">Add Breed</a>
+</body>
+</html>

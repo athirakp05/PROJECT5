@@ -109,7 +109,7 @@
 </head>
 <div id="navbar" style="background-color: #67b2e8; color: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
     <div class="logo" style="text-align: left;">
-        <a href="{% url 'profile' %}" style="text-decoration: none; color: #fff;">
+        <a href="$" style="text-decoration: none; color: #fff;">
             <i class="fas fa-user admin-profile-icon"></i> Admin
         </a>
     </div>
@@ -123,18 +123,17 @@
         <!-- sidebar.html -->
         <div class="sidebar">
             <ul class="menu">
-                <li><a href="{% url 'milk_details' %}"><i class="fas fa-home"></i> Profile</a></li>
+                <li><a href="$"><i class="fas fa-home"></i> Profile</a></li>
                 <li><a href="{% url 's_view' %}"><i class="fas fa-users"></i>Seller</a></li>
-                <li><a href="{% url 'view_cattle' %}"><i class="fas fa-users"></i> Cattle</a></li>
+                <li><a href="{% url 'add_cattle' %}"><i class="fas fa-users"></i> Cattle</a></li>
                 <li><a href="{% url 'prod_view' %}"><i class="fas fa-chart-bar"></i> View Product</a></li>
                 <li><a href="{% url 'profile' %}"><i class="fas fa-users"></i>monthly Statistics</a></li>
                 <li><a href="{% url 'product_detail' %}"><i class="fas fa-users"></i> Product Availability</a></li>
                 <li><a href="{% url 'c_view' %}"><i class="fas fa-users"></i>Orders</a></li>
                 <li><a href="{% url 'milk_details' %}"><i class="fas fa-users"></i>Milk Collection</a></li>
-                <li><a href="{% url 'add_breed' %}"><i class="fas fa-users"></i>Breed</a></li>
+                <li><a href="{% url 'view_breed' %}"><i class="fas fa-users"></i>Breed</a></li>
 
                 <li>
-
                     <a href="#" id="reports-dropdown" class="dropdown-toggle">
                         <i class="fas fa-file"></i> Reports
                         <i class="fas fa-caret-down"></i>
@@ -183,7 +182,7 @@
         });
 
         // Load default content (e.g., Profile) on page load
-        loadContent(milk_details);
+        loadContent("$");
     </script>
 </body>
 </html>

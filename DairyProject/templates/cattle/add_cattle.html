@@ -1,178 +1,121 @@
+<style>/* Style for the form */
+  form {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    max-width: 600px;
+  }
+  
+  /* Style for the form labels */
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  /* Style for the checkboxes */
+  input[type="checkbox"] {
+    margin-right: 5px;
+  }
+  
+  /* Style for the hidden divs */
+  #vaccination_form, #insurance_form {
+    display: none;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+  }
+  
+  /* Style for the submit button */
+  input[type="submit"] {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  /* Style for the submit button on hover */
+  input[type="submit"]:hover {
+    background-color: #45a049;
+  }
+  </style>
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <title>Add Cattle</title>
-      <style>
-/* Apply general styles */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  margin: 0;
-  padding: 20px;
-}
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+  
+    <label for="id_cattle_license">Cattle license:</label><br>
+    {{ cattle_form.cattle_license }}<br><br>
+  
+    <label for="id_EarTagID">EarTagID:</label><br>
+    {{ cattle_form.EarTagID }}<br><br>
+  
+    <label for="id_CattleType">CattleType:</label><br>
+    {{ cattle_form.CattleType }}<br><br>
+  
+    <label for="id_BreedName">BreedName:</label><br>
+    {{ cattle_form.BreedName }}<br><br>
+  
+    <label for="id_weight">Weight:</label><br>
+    {{ cattle_form.weight }}<br><br>
+  
+    <label for="id_height">Height:</label><br>
+    {{ cattle_form.height }}<br><br>
+  
+    <label for="id_Age">Age:</label><br>
+    {{ cattle_form.Age }}<br><br>
+  
+    <label for="id_Colour">Colour:</label><br>
+    {{ cattle_form.Colour }}<br><br>
+  
+    <label for="id_feed">Feed:</label><br>
+    {{ cattle_form.feed }}<br><br>
+  
+    <label for="id_milk_obtained">Milk obtained/day:</label><br>
+    {{ cattle_form.milk_obtained }}<br><br>
+  
+    <label for="id_photo">Photo:</label><br>
+    {{ cattle_form.photo }}<br><br>
+  
+  <input type="checkbox" id="vaccination_checkbox" name="vaccination_checkbox">
+  <label for="vaccination_checkbox">Vaccination</label><br>
 
-h2 {
-  text-align: center;
-  color: #333;
-}
-
-.cattle-form {
-  max-width: 600px;
-  margin: 20px auto;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Style form fields */
-.form-field {
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-}
-
-.form-field label {
-  width: 150px;
-  padding-right: 10px;
-  font-weight: bold;
-}
-
-.form-field input,
-.form-field select {
-  width: calc(100% - 160px);
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.checkbox-field {
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-}
-
-.additional-section {
-  display: none;
-  margin-left: 25px;
-}
-
-.checkbox-field input[type="checkbox"] {
-  margin-right: 10px;
-}
-
-/* Style submit button */
-input[type="submit"] {
-  padding: 10px 20px;
-  background-color: #4CAF50;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-input[type="submit"]:hover {
-  background-color: #45a049;
-}
-
-      </style>
-</head>
-<body>
-
-<h2>Add Cattle</h2>
-<form method="post" enctype="multipart/form-data" class="cattle-form">
-  {% csrf_token %}
-  <!-- Cattle License -->
-  <div class="form-field">
-    <label for="id_cattle_license">Cattle License:</label>
-    {{ cattle_form.cattle_license }}
+  <div id="vaccination_form" style="display: none;">
+    {{ vaccination_form.as_p }}
   </div>
-  
-  <!-- Ear Tag ID -->
-  <div class="form-field">
-    <label for="id_EarTagID">Ear Tag ID:</label>
-    {{ cattle_form.EarTagID }}
-  </div>
-  
-  <!-- Cattle Type -->
-  <div class="form-field">
-  <label for="id_CattleType">Cattle Type:</label>
-  {{ cattle_form.CattleType }}
-</div>
-  
-  <!-- Breed Name -->
-  <div class="form-field">
-  <label for="id_BreedName">Breed Name:</label>
-  {{ cattle_form.BreedName }}
-</div>
-  
-  <!-- Weight -->
-  <div class="form-field">
-    <label for="id_weight">Weight:</label>
-  {{ cattle_form.weight }}
-</div>
-  
-  <!-- Height -->
-  <div class="form-field">
-    <label for="id_height">Height:</label>
-  {{ cattle_form.height }}
-</div>
-  
-  <!-- Age -->
-  <div class="form-field">
-    <label for="id_Age">Age:</label>
-  {{ cattle_form.Age }}
-</div>
-  
-  <!-- Colour -->
-  <div class="form-field">
-    <label for="id_Colour">Colour:</label>
-  {{ cattle_form.Colour }}
-</div>
-  
-  <!-- Feed -->
-  <div class="form-field">
-    <label for="id_feed">Feed:</label>
-  {{ cattle_form.feed }}
-</div>
-  
-  <!-- Milk Obtained -->
-  <div class="form-field">
-    <label for="id_milk_obtained">Milk Obtained:</label>
-  {{ cattle_form.milk_obtained }}
-</div>
-  <!-- Photo -->
-  <div class="form-field">
-    <label for="id_photo">Photo:</label>
-  {{ cattle_form.photo }}
-</div>
-<div><input type="checkbox" id="vaccination_checkbox" name="vaccination_checkbox">
-  <label for="vaccination_checkbox">Add Vaccination</label><br>
-  <div id="vaccination_section" style="display: none;">
-    {% include 'cattle/vaccination.html' %}
-  </div>
+
   <input type="checkbox" id="insurance_checkbox" name="insurance_checkbox">
-  <label for="insurance_checkbox">Add Insurance</label><br>
-  <div id="insurance_section" style="display: none;">
-    {% include 'cattle/insurance.html' %}
-  </div></div>
+  <label for="insurance_checkbox">Insurance</label><br>
 
-  <input type="submit" value="Add Cattle">
+  <div id="insurance_form" style="display: none;">
+    {{ insurance_form.as_p }}
+  </div>
+
+  <input type="submit" value="Save">
 </form>
 
 <script>
-  document.getElementById('vaccination_checkbox').addEventListener('change', function() {
-    document.getElementById('vaccination_section').style.display = this.checked ? 'block' : 'none';
-  });
-  
-  document.getElementById('insurance_checkbox').addEventListener('change', function() {
-    document.getElementById('insurance_section').style.display = this.checked ? 'block' : 'none';
-  });
-</script>
+document.getElementById('vaccination_checkbox').addEventListener('change', function() {
+  var vaccinationForm = document.getElementById('vaccination_form');
+  if (this.checked) {
+    vaccinationForm.style.display = 'block';
+  } else {
+    vaccinationForm.style.display = 'none';
+  }
+});
 
-</body>
-</html>
+document.getElementById('insurance_checkbox').addEventListener('change', function() {
+  var insuranceForm = document.getElementById('insurance_form');
+  if (this.checked) {
+    insuranceForm.style.display = 'block';
+  } else {
+    insuranceForm.style.display = 'none';
+  }
+});
+</script>

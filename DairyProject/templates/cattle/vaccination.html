@@ -1,16 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <!-- Head content as in the provided HTML -->
-</head>
-<body>
-
-<h2>Add Vaccination</h2>
-
-<form method="post">
-    {% csrf_token %}
+<form method="POST">
+  {% csrf_token %}
   {{ vaccination_form.as_p }}
+  <input type="submit" value="Save">
 </form>
-
-</body>
-</html>

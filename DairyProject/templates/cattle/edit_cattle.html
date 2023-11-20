@@ -1,41 +1,38 @@
-<!-- edit_cattle.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Cattle</title>
+</head>
+<body>
+    <h1>Edit Cattle</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ cattle_form.as_p }}
 
-<form method="post" enctype="multipart/form-data">
-  {% csrf_token %}
-  
-  <!-- Cattle Details -->
-  {{ cattle_form.as_p }}
+        <input type="checkbox" id="vaccination_checkbox" name="vaccination_checkbox">
+        <label for="vaccination_checkbox">Vaccination</label><br>
 
-  <!-- Checkbox for Vaccination -->
-  <input type="checkbox" id="vaccination_checkbox" name="vaccination_checkbox">
-  <label for="vaccination_checkbox">Require Vaccination?</label>
-  <div id="vaccination_form" style="display: none;">
-    <!-- Vaccination Form -->
-    {{ vaccination_form.as_p }}
-  </div>
+        <input type="checkbox" id="insurance_checkbox" name="insurance_checkbox">
+        <label for="insurance_checkbox">Insurance</label><br>
 
-  <!-- Checkbox for Insurance -->
-  <input type="checkbox" id="insurance_checkbox" name="insurance_checkbox">
-  <label for="insurance_checkbox">Require Insurance?</label>
-  <div id="insurance_form" style="display: none;">
-    <!-- Insurance Form -->
-    {{ insurance_form.as_p }}
-  </div>
+        <button type="submit">Update</button>
+    </form>
 
-  <!-- Submit Button -->
-  <button type="submit">Save Changes</button>
-</form>
+    {% if 'vaccination_checkbox' in request.POST %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ vaccination_form.as_p }}
+        <button type="submit">Save Vaccination</button>
+    </form>
+    {% endif %}
 
-<script>
-  // Show/hide vaccination form based on checkbox selection
-  document.getElementById('vaccination_checkbox').addEventListener('change', function () {
-    const vaccinationForm = document.getElementById('vaccination_form');
-    vaccinationForm.style.display = this.checked ? 'block' : 'none';
-  });
-
-  // Show/hide insurance form based on checkbox selection
-  document.getElementById('insurance_checkbox').addEventListener('change', function () {
-    const insuranceForm = document.getElementById('insurance_form');
-    insuranceForm.style.display = this.checked ? 'block' : 'none';
-  });
-</script>
+    {% if 'insurance_checkbox' in request.POST %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ insurance_form.as_p }}
+        <button type="submit">Save Insurance</button>
+    </form>
+    {% endif %}
+</body>
+</html>
