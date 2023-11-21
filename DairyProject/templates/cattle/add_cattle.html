@@ -47,14 +47,14 @@
   }
   </style>
 
-  <form method="POST" enctype="multipart/form-data">
+  <form method="POST" enctype="multipart/form-data" id="cattleForm">
     {% csrf_token %}
   
     <label for="id_cattle_license">Cattle license:</label><br>
-    {{ cattle_form.cattle_license }}<br><br>
+    <input type="text" id="id_cattle_license" name="cattle_license" pattern="C-\d{4}" title="Format: C-XXXX (4 digits after hyphen)" required><br><br>
   
     <label for="id_EarTagID">EarTagID:</label><br>
-    {{ cattle_form.EarTagID }}<br><br>
+    <input type="text" id="id_EarTagID" name="EarTagID" pattern="\d{5}" title="Should be 5 digits" required><br><br>
   
     <label for="id_CattleType">CattleType:</label><br>
     {{ cattle_form.CattleType }}<br><br>
@@ -82,25 +82,53 @@
   
     <label for="id_photo">Photo:</label><br>
     {{ cattle_form.photo }}<br><br>
-  
-  <input type="checkbox" id="vaccination_checkbox" name="vaccination_checkbox">
-  <label for="vaccination_checkbox">Vaccination</label><br>
-
-  <div id="vaccination_form" style="display: none;">
-    {{ vaccination_form.as_p }}
-  </div>
-
-  <input type="checkbox" id="insurance_checkbox" name="insurance_checkbox">
-  <label for="insurance_checkbox">Insurance</label><br>
-
-  <div id="insurance_form" style="display: none;">
-    {{ insurance_form.as_p }}
-  </div>
-
+    <input type="checkbox" id="vaccination_checkbox" name="vaccination_checkbox">
+    <label for="vaccination_checkbox">Vaccination</label><br>
+    <div id="vaccination_form" style="display: none;">
+      {{ vaccination_form.as_p }}
+    </div>
+    <input type="checkbox" id="insurance_checkbox" name="insurance_checkbox">
+    <label for="insurance_checkbox">Insurance</label><br>
+    <div id="insurance_form" style="display: none;">
+      {{ insurance_form.as_p }}
+    </div>
   <input type="submit" value="Save">
 </form>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+  function validateCattleLicense() {
+    var cattleLicenseInput = document.getElementById('id_cattle_license');
+    var cattleLicensePattern = /^C-\d{4}$/;
+  
+    if (!cattleLicensePattern.test(cattleLicenseInput.value)) {
+      alert('Cattle license should be in the format C-XXXX (4 digits after hyphen)');
+      cattleLicenseInput.value = ''; // Clear the field
+      return false;
+    }
+    return true;
+  }
+  
+  // Function to validate EarTagID format
+  function validateEarTagID() {
+    var earTagIDInput = document.getElementById('id_EarTagID');
+    var earTagIDPattern = /^\d{5}$/;
+  
+    if (!earTagIDPattern.test(earTagIDInput.value)) {
+      alert('EarTagID should be 5 digits');
+      earTagIDInput.value = ''; // Clear the field
+      return false;
+    }
+    return true;
+  }
+  
+  $('#cattleForm').submit(function(event) {
+    // Validate on form submission
+    if (!validateCattleLicense() || !validateEarTagID()) {
+      event.preventDefault(); // Prevent form submission if validation fails
+    }
+  });
+
+
 document.getElementById('vaccination_checkbox').addEventListener('change', function() {
   var vaccinationForm = document.getElementById('vaccination_form');
   if (this.checked) {
@@ -117,5 +145,27 @@ document.getElementById('insurance_checkbox').addEventListener('change', functio
   } else {
     insuranceForm.style.display = 'none';
   }
+});
+
+$(document).ready(function() {
+  // Fetch breeds based on selected cattle type
+  $('#id_CattleType').change(function() {
+    var cattleType = $(this).val();
+    $.ajax({
+      url: '/fetch_breeds/',  // URL to fetch breeds based on cattle type
+      type: 'GET',
+      data: {
+        'cattleType': cattleType
+      },
+      dataType: 'json',
+      success: function(data) {
+        var breedsSelect = $('#id_BreedName');
+        breedsSelect.empty();
+        $.each(data.breeds, function(key, value) {
+          breedsSelect.append($('<option></option>').attr('value', value).text(value));
+        });
+      }
+    });
+  });
 });
 </script>
