@@ -33,7 +33,7 @@ def loginn(request):
 
             if user.role == 'Admin':
                 messages.success(request, "Login successful!")
-                return redirect("a_dashboard")  # Redirect to the admin dashboard
+                return redirect("admindash")  # Redirect to the admin dashboard
             elif user.role == 'Customer':
                 messages.success(request, "Login successful!")
                 return redirect("c_dashboard")  # Redirect to the customer dashboard
@@ -151,6 +151,13 @@ def logout(request):
 def a_dashboard(request):
     if 'email' in request.session:
         response = render(request, 'dash/a_dashboard.html')
+        response['Cache-Control'] = 'no-store, must-revalidate'
+        return response
+    else:
+        return redirect('home')
+def admindash(request):
+    if 'email' in request.session:
+        response = render(request, 'dash/admindash.html')
         response['Cache-Control'] = 'no-store, must-revalidate'
         return response
     else:
