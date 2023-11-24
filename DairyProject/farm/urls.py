@@ -16,6 +16,7 @@ urlpatterns = [
     path('s_dashboard', views.s_dashboard, name='s_dashboard'),
     path('a_dashboard/', views.a_dashboard, name='a_dashboard'),
     path('add_cattle', views.add_cattle, name='add_cattle'),
+    path('fetch_breeds/', views.fetch_breeds, name='fetch_breeds'),
     path('view_cattle/', views.view_cattle, name='view_cattle'),
     path('edit_cattle/<int:cattle_id>/', views.edit_cattle, name='edit_cattle'),
     path('delete_cattle/<int:cattle_id>/', views.delete_cattle, name='delete_cattle'),    path('add_breed', views.add_breed, name='add_breed'),

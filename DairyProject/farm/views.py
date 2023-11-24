@@ -383,3 +383,8 @@ def delete_breed(request, breed_id):
         return redirect('view_breed')  # Redirect to view breed page
     
     return render(request, 'cattle/delete_breed.html', {'breed': breed})
+def fetch_breeds(request):
+    cattle_type = request.GET.get('cattleType')
+    # Query breeds based on cattle_type
+    breeds = Breed.objects.filter(cattle_type__name=cattle_type).values_list('name', flat=True)
+    return JsonResponse({'breeds': list(breeds)})

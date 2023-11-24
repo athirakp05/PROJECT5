@@ -100,7 +100,9 @@
   <input type="submit" value="Save">
 </form>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+
 document.getElementById('vaccination_checkbox').addEventListener('change', function() {
   var vaccinationForm = document.getElementById('vaccination_form');
   if (this.checked) {
@@ -117,5 +119,27 @@ document.getElementById('insurance_checkbox').addEventListener('change', functio
   } else {
     insuranceForm.style.display = 'none';
   }
+});
+
+$(document).ready(function() {
+  // Fetch breeds based on selected cattle type
+  $('#id_CattleType').change(function() {
+    var cattleType = $(this).val();
+    $.ajax({
+      url: '/fetch_breeds/',  // URL to fetch breeds based on cattle type
+      type: 'GET',
+      data: {
+        'cattleType': cattleType
+      },
+      dataType: 'json',
+      success: function(data) {
+        var breedsSelect = $('#id_BreedName');
+        breedsSelect.empty();
+        $.each(data.breeds, function(key, value) {
+          breedsSelect.append($('<option></option>').attr('value', value).text(value));
+        });
+      }
+    });
+  });
 });
 </script>
