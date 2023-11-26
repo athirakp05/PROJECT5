@@ -11,12 +11,13 @@ from .models import CustomUser, Customer, Seller,CattleType
 from django.http import JsonResponse
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.contrib.auth.decorators import user_passes_test,login_required
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Permission
-from .forms import CustomerRegistrationForm, SellerRegistrationForm,SellerEditProfileForm
+from .forms import SellerEditProfileForm
 from .models import Cattle,Login_Details,SellerEditProfile,Breed,Insurance,Vaccination
 from .forms import CattleForm, VaccinationForm, InsuranceForm,SellerProfileForm,BreedForm
 from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
+import matplotlib.pyplot as plt
 
 def index(request):
     return render(request, 'index.html')
@@ -147,14 +148,7 @@ def logout(request):
     auth_logout(request)
     return redirect('home')
 
-    
-def a_dashboard(request):
-    if 'email' in request.session:
-        response = render(request, 'dash/a_dashboard.html')
-        response['Cache-Control'] = 'no-store, must-revalidate'
-        return response
-    else:
-        return redirect('home')
+
 def admindash(request):
     if 'email' in request.session:
         response = render(request, 'dash/admindash.html')
@@ -207,11 +201,15 @@ def s_dashboard(request):
 
 # Other views
 def s_view(request):
-    sellers = Seller.objects.all()
-    print(sellers)  # Add this line for debugging
+    sellers_list = SellerEditProfile.objects.all()
+    paginator = Paginator(sellers_list, 10)  # Show 10 sellers per page
+
+    page_number = request.GET.get('page')
+    sellers = paginator.get_page(page_number)
+
     return render(request, 'view/s_view.html', {'sellers': sellers})
 
-# Add a view to display customers
+
 def c_view(request):
     customers = Customer.objects.all()
     print(customers)  # Add this line for debugging
@@ -223,8 +221,8 @@ def profile(request):
     context = {
         'admin': admin,
     }
-
     return render(request, 'profile.html', context)
+
 
 def select(request):
     return render(request, 'select.html')
@@ -395,3 +393,47 @@ def fetch_breeds(request):
     # Query breeds based on cattle_type
     breeds = Breed.objects.filter(cattle_type__name=cattle_type).values_list('name', flat=True)
     return JsonResponse({'breeds': list(breeds)})
+
+def usercount(request):
+    customer_count = Customer.objects.count()
+    seller_count = Seller.objects.count()
+
+    data = {
+        'customer_count': customer_count,
+        'seller_count': seller_count,
+    }
+
+    return render(request, 'view/usercount.html', data)
+
+
+def society_seller_count(request):
+    # Fetch seller information
+    sellers = SellerEditProfile.objects.all()
+
+    # Extract society names and count the number of sellers in each society
+    society_count = {}
+    for seller in sellers:
+        society = seller.society
+        if society in society_count:
+            society_count[society] += 1
+        else:
+            society_count[society] = 1
+
+    # Prepare data for plotting
+    societies = list(society_count.keys())
+    seller_counts = list(society_count.values())
+
+    # Create a bar chart
+    plt.figure(figsize=(8, 6))
+    plt.bar(societies, seller_counts, color='skyblue')
+    plt.xlabel('Society')
+    plt.ylabel('Number of Sellers')
+    plt.title('Number of Sellers in Each Society')
+    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
+    plt.tight_layout()
+
+    # Save the plot to a file
+    plot_path = 'path/to/save/plot.png'
+    plt.savefig(plot_path)
+
+    return render(request, 'other/society_seller_count.html', {'plot_path': plot_path})

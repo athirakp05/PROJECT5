@@ -2,65 +2,98 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>View Cattle</title>
+    <title> Cattle</title>
 </head>
-<style>/* CSS for View Cattle Table */
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
 
-h1 {
-    text-align: center;
-}
+    h1 {
+        text-align: center;
+        color: #333;
+        margin-top: 20px;
+    }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
 
-table th, table td {
-    border: 1px solid #dddddd;
-    padding: 8px;
-    text-align: left;
-}
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
 
-table th {
-    background-color: #f2f2f2;
-}
+    th {
+        background-color: #f2f2f2;
+        color: #333;
+    }
 
-table tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
+    tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
 
-table tr:hover {
-    background-color: #e9e9e9;
-}
+    img {
+        max-width: 100px;
+        height: auto;
+    }
 
-/* CSS for Pagination Links */
-div {
-    margin-top: 20px;
-    text-align: center;
-}
+    td a {
+        color: #007bff;
+        text-decoration: none;
+        margin-right: 10px;
+    }
 
-div a {
-    display: inline-block;
-    padding: 5px 10px;
-    margin: 0 2px;
-    text-decoration: none;
-    color: #333;
-    border: 1px solid #ccc;
-    background-color: #f2f2f2;
-    border-radius: 3px;
-}
+    td a:hover {
+        text-decoration: underline;
+    }
 
-div a:hover {
-    background-color: #e2e2e2;
-}
+    .pagination {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .pagination a {
+        color: #007bff;
+        text-decoration: none;
+        padding: 8px 16px;
+        transition: background-color 0.3s;
+    }
+
+    .pagination a:hover {
+        background-color: #f2f2f2;
+    }
+
+    .pagination span {
+        padding: 8px 16px;
+        background-color: #f2f2f2;
+    }
+
+    .pagination a.disabled {
+        pointer-events: none;
+        color: #ccc;
+    }
+
+    .add-cattle-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #007bff;
+    }
+
+    .add-cattle-link:hover {
+        text-decoration: underline;
+    }
 </style>
 <body>
-    <h1>View Cattle</h1>
+    <h1>Cattle</h1>
     <table border="1">
         <thead>
             <tr>

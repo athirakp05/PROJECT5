@@ -64,19 +64,21 @@
         {% else %}
             <p>No Profile Photo Available</p>
         {% endif %}
-            <p>First Name: {{ seller_profile.first_name }}</p>
-            <p>Last Name: {{ seller_profile.last_name }}</p>
-            <p>Email: {{ seller_profile.email }}</p>
-            <p>Mobile: {{ seller_profile.mobile }}</p>
-            <p>House Name: {{ seller_profile.house_name }}</p>
-            <p>City: {{ seller_profile.city }}</p>
-            <p>Pin Code: {{ seller_profile.pin_code }}</p>
+            <p>First Name: {{ seller_profile.first_name }} {{ seller_profile.last_name }}</p>
+            
             <p>Occupation: {{ seller_profile.occupation }}</p>
             <p>Gender: {{ seller_profile.gender }}</p>
             <p>Date of Birth: {{ seller_profile.dob }}</p>
             <p>Ration Card No: {{ seller_profile.rationcard_no }}</p>
             <p>Account No: {{ seller_profile.acc_no }}</p>
-            <p>Society: {{ seller_profile.society }}</p>
+            <p>Society: {{ seller_profile.society }}</p><p><br>
+            <div><h5>Address</h5>
+                <p>House Name: {{ seller_profile.house_name }}</p>
+                <p>City: {{ seller_profile.city }}</p>
+                <p>Pin Code: {{ seller_profile.pin_code }}</p></div><br>
+                <div><h5>Contact</h5><p>Email: {{ seller_profile.email }}</p>
+                    <p>Mobile: {{ seller_profile.mobile }}</p></div>
+                
  
             <a href="{% url 'complete_s_profile' %}" class="edit-profile-link">Edit Profile</a>
         </div>

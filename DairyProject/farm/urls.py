@@ -14,7 +14,6 @@ urlpatterns = [
     path('about',views.logout,name='about'),
     path('c_dashboard', views.c_dashboard, name='c_dashboard'),
     path('s_dashboard', views.s_dashboard, name='s_dashboard'),
-    path('a_dashboard/', views.a_dashboard, name='a_dashboard'),
     path('admindash/', views.admindash, name='admindash'),
     path('add_cattle', views.add_cattle, name='add_cattle'),
     path('fetch_breeds/', views.fetch_breeds, name='fetch_breeds'),
@@ -27,7 +26,7 @@ urlpatterns = [
     path('password_reset/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset/done/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
-    path('s_view', views.s_view, name='s_view'),
+    path('s_view/', views.s_view, name='s_view'),
     path('c_view', views.c_view, name='c_view'),
     path('select', views.select, name='select'),
     path('profile', views.profile, name='profile'),
@@ -39,4 +38,7 @@ urlpatterns = [
     path('complete_s_profile/', complete_s_profile, name='complete_s_profile'),
     path('vaccination/<int:cattle_id>/', views.vac_details, name='vac_details'),
     path('insurance/<int:cattle_id>/', views.ins_details, name='ins_details'),
+    path('usercount/', views.usercount, name='usercount'),
+    path('society-seller-count/', views.society_seller_count, name='society_seller_count'),
+
 ]

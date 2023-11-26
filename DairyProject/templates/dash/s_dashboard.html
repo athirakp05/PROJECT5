@@ -1,184 +1,205 @@
+{% extends "layout/main.html" %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Your head content -->
 </head>
-<style>/* Reset some default browser styles */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    
-    /* Global styles */
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f7f7f7;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh; /* Ensure the page covers the full viewport height */
-    }
-    
-    /* Navigation bar styles */
-    .navbar {
-        background-color: rgb(87, 202, 251);
-        color: #fff;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 20px;
-    }
-    
-    .logo {
-        font-size: 24px;
-    }
-    
-    /* Sidebar styles */
-    .sidebar {
-        width: 250px;
-        background-color: #2c3e50;
-        color: #ecf0f1;
-        padding: 20px;
-        position: fixed;
-        height: 100%;
-        overflow: auto;
-    }
-    
-    .sidebar a {
-        padding: 10px 15px;
-        text-decoration: none;
-        font-size: 16px;
-        color: #ecf0f1;
-        display: block;
-        transition: background-color 0.3s;
-    }
-    
-    .sidebar a i {
-        margin-right: 10px;
-    }
-    
-    .sidebar a:hover {
-        background-color: #34495e;
-    }
-    
-    /* Content styles */
-    .content {
-        margin-left: 250px;
-        padding: 20px;
-    }
-    
-    /* Main header styles */
-    header {
-        margin-bottom: 20px;
-    }
-    
-    h1 {
-        font-size: 24px;
-    }
-    
-    /* Main content styles */
-    main {
-        line-height: 1.6;
-    }
-    /* User info styles */
-.user-info {
-    display: flex;
-    align-items: left;
+{% block body %}
+
+<link rel="stylesheet" href="{% static 'assets/css/vertical-layout-light/style.css' %}">
+<link rel="stylesheet" href="{% static 'assets/vendors/feather/feather.css' %}">
+<link rel="stylesheet" href="{% static 'assets/vendors/ti-icons/css/themify-icons.css' %}">
+<link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<style>
+    /* General styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+/* Navbar styling */
+.navbar {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
     padding: 10px 20px;
-}
-
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    overflow: hidden;
-    border-radius: 50%;
-    margin-right: 10px;
-}
-
-.user-avatar img {
+    position: fixed;
     width: 100%;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.navbar-brand img {
+    max-width: 100px;
     height: auto;
 }
 
-.user-name {
-    font-weight: bold;
-    font-size: 16px;
+.navbar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-/* Logout link styles */
-.logout-link {
+.nav-link {
     text-decoration: none;
+    color: #555;
+    margin: 0 10px;
+}
+
+.nav-link:hover {
+    color: #007bff;
+}
+
+/* Sidebar styling */
+.sidebar {
+    position: fixed;
+    top: 60px; /* Adjust this value based on your navbar height */
+    left: 0;
+    bottom: 0;
+    width: 250px;
+    background-color:rgb(44, 151, 193);
     color: #fff;
+    padding-top: 50px;
+}
+
+.user-info {
+    padding: 20px;
+    text-align: center;
+}
+
+.user-avatar img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-name {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.sidebar a {
+    display: block;
+    color: #fff;
+    text-decoration: none;
     padding: 10px 20px;
 }
 
-.logout-link i {
-    margin-right: 10px;
+.sidebar a:hover {
+    background-color:rgb(44, 151, 193);
 }
-    /* You can add more specific styles based on your project design as needed. */
-    </style>
+
+/* Content area */
+.content {
+    margin-left: 250px;
+    padding: 20px;
+    padding-top: 80px; /* Adjust this value based on your navbar height */
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100px;
+    }
+    .content {
+        margin-left: 100px;
+    }
+}
+
+</style>
+
 <body>
-    <!-- Navigation bar -->
-    <div class="navbar">
-        <div class="logo">Dashboard</div>
-    
-            <a href="{% url 'logout' %}" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
-        </div>
+<!-- Navbar section with profile photo and dropdown -->
+<nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+    <!-- ... (other navbar content) -->
+    <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <ul class="navbar-nav navbar-nav-right">
+            <li class="nav-item nav-profile dropdown">
+                <a class="nav-link dropdown-toggle" href="{% url 'seller_profile' %}" data-toggle="dropdown" id="profileDropdown">
+                    {% if seller_profile.profile_photo %}
+                    <img src="{{ seller_profile.profile_photo.url }}" alt="Profile Photo" height="100" width="100">  {{ seller_profile.first_name }} {{ seller_profile.last_name }}
+               {% else %}
+                        <i class="ti-user"></i> <!-- Display an icon if no profile photo available -->
+                    {% endif %}
+                </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                    <a class="dropdown-item" href="#">
+                        <i class="ti-settings text-primary"></i>
+                        Settings
+                    </a>
+                    <a class="dropdown-item" href="{% url 'logout' %}">
+                        <i class="ti-power-off text-primary"></i>
+                        Logout
+                    </a>
+                </div>
+            </li>
+        </ul>
     </div>
+</nav>
+<!-- Rest of your HTML content -->
 
-    <!-- Sidebar -->
-    <div>{{ user.first_name }}</div>
+<!-- Sidebar -->
+<div>{{ seller_profile.first_name }}</div>
 <div class="sidebar">
-    <div class="user-info">
-        <div class="user-avatar">
-            <img src="{% static '/img/team-2.jpg' %}" alt="Profile Picture">
-        </div>
-        <div class="user-name">
-            {{ user.first_name }}
-        </div>
-    </div>
-        <a href="{% url 'complete_s_profile' %}" data-url="{% url 'complete_s_profile' %}"><i class="fas fa-user-edit"></i> Complete Profile</a>
-        <a href="{% url 'seller_profile' %}" data-url="{% url 'seller_profile' %}"><i class="fas fa-user-edit"></i> Profile</a>
-        <a href="{% url 'milk_view' %}" data-url="{% url 'milk_view' %}"><i class="fas fa-key"></i> Todays Collection</a>
-        <a href="{% url 'prod_view' %}" data-url="{% url 'prod_view' %}"><i class="fas fa-chart-bar"></i> Product</a>
-        <a href="{% url 'view_cattle' %}" data-url="{% url 'view_cattle' %}"><i class="fas fa-chart-bar"></i>Cattle</a>
-    </div>
-    <!-- Main Content -->
-    <div class="content">
-        <header>
-            <h1> </h1>
-        </header>
-        <main>
-            <div id="dashboard-content"></div>
-        </main>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const sidebarLinks = document.querySelectorAll('.sidebar a');
-            const dashboardContent = document.getElementById('dashboard-content');
+    <div class="user-name"></div>
+    <a href="{% url 'complete_s_profile' %}" data-url="{% url 'complete_s_profile' %}"><i class="fas fa-user-edit"></i> Edit Details</a>
+    <a href="{% url 'seller_profile' %}" data-url="{% url 'seller_profile' %}"><i class="fas fa-user-edit"></i> Profile</a>
+    <a href="{% url 'milk_view' %}" data-url="{% url 'milk_view' %}"><i class="fas fa-key"></i> Todays Collection</a>
+    <a href="{% url 'prod_view' %}" data-url="{% url 'prod_view' %}"><i class="fas fa-chart-bar"></i> Product</a>
+    <a href="{% url 'view_cattle' %}" data-url="{% url 'view_cattle' %}"><i class="fas fa-chart-bar"></i>Cattle</a>
+</div>
 
-            sidebarLinks.forEach(function(link) {
-                link.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    const url = link.getAttribute('data-url');
-                    if (url) {
-                        loadContent(url);
-                    }
-                });
+<!-- Main Content -->
+<div class="content">
+    <header>
+        <h1> </h1>
+    </header>
+    <main>
+        <div id="dashboard-content"></div>
+    </main>
+</div>
+
+<!-- Bootstrap JS and jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+        const dashboardContent = document.getElementById('dashboard-content');
+
+        sidebarLinks.forEach(function(link) {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const url = link.getAttribute('data-url');
+                if (url) {
+                    loadContent(url);
+                }
             });
-           loadContent("{% url 's_profile' %}");
-            function loadContent(url) {
-                var xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        dashboardContent.innerHTML = xhr.responseText;
-                    }
-                };
-                xhr.open('GET', url, true);
-                xhr.send();
-            }
         });
-    </script>
+        loadContent("{% url 'seller_profile' %}");
+        function loadContent(url) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    dashboardContent.innerHTML = xhr.responseText;
+                }
+            };
+            xhr.open('GET', url, true);
+            xhr.send();
+        }
+    });
+</script>
+
 </body>
+{% endblock %}
 </html>
