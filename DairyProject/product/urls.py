@@ -11,5 +11,7 @@ urlpatterns = [
     path('milk_view/', views.milk_list, name='milk_list'),  # List all milk collections
     path('milk_view/', views.milk_view, name='milk_view'),  # View individual milk collection
     path('p_detail/', p_detail, name='p_detail'),
+    path('add-to-wishlist/', views.add_to_wishlist, name='add_to_wishlist'),
+    path('wishlist/', views.wishlist, name='wishlist'),  # Example URL mapping for wishlist view
 
 ]

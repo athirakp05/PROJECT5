@@ -8,7 +8,8 @@ from django.shortcuts import render, redirect, get_object_or_404  # Import get_o
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib.auth import get_user_model
-from django.http import Http404
+from django.http import Http404, HttpResponseBadRequest, JsonResponse
+from django.views.decorators.http import require_POST
 
 def product_add(request):
     if request.method == 'POST':
@@ -94,3 +95,33 @@ def milk_view(request, pk):
 #         'products' : products,
 #         }
 #         return render(request,'category/product_detail.html',context)
+
+
+@login_required
+def wishlist(request):
+    wishlist=Wishlists.objects.all()
+    context={
+    "wishlist":wishlist
+    }
+    return render(request, "category/wishlist.html",context)
+
+
+from django.views.decorators.csrf import csrf_exempt
+
+@login_required
+def add_to_wishlist(request):
+    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        product_id = request.POST.get('product_id')
+        product = get_object_or_404(Product, pk=product_id)
+
+        wishlist_item = Wishlists.objects.filter(user=request.user, product=product).first()
+
+        if wishlist_item:
+            return JsonResponse({'message': 'Product already exists in your wishlist.'}, status=400)
+
+        new_wishlist_item = Wishlists(user=request.user, product=product)
+        new_wishlist_item.save()
+
+        return JsonResponse({'message': 'Product added to your wishlist successfully.'})
+
+    return JsonResponse({'message': 'Invalid request.'}, status=400)
