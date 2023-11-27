@@ -224,4 +224,13 @@ class Vaccination(models.Model):
         return self.vaccine_name
 
 
+class ContactMessage(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    subject = models.CharField(max_length=200)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)  # New field to mark message read or unread
 
+    def __str__(self):
+        return self.subject

@@ -14,9 +14,9 @@
             <a href="{%  url 'home' %}"class="nav-item nav-link active">Home</a>
             <a href="{% url 'about' %}" class="nav-item nav-link">About</a>
             <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Todays Rate</a>
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Info</a>
                 <div class="dropdown-menu bg-light rounded-0 m-0">
-                    <a class="dropdown-item">Milk ----50/-</a>
+                    <a href="{% url 'team' %}" class="dropdown-item">Our top sellers</a>
                     <a  class="dropdown-item">Curd----70/-</a>
                     <a  class="dropdown-item">Ghee----400/-</a>
                     <a  class="dropdown-item">Butter----300/-</a>

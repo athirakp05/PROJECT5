@@ -8,24 +8,21 @@
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
     <style>
-        /* Custom Styles for Admin Dashboard */
-
-        /* Sidebar Styles */
+        /* Styles for the sidebar */
         .sidebar {
             position: fixed;
             top: 0;
             left: 0;
             height: 100%;
             width: 250px;
-            background-color: white;
-            color: #000; /* Changed text color to black for better readability */
+            background-color: #333; /* Change background color as needed */
+            color: #fff; /* Change text color as needed */
             padding-top: 60px;
         }
 
         .nav {
             list-style: none;
             padding-left: 0;
-            margin-top: 50px; /* Adjust this value to align the menu downwards */
         }
 
         .nav-item {
@@ -35,143 +32,73 @@
         .nav-link {
             display: block;
             padding: 10px;
-            color: #000; /* Changed text color to black for better readability */
+            color: #fff;
             text-decoration: none;
         }
 
         .nav-link:hover {
-          background-color: #007bff;
-        }
-
-        .menu-title {
-            flex-grow: 1;
-        }
-        /* Active menu item style */
-        .nav-item.active .nav-link {
-            background-color: #007bff;
-            color: #fff; /* Changed text color for active item */
-        }
-
-        /* Dropdown styles */
-        .dropdown-content {
-            display: none;
-            padding-left: 20px; /* Adjusted indentation for sub-menu */
-        }
-
- 
-        .dropdown-content a {
-            display: block;
-            padding: 10px 15px;
-            text-decoration: none;
-            color: #333;
-            transition: all 0.3s ease;
-        }
-        .dropdown-content a:hover {
-          background-color: #007bff;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        /* Logout link style */
-        .logout-link {
-            color: #000;
-            text-decoration: none;
-            margin-top: 20px;
-            display: block;
-        }
-
-        .logout-link:hover {
-          background-color: #007bff;
-        }
-
-        /* Icon styles */
-        .icon {
-            margin-right: 5px;
+            background-color: #555; /* Change hover background color as needed */
         }
     </style>
 </head>
 <body>
-  <div class="container-fluid">
-      <div class="row">
-          <!-- Sidebar -->
-          <div class="col-12 col-md-3 col-lg-2 sidebar">
-              <nav class="sidebar sidebar-offcanvas active" id="sidebar">
-                  <ul class="nav">
-                      <li class="nav-item active">
-                          <a class="nav-link" href="{% url 'admindash' %}" data-url="{% url 'admindash' %}">
-                              <i class="icon-grid menu-icon"></i>
-                              <span class="menu-title">Dashboard</span>
-                          </a>
-                      </li>
-                      <li class="nav-item">
-                          <div class="dropdown">
-                              <a class="nav-link">
-                                  <i class="icon-user menu-icon"></i>
-                                  <span class="menu-title">User</span>
-                              </a>
-                              <div class="dropdown-content">
-                                  <a href="{% url 's_view' %}" data-url="{% url 's_view' %}">Seller</a>
+    <div class="container-fluid">
+            <!-- Sidebar -->
+            <div class=" sidebar">
+                <nav class="sidebar sidebar-offcanvas active" id="sidebar">
+                    <ul class="nav">
+                        <li class="nav-item"><a class="nav-link" href="{% url 'admindash' %}" data-url="{% url 'admindash' %}">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'view_breed' %}" data-url="{% url 'view_breed' %}">Breed</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'message' %}" data-url="{% url 'message' %}">Message</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}" data-url="{% url 'logout' %}">Logout</a></li>
+                        <li><div class="dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Users</a>
+                                <a href="{% url 's_view' %}" data-url="{% url 's_view' %}">Seller</a>
                                   <a href="{% url 'c_view' %}" data-url="{% url 'c_view' %}">Customer</a>
-                              </div>
-                          </div>
-                      </li>
-                      <li class="nav-item">
-                          <a class="logout-link" href="{% url 'logout' %}" data-url="{% url 'logout' %}">
-                              <i class="icon-logout menu-icon"></i>
-                              <span class="menu-title">Logout</span>
-                          </a>
-                      </li>
-                      <li>
-                        <a class="logout-link" href="{% url 'view_breed' %}" data-url="{% url 'view_breed' %}">
-                            <i class="icon-logout menu-icon"></i>
-                            <span class="menu-title">Breed</span>
-                        </a>
-                    </li>
-                    <li></li>
-                    <li><a href="{% url 'milk_details' %}"><i class=" "></i>Milk Collection</a></li>
-                    <li><a href="{% url 'prod_view' %}"><i class=" "></i> View Product</a></li>
+                            </div>
+                        </div></li>
+                        <!-- Add more sidebar items as needed -->
+                    </ul>
+                </nav>
+            </div>
+            
+            <!-- Main Content Area -->
+            <div class="main-content">
+                <div id="dashboard-content"></div>
+            </div>
+        </div>
+    </div>
+  
+    <script>
+        // JavaScript code for loading content dynamically
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebarLinks = document.querySelectorAll('.sidebar a');
+            const dashboardContent = document.getElementById('dashboard-content');
+            
+            sidebarLinks.forEach(function(link) {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const url = link.getAttribute('data-url');
+                    if (url) {
+                        loadContent(url);
+                    }
+                });
+            });
 
-                  </ul>
-              </nav>
-          </div>
-          <!-- Main Content Area -->
-          <div class="col-12 col-md-9 col-lg-10 main-content">
-              <div id="dashboard-content"></div>
-          </div>
-      </div>
-  </div>
-  
-  <script>
-  document.addEventListener('DOMContentLoaded', function () {
-      const sidebarLinks = document.querySelectorAll('.sidebar a');
-      const dashboardContent = document.getElementById('dashboard-content');
-  
-      sidebarLinks.forEach(function(link) {
-          link.addEventListener('click', function(event) {
-              event.preventDefault();
-              const url = link.getAttribute('data-url');
-              if (url) {
-                  loadContent(url);
-              }
-          });
-      });
-      loadContent("{% url 'usercount' %}");
+            loadContent("{% url 'usercount' %}");
 
-      function loadContent(url) {
-          var xhr = new XMLHttpRequest();
-          xhr.onreadystatechange = function() {
-              if (xhr.readyState === 4 && xhr.status === 200) {
-                  dashboardContent.innerHTML = xhr.responseText;
-              }
-          };
-          xhr.open('GET', url, true);
-          xhr.send();
-      }
-  });
-  </script>
-  
-  </body>
-  </html>
-  {% endblock %}
+            function loadContent(url) {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        dashboardContent.innerHTML = xhr.responseText;
+                    }
+                };
+                xhr.open('GET', url, true);
+                xhr.send();
+            }
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

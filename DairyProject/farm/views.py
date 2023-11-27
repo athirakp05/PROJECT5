@@ -4,7 +4,6 @@ from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.utils import IntegrityError
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect,HttpResponse
 from .models import CustomUser, Customer, Seller,CattleType
@@ -14,8 +13,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Permission
 from .forms import SellerEditProfileForm
-from .models import Cattle,Login_Details,SellerEditProfile,Breed,Insurance,Vaccination
-from .forms import CattleForm, VaccinationForm, InsuranceForm,SellerProfileForm,BreedForm
+from .models import Cattle,Login_Details,SellerEditProfile,Breed,Insurance,Vaccination,ContactMessage
+from .forms import CattleForm, VaccinationForm, InsuranceForm,SellerProfileForm,BreedForm,ContactForm
 from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
 import matplotlib.pyplot as plt
 
@@ -405,6 +404,9 @@ def usercount(request):
 
     return render(request, 'view/usercount.html', data)
 
+def team(request):
+    sellers = SellerEditProfile.objects.all()
+    return render(request, 'other/team.html', {'sellers': sellers})
 
 def society_seller_count(request):
     # Fetch seller information
@@ -437,3 +439,42 @@ def society_seller_count(request):
     plt.savefig(plot_path)
 
     return render(request, 'other/society_seller_count.html', {'plot_path': plot_path})
+
+def contact(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        else:
+            # Print form errors for debugging
+            print(form.errors)
+            return JsonResponse({'success': False, 'errors': form.errors})
+    else:
+        form = ContactForm()
+    return render(request, 'contact.html', {'form': form})
+
+
+# from django.contrib.admin.views.decorators import staff_member_required
+def message(request):
+    messages = ContactMessage.objects.all().order_by('-created_at')
+    return render(request, 'admin/message.html', {'messages': messages})
+
+def get_new_messages(request):
+    # Fetch new messages (logic to determine new messages goes here)
+    new_messages = ContactMessage.objects.filter(is_read=False)  # Adjust this filter based on your logic
+
+    # Serialize new messages data
+    serialized_messages = [
+        {
+            'name': message.name,
+            'email': message.email,
+            'subject': message.subject,
+            'message': message.message,
+            'created_at': message.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        for message in new_messages
+    ]
+
+    # Return new messages as JSON response
+    return JsonResponse({'messages': serialized_messages})

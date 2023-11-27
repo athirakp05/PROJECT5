@@ -40,5 +40,8 @@ urlpatterns = [
     path('insurance/<int:cattle_id>/', views.ins_details, name='ins_details'),
     path('usercount/', views.usercount, name='usercount'),
     path('society-seller-count/', views.society_seller_count, name='society_seller_count'),
+    path('team-list/', views.team, name='team'),
+    path('message/', views.message, name='message'),
+    path('get_new_messages/', views.get_new_messages, name='get_new_messages'),
 
 ]

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Messages</title>
+    <!-- Other styles and scripts -->
+    <style>
+        /* CSS for notifications */
+        .notification {
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Display Contact Messages -->
+    <div id="container">
+        <h1>Contact Messages</h1>
+        <ul>
+            {% for message in contact_messages %}
+                <li>
+                    <strong>Name:</strong> {{ message.name }} <br>
+                    <strong>Email:</strong> {{ message.email }} <br>
+                    <strong>Subject:</strong> {{ message.subject }} <br>
+                    <strong>Message:</strong> {{ message.message }} <br>
+                    <strong>Sent at:</strong> {{ message.created_at }} <br>
+                    <!-- Other message details -->
+                </li>
+            {% empty %}
+                <li>No new messages</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+        // JavaScript code for displaying incoming messages as notifications
+        document.addEventListener('DOMContentLoaded', function () {
+            function checkForNewMessages() {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        var messages = response.messages;
+                        if (messages.length > 0) {
+                            messages.forEach(function(message) {
+                                var notification = document.createElement('div');
+                                notification.className = 'notification';
+                                notification.innerHTML = '<strong>New Message:</strong> ' + message.name + ' - ' + message.subject;
+                                document.getElementById('notifications-container').appendChild(notification);
+                            });
+                        }
+                    }
+                };
+                xhr.open('GET', '/get_new_messages/', true);  // Replace with your endpoint URL
+                xhr.send();
+            }
+
+            setInterval(checkForNewMessages, 60000); // Periodically check for new messages (every 60 seconds in this example)
+        });
+    </script>
+</body>
+</html>
