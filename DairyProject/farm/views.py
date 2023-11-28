@@ -16,6 +16,8 @@ from .forms import SellerEditProfileForm
 from .models import Cattle,Login_Details,SellerEditProfile,Breed,Insurance,Vaccination,ContactMessage
 from .forms import CattleForm, VaccinationForm, InsuranceForm,SellerProfileForm,BreedForm,ContactForm
 from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
+import matplotlib
+matplotlib.use('Agg')  # Set the backend to 'Agg'
 import matplotlib.pyplot as plt
 
 def index(request):

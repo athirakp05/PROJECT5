@@ -19,31 +19,26 @@
             color: #fff; /* Change text color as needed */
             padding-top: 60px;
         }
-
         .nav {
             list-style: none;
             padding-left: 0;
         }
-
         .nav-item {
             margin-bottom: 5px;
         }
-
         .nav-link {
             display: block;
             padding: 10px;
             color: #fff;
             text-decoration: none;
         }
-
         .nav-link:hover {
-            background-color: #555; /* Change hover background color as needed */
+            background-color: #555; 
         }
     </style>
 </head>
 <body>
     <div class="container-fluid">
-            <!-- Sidebar -->
             <div class=" sidebar">
                 <nav class="sidebar sidebar-offcanvas active" id="sidebar">
                     <ul class="nav">
@@ -55,20 +50,18 @@
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Users</a>
                                 <a href="{% url 's_view' %}" data-url="{% url 's_view' %}">Seller</a>
                                   <a href="{% url 'c_view' %}" data-url="{% url 'c_view' %}">Customer</a>
-                            </div>
+
+                                  <a href="{% url 'society_seller_count' %}" data-url="{% url 'society_seller_count' %}">graph</a>
+                                </div>
                         </div></li>
-                        <!-- Add more sidebar items as needed -->
                     </ul>
                 </nav>
             </div>
-            
-            <!-- Main Content Area -->
-            <div class="main-content">
+                <div class="main-content">
                 <div id="dashboard-content"></div>
             </div>
         </div>
     </div>
-  
     <script>
         // JavaScript code for loading content dynamically
         document.addEventListener('DOMContentLoaded', function () {
