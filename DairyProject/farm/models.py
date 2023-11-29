@@ -94,6 +94,9 @@ class Seller(models.Model):
     last_name = models.CharField(max_length=50)  # Added for Seller's last name
     mobile = models.CharField(max_length=15,blank=True, null=True)
     farmer_license = models.CharField(max_length=20, unique=True)  # Add 'unique=True'
+    is_approved = models.BooleanField(default=False)  # Field to track approval status
+    is_active = models.BooleanField(default=True)  # Field to track account status
+
     def __str__(self):
         return self.first_name
 class SellerEditProfile(models.Model):
@@ -124,6 +127,8 @@ class Customer(models.Model):
     first_name = models.CharField(max_length=50)  # Added for Customer's first name
     last_name = models.CharField(max_length=50)  # Added for Customer's last name
     mobile = models.CharField(max_length=20, blank=True, null=True)
+    is_active = models.BooleanField(default=True)  # Field to track account status
+
     def __str__(self):
         return self.first_name
 

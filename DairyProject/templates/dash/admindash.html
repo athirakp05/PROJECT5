@@ -50,10 +50,11 @@
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Users</a>
                                 <a href="{% url 's_view' %}" data-url="{% url 's_view' %}">Seller</a>
                                   <a href="{% url 'c_view' %}" data-url="{% url 'c_view' %}">Customer</a>
-
-                                  <a href="{% url 'society_seller_count' %}" data-url="{% url 'society_seller_count' %}">graph</a>
                                 </div>
                         </div></li>
+                        <li><a href="{% url 'society_seller_count' %}" data-url="{% url 'society_seller_count' %}">graph</a></li>
+                        <li><a href="{% url 'pending_sellers' %}" data-url="{% url 'pending_sellers' %}">approve</a></li>
+
                     </ul>
                 </nav>
             </div>

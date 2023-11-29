@@ -37,8 +37,13 @@ def loginn(request):
                 messages.success(request, "Login successful!")
                 return redirect("admindash")  # Redirect to the admin dashboard
             elif user.role == 'Customer':
-                messages.success(request, "Login successful!")
-                return redirect("c_dashboard")  # Redirect to the customer dashboard
+                if user.seller.is_approved:
+                    messages.success(request, "Login successful!")
+                    return redirect("c_dashboard")  # Redirect to the customer dashboard
+                else:
+                # Seller registration is pending approval
+                    messages.info(request, "Your registration is pending approval. Please wait for admin approval.")
+                    return redirect("login")  # Redirect back to the login page
             elif user.role == 'Seller':
                 messages.success(request, "Login successful!")
                 return redirect("s_dashboard")  # Redirect to the seller dashboard
@@ -49,6 +54,52 @@ def loginn(request):
     # Handle login failure
     messages.error(request, "Login failed. Please check your credentials.")
     return render(request, 'login.html')
+
+@login_required
+def pending_sellers(request):
+    pending_sellers = Seller.objects.filter(is_approved=False)
+    return render(request, 'admin/pending_sellers.html', {'pending_sellers': pending_sellers})
+
+@login_required
+def approve_seller(request, seller_id):
+    seller = get_object_or_404(Seller, pk=seller_id)
+    seller.is_approved = True
+    seller.save()
+    return redirect('pending_sellers')
+
+@login_required
+def reject_seller(request, seller_id):
+    seller = get_object_or_404(Seller, pk=seller_id)
+    seller.delete()  # Optionally, you can implement a soft delete here
+    return redirect('pending_sellers')
+
+@login_required
+def deactivate_s(request, seller_id):
+    seller = get_object_or_404(Seller, pk=seller_id)
+    seller.is_active = False
+    seller.save()
+    return render(activate_s)
+
+@login_required
+def activate_s(request, seller_id):
+    seller = get_object_or_404(Seller, pk=seller_id)
+    seller.is_active = True
+    seller.save()
+    return render(activate_s)
+
+@login_required
+def deactivate_c(request, customer_id):
+    seller = get_object_or_404(Seller, pk=customer_id)
+    seller.is_active = False
+    seller.save()
+    return render(activate_c)
+
+@login_required
+def activate_c(request, customer_id):
+    customer = get_object_or_404(Customer, pk=customer_id)
+    customer.is_active = True
+    customer.save()
+    return render(activate_c)
 
 # Customer registration view
 def c_register(request):
@@ -107,7 +158,7 @@ def s_register(request):
             # Save login details to the Login model
             login = Login_Details(email=email, password=password, role='Seller')
             login.save()
-            messages.success(request, "Registered successfully")
+            messages.success(request, "Registered pending approval")
             return redirect("login")  # Redirect to the registration page
     
     return render(request, 's_register.html')
@@ -411,10 +462,7 @@ def team(request):
     return render(request, 'other/team.html', {'sellers': sellers})
 
 def society_seller_count(request):
-    # Fetch seller information
     sellers = SellerEditProfile.objects.all()
-
-    # Extract society names and count the number of sellers in each society
     society_count = {}
     for seller in sellers:
         society = seller.society
@@ -426,22 +474,27 @@ def society_seller_count(request):
     # Prepare data for plotting
     societies = list(society_count.keys())
     seller_counts = list(society_count.values())
+    # Check data types and contents
+    print("Societies:", societies)
+    print("Seller Counts:", seller_counts)
+    try:
+        plt.figure(figsize=(8, 6))
+        plt.bar(societies, seller_counts, color='skyblue')
+        plt.xlabel('Society')
+        plt.ylabel('Number of Sellers')
+        plt.title('Number of Sellers in Each Society')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
 
-    # Create a bar chart
-    plt.figure(figsize=(8, 6))
-    plt.bar(societies, seller_counts, color='skyblue')
-    plt.xlabel('Society')
-    plt.ylabel('Number of Sellers')
-    plt.title('Number of Sellers in Each Society')
-    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
-    plt.tight_layout()
+        # Save the plot to a file or render it in a template as needed
+        # ...
 
-    # Save the plot to a file
-    plot_path = 'path/to/save/plot.png'
-    plt.savefig(plot_path)
+        return render(request, 'other/society_seller_count.html', {'plot_path': plot_path})
+    except Exception as e:
+        print("Error:", e)  # Print the exact error message for further debugging
 
-    return render(request, 'other/society_seller_count.html', {'plot_path': plot_path})
-
+        # Handle the exception appropriately or return an error response
+        return HttpResponse("Error occurred during plotting.")
 def contact(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)

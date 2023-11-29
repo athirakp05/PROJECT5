@@ -43,5 +43,9 @@ urlpatterns = [
     path('team-list/', views.team, name='team'),
     path('message/', views.message, name='message'),
     path('get_new_messages/', views.get_new_messages, name='get_new_messages'),
-
+    path('pending_sellers/', views.pending_sellers, name='pending_sellers'),
+    path('approve_seller/<int:seller_id>/', views.approve_seller, name='approve_seller'),
+    path('reject_seller/<int:seller_id>/', views.reject_seller, name='reject_seller'),
+    path('deactivate_s/<int:seller_id>/', views.deactivate_s, name='deactivate_s'),
+    path('activate_s/<int:seller_id>/', views.activate_s, name='activate_s'),
 ]

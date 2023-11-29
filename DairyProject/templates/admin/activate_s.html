@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Seller Activation/Deactivation</title>
+</head>
+<body>
+    <h1>Seller Activation/Deactivation</h1>
+    {% for seller in sellers %}
+        <div>
+            <p>Seller ID: {{ seller.id }}</p>
+            <p>Name: {{ seller.first_name }} {{ seller.last_name }}</p>
+            <p>Email: {{ seller.user.email }}</p>
+            <p>Mobile: {{ seller.mobile }}</p>
+            {% if seller.is_active %}
+                <a href="{% url 'd_seller' seller.id %}">Deactivate</a>
+            {% else %}
+                <a href="{% url 'a_seller' seller.id %}">Activate</a>
+            {% endif %}
+            <hr>
+        </div>
+    {% endfor %}
+</body>
+</html>
