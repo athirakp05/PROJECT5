@@ -5,7 +5,7 @@ from .models import Product,MilkCollection
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['p_name', 'mfg_date', 'expiry_date', 'grade_level', 'quantity', 'price', 'description', 'seller', 'categories', 'image']
+        fields = ['p_name', 'mfg_date', 'expiry_date', 'quantity', 'price', 'description', 'seller', 'categories', 'image']
         widgets = {
             'mfg_date': forms.DateInput(attrs={'type': 'date'}),
             'expiry_date': forms.DateInput(attrs={'type': 'date'}),

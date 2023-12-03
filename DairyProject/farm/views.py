@@ -22,37 +22,43 @@ import matplotlib.pyplot as plt
 
 def index(request):
     return render(request, 'index.html')
+
 def loginn(request):
     if request.method == "POST":
         email = request.POST.get('email')
         password = request.POST.get('password')
-
         user = authenticate(request, email=email, password=password)
-
         if user is not None:
-            auth_login(request, user)
-            request.session['email'] = email
+            if user.is_active:  # Check if the user is active
+                auth_login(request, user)
+                request.session['email'] = email
 
-            if user.role == 'Admin':
-                messages.success(request, "Login successful!")
-                return redirect("admindash")  # Redirect to the admin dashboard
-            elif user.role == 'Customer':
-                if user.seller.is_approved:
+                if user.role == 'Admin':
                     messages.success(request, "Login successful!")
-                    return redirect("c_dashboard")  # Redirect to the customer dashboard
+                    return redirect("admindash")  # Redirect to the admin dashboard
+                elif user.role == 'Customer':
+                    if user.customer.is_active:
+                        messages.success(request, "Login successful!")
+                        return redirect("c_dashboard")  # Redirect to the customer dashboard
+                    else:
+                        messages.warning(request, "Your account has been disabled. Please contact the administrator.")
+                        return render(request, 'login.html')  # Render login page with a message
+
+                elif user.role == 'Seller':
+                    if user.seller.is_active:
+                        messages.success(request, "Login successful!")
+                        return redirect("s_dashboard")  # Redirect to the seller dashboard
+                    else:
+                        messages.warning(request, "Your account has been disabled. Please contact the administrator.")
+                        return render(request, 'login.html')  # Render login page with a message
                 else:
-                # Seller registration is pending approval
-                    messages.info(request, "Your registration is pending approval. Please wait for admin approval.")
-                    return redirect("login")  # Redirect back to the login page
-            elif user.role == 'Seller':
-                messages.success(request, "Login successful!")
-                return redirect("s_dashboard")  # Redirect to the seller dashboard
+                    # Handle unknown or unsupported roles here
+                    messages.error(request, "Unknown user role or unsupported role.")
             else:
-                # Handle unknown or unsupported roles here
-                messages.error(request, "Unknown user role or unsupported role.")
-    
-    # Handle login failure
-    messages.error(request, "Login failed. Please check your credentials.")
+                messages.warning(request, "Your account has been disabled. Please contact the administrator.")
+                return render(request, 'login.html')  # Render login page with a message
+        else:
+            messages.error(request, "Login failed. Please check your credentials.")
     return render(request, 'login.html')
 
 @login_required
@@ -61,50 +67,49 @@ def pending_sellers(request):
     return render(request, 'admin/pending_sellers.html', {'pending_sellers': pending_sellers})
 
 @login_required
-def approve_seller(request, seller_id):
-    seller = get_object_or_404(Seller, pk=seller_id)
+def approve_seller(request, email):
+    user = get_object_or_404(CustomUser, email=email)
+    seller = Seller.objects.get(user=user)
     seller.is_approved = True
     seller.save()
+    # Redirect to a success page or a relevant view
+    return redirect('pending_sellers')
+@login_required
+def reject_seller(request, email):
+    user = get_object_or_404(CustomUser, email=email)
+    seller = Seller.objects.get(user=user)
+    seller.delete()  
     return redirect('pending_sellers')
 
 @login_required
-def reject_seller(request, seller_id):
-    seller = get_object_or_404(Seller, pk=seller_id)
-    seller.delete()  # Optionally, you can implement a soft delete here
-    return redirect('pending_sellers')
-
-@login_required
-def deactivate_s(request, seller_id):
-    seller = get_object_or_404(Seller, pk=seller_id)
-    seller.is_active = False
-    seller.save()
-    return render(activate_s)
-
-@login_required
-def activate_s(request, seller_id):
-    seller = get_object_or_404(Seller, pk=seller_id)
-    seller.is_active = True
-    seller.save()
-    return render(activate_s)
-
-@login_required
-def deactivate_c(request, customer_id):
-    seller = get_object_or_404(Seller, pk=customer_id)
-    seller.is_active = False
-    seller.save()
-    return render(activate_c)
-
-@login_required
-def activate_c(request, customer_id):
-    customer = get_object_or_404(Customer, pk=customer_id)
+def activate_customer(request, email):
+    customer = get_object_or_404(CustomUser, email=email)
     customer.is_active = True
     customer.save()
-    return render(activate_c)
+    return redirect('c_view')  # Redirect to the customer view page
 
-# Customer registration view
+@login_required
+def deactivate_customer(request, email):
+    customer = get_object_or_404(CustomUser, email=email)
+    customer.is_active = False
+    customer.save()
+    return redirect('c_view')  # Redirect to the customer view page
+
+def activate_seller(request, email):
+    seller = CustomUser.objects.get(email=email)
+    seller.is_active = True
+    seller.save()
+    return redirect('s_view')  # Redirect to login page
+
+def deactivate_seller(request, email):
+    seller = CustomUser.objects.get(email=email)
+    seller.is_active = False
+    seller.save()
+    return redirect('s_view')  # Redirect to login page
+
+
 def c_register(request):
     if request.method == "POST":
-        # Retrieve seller registration data
         firstname = request.POST.get('firstname')
         lastname = request.POST.get('lastname')
         email = request.POST.get('email')
@@ -120,20 +125,14 @@ def c_register(request):
             user = CustomUser.objects.create_user(email=email, password=password, role='Customer')
             customer = Customer(user=user, first_name=firstname, last_name=lastname, mobile=mobile)
             customer.save()
-            # Save login details to the Login model
             login = Login_Details(email=email, password=password, role='Customer')
             login.save()
             messages.success(request, "Registered successfully")
-            return redirect("login")  # Redirect to the registration page
-    
+            return redirect("login") 
     return render(request, 'c_register.html')
-
-
-# Seller registration view
 
 def s_register(request):
     if request.method == "POST":
-        # Retrieve seller registration data
         firstname = request.POST.get('firstname')
         lastname = request.POST.get('lastname')
         farmer_license = request.POST.get('farmer_license')
@@ -144,7 +143,6 @@ def s_register(request):
         if Seller.objects.filter(farmer_license=farmer_license).exists():
             messages.error(request, "Seller with this farmer license already exists. Please use a different license.")
             return redirect("s_register")
-
         if CustomUser.objects.filter(email=email).exists():
             messages.error(request, "Email already exists")
         elif password != confirm_password:
@@ -155,39 +153,30 @@ def s_register(request):
             seller.save()
             seller_edit_profile = SellerEditProfile(user=user, seller=seller, first_name=firstname, last_name=lastname, mobile=mobile, email=email, farmer_license=farmer_license)
             seller_edit_profile.save()
-            # Save login details to the Login model
             login = Login_Details(email=email, password=password, role='Seller')
             login.save()
             messages.success(request, "Registered pending approval")
-            return redirect("login")  # Redirect to the registration page
-    
+            return redirect("login") 
     return render(request, 's_register.html')
 
-@login_required(login_url='login')
+@login_required
 def s_profile(request):
-    # Get the logged-in user
     user = request.user
-
-    # Check if the user is a seller
     if user.is_seller:
-        # Retrieve the seller profile details from SellerEditProfile model
         seller_profile = SellerEditProfile.objects.get(user=user)
-
         return render(request, 'profile_edit/s_profile.html', {'seller_profile': seller_profile})
     else:
-        # Redirect to a different page for non-seller users
-        return redirect('home')  # Change 'home' to the appropriate URL for your home page
+        return redirect('home') 
 
 @login_required
 def complete_s_profile(request):
     user = request.user
     seller_profile, created = SellerEditProfile.objects.get_or_create(user=user.seller.user)
-
     if request.method == 'POST':
         form = SellerEditProfileForm(request.POST, request.FILES, instance=seller_profile)
         if form.is_valid():
             form.save()
-            return redirect('seller_profile')  # Replace 's_dashboard' with your desired redirect URL after profile completion
+            return redirect('seller_profile')  
     else:
         form = SellerEditProfileForm(instance=seller_profile)
     return render(request, 'profile_edit/complete_s_profile.html', {'form': form})
@@ -196,10 +185,9 @@ def seller_profile(request):
     seller_profile = SellerEditProfile.objects.get(user=request.user.seller.user)
     return render(request, 'profile_edit/seller_profile.html', {'seller_profile': seller_profile})
 
-def logout(request):
+def logout_user(request):
     auth_logout(request)
     return redirect('home')
-
 
 def admindash(request):
     if 'email' in request.session:
@@ -486,9 +474,9 @@ def society_seller_count(request):
         plt.xticks(rotation=45)
         plt.tight_layout()
 
-        # Save the plot to a file or render it in a template as needed
-        # ...
-
+        # Save the plot to a file
+        plot_path = 'path/to/save/plot.png'
+        plt.savefig(plot_path)
         return render(request, 'other/society_seller_count.html', {'plot_path': plot_path})
     except Exception as e:
         print("Error:", e)  # Print the exact error message for further debugging

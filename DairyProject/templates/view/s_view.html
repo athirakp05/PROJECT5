@@ -88,11 +88,16 @@
                     {{ seller.email }} <br>
                   {{ seller.mobile }}
                 </td>
+                <td>
+                    <a href="{% url 'activate_s' email=seller.user.email %}">Activate</a>
+                </td>
+                <td>
+                    <a href="{% url 'deactivate_s' email=seller.user.email %}">Deactivate</a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
     <div style="margin-left: 50px;"> <!-- Adjust the margin-left value to align with your table -->
         <span>Page {{ sellers.number }} of {{ sellers.paginator.num_pages }}</span>
         {% if sellers.has_previous %}

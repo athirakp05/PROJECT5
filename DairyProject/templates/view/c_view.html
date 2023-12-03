@@ -8,54 +8,56 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> <!-- Include Bootstrap CSS -->
     <title>View Customers</title>
 </head>
-<style>h1 {
-    text-align: center;
-    font-size: 24px;
-    margin-top: 20px;
-}
+<style>
+    h1 {
+        text-align: center;
+        font-size: 24px;
+        margin-top: 20px;
+    }
 
-/* Style for the table */
-.table {
-    width: 80%;
-    margin: 0 auto;
-}
+    /* Style for the table */
+    .table {
+        width: 80%;
+        margin: 0 auto;
+    }
 
-/* Style for table headings */
-th {
-    background-color: #007BFF;
-    color: #fff;
-    text-align: center;
-}
+    /* Style for table headings */
+    th {
+        background-color: #007BFF;
+        color: #fff;
+        text-align: center;
+    }
 
-/* Style for table cells */
-td {
-    text-align: center;
-}
+    /* Style for table cells */
+    td {
+        text-align: center;
+    }
 
-/* Style for pagination */
-.pagination {
-    display: flex;
-    justify-content: center;
-    list-style: none;
-    padding: 0;
-    margin-top: 20px;
-}
+    /* Style for pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+    }
 
-.page-item {
-    margin: 0 5px;
-}
+    .page-item {
+        margin: 0 5px;
+    }
 
-.page-link {
-    text-decoration: none;
-    background-color: #007BFF;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 5px;
-}
+    .page-link {
+        text-decoration: none;
+        background-color: #007BFF;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
 
-.page-link:hover {
-    background-color: #0056b3;
-}</style>
+    .page-link:hover {
+        background-color: #0056b3;
+    }
+</style>
 <body>
     <table class="table table-bordered">
         <thead>
@@ -64,6 +66,8 @@ td {
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Phone</th>
+                <th>Activate</th>
+                <th>Deactivate</th>
             </tr>
         </thead>
         <tbody>
@@ -73,6 +77,12 @@ td {
                     <td>{{ customer.first_name }}</td>
                     <td>{{ customer.last_name }}</td>
                     <td>{{ customer.phone }}</td>
+                    <td>
+                        <a href="{% url 'activate_c' email=customer.user.email %}">Activate</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'deactivate_c' email=customer.user.email %}">Deactivate</a>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>

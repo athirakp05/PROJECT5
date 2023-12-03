@@ -1,5 +1,5 @@
 from django.db import models
-from farm.models import Seller
+from farm.models import Seller,CustomUser
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.utils import timezone
@@ -9,12 +9,6 @@ class Product(models.Model):
     p_name = models.CharField(max_length=50, null=False)
     mfg_date = models.DateField()
     expiry_date = models.DateField()
-    GRADE_CHOICES = [
-        ('A', 'A'),
-        ('B', 'B'),
-        ('C', 'C'),
-]
-    grade_level = models.CharField(max_length=10, choices=GRADE_CHOICES,default='A')
     quantity = models.PositiveIntegerField()
     price = models.FloatField()
     description = models.TextField()
@@ -60,10 +54,13 @@ class MilkCollection(models.Model):
     description = models.TextField()
     
 
-
-class Wishlists(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+class Cart(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(default=timezone.now)
 
-    def __str__(self):
-        return f"{self.user.email}'s wishlist: {self.product.p_name}"
+    def total_amount(self):
+        if isinstance(self.quantity, (int, float)) and isinstance(self.product.price, (int, float)):
+            return self.quantity * self.product.price
+        return 0

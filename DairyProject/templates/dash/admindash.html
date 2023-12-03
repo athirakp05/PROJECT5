@@ -1,6 +1,5 @@
 {% extends 'layout/main.html' %}
 {% load static %}
-
 {% block body %}
 <!DOCTYPE html>
 <html lang="en">
@@ -8,33 +7,7 @@
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
     <style>
-        /* Styles for the sidebar */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 250px;
-            background-color: #333; /* Change background color as needed */
-            color: #fff; /* Change text color as needed */
-            padding-top: 60px;
-        }
-        .nav {
-            list-style: none;
-            padding-left: 0;
-        }
-        .nav-item {
-            margin-bottom: 5px;
-        }
-        .nav-link {
-            display: block;
-            padding: 10px;
-            color: #fff;
-            text-decoration: none;
-        }
-        .nav-link:hover {
-            background-color: #555; 
-        }
+
     </style>
 </head>
 <body>
@@ -46,14 +19,15 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'view_breed' %}" data-url="{% url 'view_breed' %}">Breed</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'message' %}" data-url="{% url 'message' %}">Message</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}" data-url="{% url 'logout' %}">Logout</a></li>
+                        <li><a href="{% url 'society_seller_count' %}" data-url="{% url 'society_seller_count' %}">graph</a></li>
+                        <li><a href="{% url 'pending_sellers' %}" data-url="{% url 'pending_sellers' %}">Seller Requests</a></li>
                         <li><div class="dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Users</a>
                                 <a href="{% url 's_view' %}" data-url="{% url 's_view' %}">Seller</a>
                                   <a href="{% url 'c_view' %}" data-url="{% url 'c_view' %}">Customer</a>
                                 </div>
                         </div></li>
-                        <li><a href="{% url 'society_seller_count' %}" data-url="{% url 'society_seller_count' %}">graph</a></li>
-                        <li><a href="{% url 'pending_sellers' %}" data-url="{% url 'pending_sellers' %}">approve</a></li>
+                        
 
                     </ul>
                 </nav>

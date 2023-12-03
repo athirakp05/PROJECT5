@@ -1,0 +1,161 @@
+<!-- category/view_cart.html -->
+{% extends "layout/main.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cart</title>
+    {% block body %}
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .product-details {
+            display: flex;
+            align-items: center;
+        }
+
+        .product-details img {
+            max-width: 200px;
+            max-height: 200px;
+            margin-right: 20px;
+        }
+
+        .product-name {
+            font-weight: bold;
+        }
+
+        .quantity {
+            display: flex;
+            align-items: center;
+        }
+
+        .quantity input {
+            width: 30px;
+            text-align: center;
+            margin: 0 10px;
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .actions button {
+            margin-left: 10px;
+        }
+
+        .total-amount {
+            font-weight: bold;
+        }
+
+        #make-payment {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Your Cart</h1>
+        {% for item in cart_items %}
+        <div class="cart-item">
+            <div class="product-details">
+                <img src="{{ item.product.image.url }}" alt="Product Image">
+                <div>
+                    <p class="product-name">{{ item.product.p_name }}</p>
+                    <p>Price: {{ item.product.price }}</p>
+                </div>
+            </div>
+            <div class="quantity">
+                <button class="btn btn-sm btn-primary plus-cart" data-id="{{ item.id }}">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <input type="text" id="quantity-{{ item.id }}" value="{{ item.quantity }}" readonly>
+                <button class="btn btn-sm btn-danger minus-cart" data-id="{{ item.id }}">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+            <div class="total-amount" id="total-{{ item.id }}">{{ item.total_amount }}</div>
+            <div class="actions">
+                <form action="{% url 'remove_from_cart' item.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Remove</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+        {% if cart_items %}
+        <button class="btn btn-success" id="make-payment">Make Payment</button>
+    {% endif %}    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <script>
+        $(document).ready(function() {
+            $('.plus-cart').click(function() {
+                var id = $(this).attr('data-id');
+                var quantity = parseInt($('#quantity-' + id).val()) + 1;
+                $('#quantity-' + id).val(quantity);
+                updateQuantity(id, quantity);
+            });
+
+            $('.minus-cart').click(function() {
+                var id = $(this).attr('data-id');
+                var quantity = parseInt($('#quantity-' + id).val());
+                if (quantity > 1) {
+                    quantity -= 1;
+                    $('#quantity-' + id).val(quantity);
+                    updateQuantity(id, quantity);
+                }
+            });
+
+            function updateQuantity(id, quantity) {
+                $.ajax({
+                    url: '/update_quantity/', // Replace with your actual URL for updating quantity
+                    method: 'POST',
+                    data: {
+                        'cart_id': id,
+                        'quantity': quantity,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(data) {
+                        // Update the total amount in the table
+                        $('#total-' + id).text(data.total_amount);
+                    },
+                    error: function(error) {
+                        console.log('Error occurred: ', error);
+                    }
+                });
+            }
+
+            $('#make-payment').click(function() {
+                // Redirect to the payment page or perform any necessary actions
+                window.location.href = '{% url "payment" %}';
+            });
+        });
+    </script>
+    {% endblock %}
+</body>
+
+</html>

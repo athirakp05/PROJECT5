@@ -3,24 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <title>Pending Seller Approval</title>
+    <style>
+
+    </style>
 </head>
 <body>
     <h1>Pending Seller Approval</h1>
-    {% for seller in pending_sellers %}
-        <div>
-            <p>Seller ID: {{ seller.id }}</p>
-            <p>Name: {{ seller.first_name }} {{ seller.last_name }}</p>
-            <p>Email: {{ seller.user.email }}</p>
-            <p>Mobile: {{ seller.mobile }}</p>
-            {% if seller.id %}
-            <a href="{% url 'approve_seller' seller.id %}">Approve</a>
-            <a href="{% url 'reject_seller' seller.id %}">Reject</a>
-        {% else %}
-            <!-- Handle the case where seller.id is empty -->
-            <p>No valid seller ID</p>
-        {% endif %}
-        <hr>
-        </div>
-    {% endfor %}
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Farmer License</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for seller in pending_sellers %}
+            <tr>
+                <td>{{ seller.first_name }} {{ seller.last_name }}</td>
+                <td>{{ seller.user.email }}</td>
+                <td>{{ seller.farmer_license }}</td>
+                <td>
+                    <a href="{% url 'approve_seller' seller.user.email %}">Approve</a>
+                    <a href="{% url 'reject_seller' seller.user.email %}">Reject</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <hr>
+    <h1>Approved Sellers</h1>
+    <ul>
+       
+    </ul>
 </body>
 </html>

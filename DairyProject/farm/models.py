@@ -133,8 +133,6 @@ class Customer(models.Model):
         return self.first_name
 
 
-
-
 class CustomerEditProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
     mobile = models.CharField(max_length=20, blank=True, null=True)
@@ -239,3 +237,4 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return self.subject
+    

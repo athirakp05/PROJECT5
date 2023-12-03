@@ -14,17 +14,6 @@
         <p>Discounted Price: ₹{{ product.discounted_price }}</p>
     {% endif %}
 
-    <!-- Wishlist Option -->
-    <button onclick="addToWishlist('{{ product.id }}')">Add to Wishlist</button>
-
-    <!-- Order Option -->
-    <button onclick="placeOrder('{{ product.id }}')">Place Order</button>
-
-    <!-- Remove from Wishlist Option -->
-    <button onclick="removeFromWishlist('{{ product.id }}')">Remove from Wishlist</button>
-
-    <!-- Cancel Order Option -->
-    <button onclick="cancelOrder('{{ product.id }}')">Cancel Order</button>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
