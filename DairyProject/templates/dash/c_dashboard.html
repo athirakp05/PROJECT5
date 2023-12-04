@@ -62,15 +62,65 @@ body {
 /* Sidebar styling */
 .sidebar {
     position: fixed;
-    top: 60px; /* Adjusted to avoid overlap with fixed navbar */
+    top: 60px;
     left: 0;
     bottom: 0;
-    width: 110px;
-    background-color:rgb(205, 215, 219);
-    color: #fff;
-    padding-top: 100px;
-    z-index: 999; /* Set higher z-index to appear above content */
+    width: 240px; /* Adjusted width for better visibility */
+    background-color: #fff;
+    color: #333;
+    padding-top: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    overflow-y: auto; /* Enable scrollbar if needed */
 }
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.user-profile img {
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.user-profile .user-info p {
+    margin: 0;
+    font-weight: bold;
+}
+
+.user-profile .user-info a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 10px;
+}
+
+.sidebar-menu li a {
+    color: #333;
+    text-decoration: none;
+    display: block;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+}
+
+.sidebar-menu li a:hover {
+    background-color: #f0f0f0;
+    border-left: 3px solid #007bff;
+    padding-left: 17px;
+}
+
     .content {
         margin-left: 100px;
     }
@@ -79,6 +129,7 @@ body {
 </style>
 
 <body>
+
     <nav class="navbar col-lg-12 col-12 p-0 d-flex flex-row">
         <!-- ... (other navbar content) -->
     <!-- Profile dropdown -->
@@ -87,12 +138,16 @@ body {
             <li class="nav-item nav-profile dropdown">
                 <a class="nav-link dropdown-toggle" href="{% url 'customer_profile' %}" data-toggle="dropdown" id="profileDropdown">
                     {% if customer_profile.profile_photo %}
-                        <img src="{{ customer_profile.profile_photo.url }}" alt="Profile Photo" height="100" width="100">  {{ customer_profile.first_name }} {{ customer_profile.last_name }}
-                    {% else %}
+                    <img src="{{ customer_profile.profile_photo.url }}" alt="Profile Photo" height="100" width="100">  {{ customer_profile.first_name }} {{ customer_profile.last_name }}
+                {% else %}
                         <i class="ti-user"></i> <!-- Display an icon if no profile photo available -->
                     {% endif %}
+                    <!-- c_dashboard.html -->
+
+
                 </a>
                 <a href="{% url 'product_detail' %}" data-url="{% url 'product_detail' %}"><i class="fas fa-key"></i>  Products</a>
+                <a href="{% url 'contact' %}" data-url="{% url 'contact' %}"><i class="fas fa-box"></i>FeedBack</a>
 
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                     <a class="dropdown-item" href="{% url 'seller_password_change' %}" data-url="{% url 'seller_password_change' %}">
@@ -107,15 +162,18 @@ body {
         </ul>
     </div>
 </nav>
-
 <!-- Sidebar -->
-<div>{{ customer_profile.first_name }}</div>
 <div class="sidebar">
-    <div class="user-name"></div>
-    <a href="{% url 'customer_profile' %}" data-url="{% url 'customer_profile' %}"><i class="fas fa-user-edit"></i> Edit Details</a><br>
-    <a href="{% url 'customer_profile' %}" data-url="{% url 'customer_profile' %}"><i class="fas fa-user-edit"></i> Profile</a>
-    <a href="{% url 'product_detail' %}" data-url="{% url 'product_detail' %}"><i class="fas fa-chart-bar"></i> Orders</a><br>
-    <a href="{% url 'view_cart' %}" data-url="{% url 'view_cart' %}"><i class="fas fa-chart-bar"></i> Cart</a>
+    <div class="user-profile">
+        <div class="user-info">
+            <p>{{ customer_profile.first_name }} {{ customer_profile.last_name }}</p>
+        </div>
+    </div>
+    <ul class="sidebar-menu">
+        <li><a href="{% url 'customer_profile' %}" data-url="{% url 'customer_profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+        <li><a href="{% url 'view_cart' %}" data-url="{% url 'view_cart' %}"><i class="fas fa-shopping-cart"></i> Cart</a></li>
+        <li><a href="{% url 'view_cart' %}" data-url="{% url 'view_cart' %}"><i class="fas fa-chart-bar"></i> Orders</a></li>
+    </ul>
 </div>
 
 <!-- Main Content -->
@@ -123,6 +181,13 @@ body {
     <header>
         <h1>Customer Dashboard</h1>
     </header>
+    <center>{% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% endif %}</center>
     <main>
         <div id="dashboard-content"></div>
     </main>

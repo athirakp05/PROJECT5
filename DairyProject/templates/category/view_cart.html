@@ -8,6 +8,7 @@
     <title>Your Cart</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
             body {
                 font-family: Arial, sans-serif;
@@ -78,7 +79,6 @@
 <body>
 
     <div class="container">
-        <h1>Your Cart</h1>
         {% for item in cart_items %}
         <div class="cart-item">
             <div class="product-details">
@@ -111,7 +111,6 @@
     {% endif %}    </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
     <script>
         $(document).ready(function() {

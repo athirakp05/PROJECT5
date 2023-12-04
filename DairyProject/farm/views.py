@@ -295,10 +295,25 @@ def search_sellers(request):
     context = {'sellers': sellers, 'query': query}
     return render(request, 'other/team.html', context)
 
-    
+
 def contact(request):
-    # Add your view logic here
-    return render(request, 'contact.html')
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            contact_message = form.save(commit=False)
+            contact_message.name = request.user.get_full_name()
+            contact_message.email = request.user.email
+            contact_message.save()
+            # Add success message and redirect if needed
+            return redirect('success')  # Redirect to a success page
+    else:
+        initial_data = {'name': request.user.get_full_name(), 'email': request.user.email} if request.user.is_authenticated else {}
+        form = ContactForm(initial=initial_data)
+
+    return render(request, 'contact.html', {'form': form})
+
+
+
 def about(request):
     # Add your view logic here
     return render(request, 'about.html')

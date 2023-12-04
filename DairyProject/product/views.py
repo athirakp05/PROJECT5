@@ -11,6 +11,7 @@ from django.contrib.auth import get_user_model
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.views.decorators.http import require_POST
 from farm.models import Seller  # Import the Seller model
+from django.contrib import messages
 
 @login_required
 def product_add(request):
@@ -80,7 +81,7 @@ def edit_milk_details(request, pk):
         form = MilkCollectionForm(request.POST, instance=milk_detail)
         if form.is_valid():
             form.save()
-            return redirect('all_milk_details')  # Redirect to the view all milk details page
+            return redirect('admindash')  # Redirect to the view all milk details page
     else:
         form = MilkCollectionForm(instance=milk_detail)
     return render(request, 'admin/edit_milk_details.html', {'form': form})
@@ -112,61 +113,46 @@ def add_to_cart(request):
         user = request.user
         # Check if the product is already in the cart for the user
         existing_product = Cart.objects.filter(user=user, product__p_code=p_code).exists()
-        if not existing_product:
-            # Add the product to the cart
+        if existing_product:
+            existing_product.quantity += 1
+            existing_product.save()
+        else:           
+            product = get_object_or_404(Product, p_code=p_code)
             cart_item = Cart.objects.create(
                 user=user,
-                product=Product.objects.get(p_code=p_code),
+                product=product,
                 quantity=1  # You can adjust the quantity as needed
             )
             cart_item.save()
-            return JsonResponse({'success': True})
+        return JsonResponse({'success': True})
     return JsonResponse({'success': False})
 
 @login_required
 def view_cart(request):
-    cart_items = Cart.objects.filter(user=request.user) 
+    user = request.user
+    cart_items = Cart.objects.filter(user=user) 
     context = {'cart_items': cart_items}
     return render(request, 'category/view_cart.html', context)
 
 @login_required
 def remove_from_cart(request, cart_id):
-    cart_item = Cart.objects.get(pk=cart_id)
+    cart_item = get_object_or_404(Cart, pk=cart_id)
     cart_item.delete()
-    return redirect('view_cart')
+    messages.success(request, 'Product removed from cart.')
+    return redirect('c_dashboard')
 
 @login_required
 @require_POST
 def update_quantity(request):
     cart_id = request.POST.get('cart_id')
-    quantity = request.POST.get('quantity')
+    quantity = int(request.POST.get('quantity'))
 
-    cart_item = Cart.objects.get(pk=cart_id)
+    cart_item = get_object_or_404(Cart, pk=cart_id)
     cart_item.quantity = quantity
+    total_amount = cart_item.product.price * quantity
     cart_item.save()
-
-    total_amount = cart_item.total_amount()  # Assuming total_amount is a method
-
     return JsonResponse({'total_amount': total_amount})
 
-def payment(request):
-    return render(request, 'category/payment.html')
-
-def process_payment(request):
-    if request.method == 'POST':
-        # Get payment-related data from the form
-        card_number = request.POST.get('card_number')
-        expiry_date = request.POST.get('expiry_date')
-        cvv = request.POST.get('cvv')
-
-        # Process the payment logic here (this is a mock example)
-        # Ideally, you'd integrate with a payment gateway or process payments securely
-
-        # Dummy response for demonstration purposes
-        return HttpResponse("Payment processed successfully!") 
-    else:
-        return HttpResponse("Invalid request method")
-    
 def search_products(request):
     query = request.GET.get('query', None)
     if query:
@@ -175,3 +161,18 @@ def search_products(request):
         products = Product.objects.all()
     context = {'products': products}
     return render(request, 'category/product_detail.html', context)
+
+
+
+def payment(request):
+    return render(request, 'category/payment.html')
+
+def process_payment(request):
+    if request.method == 'POST':
+        card_number = request.POST.get('card_number')
+        expiry_date = request.POST.get('expiry_date')
+        cvv = request.POST.get('cvv')
+        return HttpResponse("Payment processed successfully!") 
+    else:
+        return HttpResponse("Invalid request method")
+    
