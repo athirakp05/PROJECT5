@@ -7,35 +7,131 @@
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+    
+        .container-fluid {
+            display: flex;
+        }
+    
+        .sidebar {
+            width: 150px;
+            height: 100vh;
+            background-color: #f3f3f3;
+        }
+    
 
+    
+        .sidebar .nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+    
+        .sidebar .nav-item {
+            padding: 10px;
+        }
+    
+        .sidebar .nav-link {
+            text-decoration: none;
+            color: #333;
+        }
+    
+        .sidebar .nav-link:hover {
+            background-color: #ddd;
+        }
+    
+        .dropdown-menu {
+            display: none;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            background-color: #f3f3f3;
+        }
+    
+        .dropdown-menu .dropdown-item {
+            padding: 8px 15px;
+            text-decoration: none;
+            color: #333;
+            display: block;
+        }
+    
+        .dropdown-menu .dropdown-item:hover {
+            background-color: #ddd;
+        }
+    
+        .main-content {
+            padding: 20px;
+            box-sizing: border-box;
+        }
+    
+        #dashboard-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+    
+        /* Adjust the loaded content width */
+        #dashboard-content > div {
+            width: 80%;
+            max-width: 1000px; /* Set a maximum width for the content */
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #fff; /* Optional: set a background color */
+            border-radius: 1px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: add a box shadow */
+        }
     </style>
+    
 </head>
 <body>
     <div class="container-fluid">
-            <div class=" sidebar">
-                <nav class="sidebar sidebar-offcanvas active" id="sidebar">
-                    <ul class="nav">
-                        <li class="nav-item"><a class="nav-link" href="{% url 'admindash' %}" data-url="{% url 'admindash' %}">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'view_breed' %}" data-url="{% url 'view_breed' %}">Breed</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'message' %}" data-url="{% url 'message' %}">Message</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}" data-url="{% url 'logout' %}">Logout</a></li>
-                        <li><a href="{% url 'society_seller_count' %}" data-url="{% url 'society_seller_count' %}">graph</a></li>
-                        <li><a href="{% url 'pending_sellers' %}" data-url="{% url 'pending_sellers' %}">Seller Requests</a></li>
-                        <li><div class="dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Users</a>
-                                <a href="{% url 's_view' %}" data-url="{% url 's_view' %}">Seller</a>
-                                  <a href="{% url 'c_view' %}" data-url="{% url 'c_view' %}">Customer</a>
-                                </div>
-                        </div></li>
-                        
-
-                    </ul>
-                </nav>
-            </div>
-                <div class="main-content">
-                <div id="dashboard-content"></div>
-            </div>
+        <div class="sidebar">
+            <nav class="sidebar sidebar-offcanvas active" id="sidebar">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admindash' %}" data-url="{% url 'admindash' %}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_breed' %}" data-url="{% url 'view_breed' %}">Breed</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'message' %}" data-url="{% url 'message' %}">Message</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'all_milk_details' %}" data-url="{% url 'all_milk_details' %}">Milk</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin_view_cattle' %}" data-url="{% url 'admin_view_cattle' %}">Cattle</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_carts' %}" data-url="{% url 'view_carts' %}">Cart</a>
+                    </li>
+                   
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'society_seller_count' %}" data-url="{% url 'society_seller_count' %}">Graph</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'pending_sellers' %}" data-url="{% url 'pending_sellers' %}">Request</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Users</a>
+                        <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{% url 's_view' %}" data-url="{% url 's_view' %}">Seller</a></li>
+                            <li><a class="dropdown-item" href="{% url 'c_view' %}" data-url="{% url 'c_view' %}">Customer</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
         </div>
+        <div class="main-content">
+            <div id="dashboard-content"></div>
+        </div>
+    </div>
     </div>
     <script>
         // JavaScript code for loading content dynamically
@@ -54,7 +150,6 @@
             });
 
             loadContent("{% url 'usercount' %}");
-
             function loadContent(url) {
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {

@@ -111,15 +111,14 @@
     <table>
         <thead>
             <tr>
+                <th>Category</th>
                 <th>Product Image</th>
                 <th>Product Name</th>
                 <th>Manufacturing Date</th>
                 <th>Expiry Date</th>
-                <th>Grade Level</th>
                 <th>Quantity (ltrs/kgms)</th>
                 <th>Price</th>
                 <th>Description</th>
-                <th>Category</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -129,16 +128,14 @@
                 <td>
                     <img src="{{ product.image.url }}" alt="{{ product.p_name }}">
                 </td>
+                <td>{{ product.categories }}</td>
                 <td>{{ product.p_name }}</td>
                 <td>{{ product.mfg_date }}</td>
                 <td>{{ product.expiry_date }}</td>
-                <td>{{ product.grade_level }}</td>
                 <td>{{ product.quantity }}</td>
                 <td>{{ product.price }}</td>
                 <td>{{ product.description }}</td>
-                <td>{{ product.categories }}</td>
                 <td>
-                    <a href="#" class="btn">Edit</a>
                     <a href="#" class="btn">Delete</a>
                 </td>
             </tr>
@@ -146,16 +143,24 @@
         </tbody>
     </table>
     <nav aria-label="Page navigation example">
-        <ul class="pagination">
-            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-        </ul>
+        <div class="pagination">
+            <span class="step-links">
+                {% if products.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ products.previous_page_number }}">previous</a>
+                {% endif %}
+        
+                <span class="current">
+                    Page {{ products.number }} of {{ products.paginator.num_pages }}.
+                </span>
+    
+                {% if products.has_next %}
+                    <a href="?page={{ products.next_page_number }}">next</a>
+                    <a href="?page={{ products.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
     </nav>
     <a href="{% url 'product_add' %}" class="btn">Add Product</a>
-    <a href="{% url 'product_detail' %}">View Details</a>
-
 </body>
 </html>

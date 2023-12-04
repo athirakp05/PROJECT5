@@ -3,28 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <title>User Count</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* Add styling for card bodies */
         .card-body {
-            border-radius: 5px;
+            border-radius: 15px;
             padding: 10px;
-            margin: 20px;
             text-align: center;
         }
 
-        /* Add background colors for different card classes */
+        /* Add different background colors for different card classes */
         .card-light-blue {
-            background-color: #a8d0e6;
+            background-color: #a8d0e6; /* Light Blue */
             border: 1px solid #4682b4;
-            width: 300px;
-            height: 200px;
+            width: 100px; /* Adjusted width */
+            height: 70px; /* Adjusted height */
+            margin: 20px; /* Add margin for spacing */
         }
 
         .card-light-danger {
-            background-color: #f29292;
-            border: 1px solid #d9534f;
-            width: 300px;
-            height: 200px;
+            background-color: #ff9999; /* Light Red */
+            border: 1px solid #ff0000;
+            width: 100px; /* Adjusted width */
+            height: 70px; /* Adjusted height */
+            margin: 20px; /* Add margin for spacing */
+        }
+
+        .card-light-green {
+            background-color: #a2e8a2; /* Light Green */
+            border: 1px solid #4caf50;
+            width: 100px; /* Adjusted width */
+            height: 70px; /* Adjusted height */
+            margin: 20px; /* Add margin for spacing */
+        }
+
+        .card-light-yellow {
+            background-color: #fff2a8; /* Light Yellow */
+            border: 1px solid #ffd700;
+            width: 100px; /* Adjusted width */
+            height: 70px; /* Adjusted height */
+            margin: 20px; /* Add margin for spacing */
         }
 
         /* Add text color for card titles */
@@ -35,55 +53,52 @@
         /* Add text color for card content */
         .card-content {
             color: #000;
-        
+        }
+
+        /* Add custom flexbox styles */
+        .row-md-12 {
+            display: flex;
+            flex-wrap: nowrap; /* Prevent cards from wrapping to a new line */
+            overflow-x: auto; /* Enable horizontal scrolling */
+        }
+
+        .card {
+            flex: 0 0 auto; /* Prevent cards from stretching */
         }
     </style>
 </head>
 <body>
-    <h1>Users</h1>
-
+    <div class="container">
+        <h1 class="mt-4">Users</h1>
         <div class="col">
-            <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
+            <div class="row-md-12">
                 <div class="card card-light-blue">
                     <div class="card-body">
-                        <p class="mb-2">Customers </p>
+                        <p class="mb-2">Customers</p>
                         <p class="fs-24 mb-2" id="totalCustomers">{{ customer_count}}</p>
                     </div>
                 </div>
-            </div>
-            <div class="col">
-            <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
                 <div class="card card-light-danger">
                     <div class="card-body">
-                        <p class="mb-2">Sellers   </p>
-                        <p class="fs-24 mb-2" id="totalSellers">{{seller_count}}</p>
+                        <p class="mb-2">Sellers</p>
+                        <p class="fs-24 mb-2" id="totalSellers">{{ seller_count }}</p>
                     </div>
                 </div>
+                <div class="card card-light-green">
+                    <div class="card-body">
+                        <p class="mb-2">Products</p>
+                        <p class="fs-24 mb-2" id="totalProducts">{{ product_count }}</p>
+                    </div>
+                </div>
+                <div class="card card-light-yellow">
+                    <div class="card-body">
+                        <p class="mb-2">Orders</p>
+                        <p class="fs-24 mb-2" id="totalOrders">{{ order_count }}</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col">
-        <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
-            <div class="card card-light-blue">
-                <div class="card-body">
-                    <p class="mb-2">Products </p>
-                    <p class="fs-24 mb-2" id="totalCustomers">{{ customer_count}}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-        <div class="col">
-        <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
-            <div class="card card-light-danger">
-                <div class="card-body">
-                    <p class="mb-2">Orders   </p>
-                    <p class="fs-24 mb-2" id="totalSellers">{{seller_count}}</p>
-                </div>
-        </div>
-    </div>
-</div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
         // Function to update user counts in card bodies
@@ -97,6 +112,12 @@
 
                     // Update seller count in the respective card
                     $('#totalSellers').text(data.seller_count);
+
+                    // Update product count in the respective card
+                    $('#totalProducts').text(data.product_count);
+
+                    // Update order count in the respective card
+                    $('#totalOrders').text(data.order_count);
                 },
                 error: function(error) {
                     console.log("Error fetching user counts:", error);

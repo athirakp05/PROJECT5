@@ -68,7 +68,11 @@
 </div>
 
 <p>Seller: {{ form.initial.seller }}</p>
-
+   <!-- Categories -->
+   <div class="mb-3">
+    <label for="{{ form.categories.id_for_label }}">Categories:</label>
+    {{ form.categories }}
+</div>
          
             <div class="mb-3">
                 <label for="{{ form.p_name.id_for_label }}">Product Name:</label>
@@ -103,13 +107,6 @@
                 <label for="{{ form.description.id_for_label }}">Description:</label>
                 {{ form.description }}
             </div>
-
-   <!-- Categories -->
-            <div class="mb-3">
-                <label for="{{ form.categories.id_for_label }}">Categories:</label>
-                {{ form.categories }}
-            </div>
-
             <!-- Image -->
             <div class="mb-3">
                 <label for="{{ form.image.id_for_label }}">Image:</label>

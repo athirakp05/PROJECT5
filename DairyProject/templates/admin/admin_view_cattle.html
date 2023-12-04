@@ -1,0 +1,102 @@
+
+<style>body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+/* Table styling */
+table.cattle-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+/* Pagination styling */
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination a {
+    text-decoration: none;
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    margin: 0 4px;
+    color: #007bff;
+}
+
+.pagination a:hover {
+    background-color: #f2f2f2;
+}
+
+.current {
+    font-weight: bold;
+}
+    </style>
+<table class="cattle-table">
+    <thead>
+        <tr>
+            <th>Cattle License</th>
+            <th>Ear Tag ID</th>
+            <th>Cattle Type</th>
+            <th>Breed Name</th>
+            <th>Weight</th>
+            <th>Height</th>
+            <th>Age</th>
+            <th>Colour</th>
+            <th>Feed</th>
+            <th>Milk Obtained/day</th>
+            <th>Photo</th>
+            <!-- Add more fields as required -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for cattle in cattle %}
+            <tr>
+                <td>{{ cattle.cattle_license }}</td>
+                <td>{{ cattle.EarTagID }}</td>
+                <td>{{ cattle.CattleType }}</td>
+                <td>{{ cattle.BreedName }}</td>
+                <td>{{ cattle.weight }}</td>
+                <td>{{ cattle.height }}</td>
+                <td>{{ cattle.Age }}</td>
+                <td>{{ cattle.Colour }}</td>
+                <td>{{ cattle.feed }}</td>
+                <td>{{ cattle.milk_obtained }}</td>
+                <td><img src="{{ cattle.photo.url }}" alt="Cattle Photo" class="cattle-photo" height="100" width="100"></td>
+                <!-- Display more fields as required -->
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Pagination -->
+<div class="pagination">
+    <span class="step-links">
+        {% if cattle.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ cattle.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ cattle.number }} of {{ cattle.paginator.num_pages }}.
+        </span>
+
+        {% if cattle.has_next %}
+            <a href="?page={{ cattle.next_page_number }}">next</a>
+            <a href="?page={{ cattle.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>

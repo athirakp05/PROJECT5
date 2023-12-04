@@ -1,99 +1,170 @@
-
-{% load static%}
-
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <style>
-        /* Reset some default browser styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        /* Global styles */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
-        }
-
-        /* Navigation bar styles */
-        .navbar {
-            background-color: rgb(87, 202, 251); /* Updated background color */
-            color: #fff;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .logo {
-            font-size: 24px;
-        }
-
-        .menu {
-            list-style: none;
-            padding: 0;
-            display: flex;
-        }
-
-        .menu li {
-            margin-right: 20px;
-        }
-
-        .menu li a {
-            text-decoration: none;
-            color: #fff;
-            transition: background-color 0.3s;
-        }
-
-        .menu li a:hover {
-            background-color: #555;
-        }
-
-        .menu li a i {
-            margin-right: 10px;
-        }
-
-        /* Main content styles */
-        .content {
-            padding: 20px;
-        }
-
-        header {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        /* FontAwesome Icons */
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
-    </style>
 </head>
+
+<link rel="stylesheet" href="{% static 'assets/css/vertical-layout-light/style.css' %}">
+<link rel="stylesheet" href="{% static 'assets/vendors/feather/feather.css' %}">
+<link rel="stylesheet" href="{% static 'assets/vendors/ti-icons/css/themify-icons.css' %}">
+<link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- CSS styles -->
+<style>
+/* General styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    padding-top: 60px; /* Adding top padding to body for the fixed navbar */
+}
+
+/* Navbar styling */
+.navbar {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0; /* Fixed position to top */
+    width: 100%;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.navbar-brand img {
+    max-width: 100px;
+    height: auto;
+}
+
+.navbar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #555;
+    margin: 0 10px;
+}
+
+.nav-link:hover {
+    color: #007bff;
+}
+
+/* Sidebar styling */
+.sidebar {
+    position: fixed;
+    top: 60px; /* Adjusted to avoid overlap with fixed navbar */
+    left: 0;
+    bottom: 0;
+    width: 110px;
+    background-color:rgb(205, 215, 219);
+    color: #fff;
+    padding-top: 100px;
+    z-index: 999; /* Set higher z-index to appear above content */
+}
+    .content {
+        margin-left: 100px;
+    }
+
+
+</style>
+
 <body>
-    <div class="navbar">
-        <div class="logo">Dashboard</div>
-        <ul class="menu">
-            <li><a href="#"><i class="fas fa-home"></i> Profile</a></li>
-            <li><a href="{% url 'product_detail' %}"><i class="fas fa-chart-bar"></i>Product</a></li>
-            <li><a href="{% url 'view_cart' %}"><i class="fas fa-users"></i> Wishlist</a></li>
-            <li><a href="#"><i class="fas fa-users"></i> Order History</a></li>
-            <li><a href="#"><i class="fas fa-users"></i> Payment History</a></li>
-            <li><a href="{% url 'logout' %}"><i class="fas fa-cog"></i> Logout</a></li>
+    <nav class="navbar col-lg-12 col-12 p-0 d-flex flex-row">
+        <!-- ... (other navbar content) -->
+    <!-- Profile dropdown -->
+    <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <ul class="navbar-nav navbar-nav-right">
+            <li class="nav-item nav-profile dropdown">
+                <a class="nav-link dropdown-toggle" href="{% url 'customer_profile' %}" data-toggle="dropdown" id="profileDropdown">
+                    {% if customer_profile.profile_photo %}
+                        <img src="{{ customer_profile.profile_photo.url }}" alt="Profile Photo" height="100" width="100">  {{ customer_profile.first_name }} {{ customer_profile.last_name }}
+                    {% else %}
+                        <i class="ti-user"></i> <!-- Display an icon if no profile photo available -->
+                    {% endif %}
+                </a>
+                <a href="{% url 'product_detail' %}" data-url="{% url 'product_detail' %}"><i class="fas fa-key"></i>  Products</a>
+
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                    <a class="dropdown-item" href="{% url 'seller_password_change' %}" data-url="{% url 'seller_password_change' %}">
+                        <i class="fas fa-key"></i> Change Password
+                    </a>
+                    <a class="dropdown-item" href="{% url 'logout' %}">
+                        <i class="ti-power-off text-primary"></i>
+                        Logout
+                    </a>
+                </div>
+            </li>
         </ul>
     </div>
+</nav>
 
-    <!-- Main Content -->
-    <div class="content">
-        <header>
-            <h1>Welcome to {{ user.email }}</h1>
-        </header>
-        <main>
-            <p></p>
-        </main>
-    </div>
+<!-- Sidebar -->
+<div>{{ customer_profile.first_name }}</div>
+<div class="sidebar">
+    <div class="user-name"></div>
+    <a href="{% url 'customer_profile' %}" data-url="{% url 'customer_profile' %}"><i class="fas fa-user-edit"></i> Edit Details</a><br>
+    <a href="{% url 'customer_profile' %}" data-url="{% url 'customer_profile' %}"><i class="fas fa-user-edit"></i> Profile</a>
+    <a href="{% url 'product_detail' %}" data-url="{% url 'product_detail' %}"><i class="fas fa-chart-bar"></i> Orders</a><br>
+    <a href="{% url 'view_cart' %}" data-url="{% url 'view_cart' %}"><i class="fas fa-chart-bar"></i> Cart</a>
+</div>
+
+<!-- Main Content -->
+<div class="content">
+    <header>
+        <h1>Customer Dashboard</h1>
+    </header>
+    <main>
+        <div id="dashboard-content"></div>
+    </main>
+</div>
+
+<!-- Bootstrap JS and jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+        const dashboardContent = document.getElementById('dashboard-content');
+    
+        sidebarLinks.forEach(function(link) {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const url = link.getAttribute('data-url');
+                if (url) {
+                    loadContent(url);
+                }
+            });
+        });
+        loadContent("{% url 'customer_profile' %}");
+        function loadContent(url) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        dashboardContent.innerHTML = xhr.responseText;
+                    } else {
+                        console.error('Error loading content:', xhr.status);
+                    }
+                }
+            };
+            xhr.open('GET', url, true);
+            xhr.send();
+        }
+    });
+    
+</script>
+
+
 </body>
 </html>

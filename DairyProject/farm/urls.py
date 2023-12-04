@@ -1,8 +1,7 @@
 from django.urls import path
 from . import views  
 from django.contrib.auth.views import PasswordResetView,PasswordResetDoneView,PasswordResetConfirmView,PasswordResetCompleteView
-from .views import s_profile, complete_s_profile
-
+from .views import SellerPasswordChangeView, complete_c_profile, s_profile, complete_s_profile
 
 urlpatterns = [
     path('',views.index,name='home'),
@@ -29,12 +28,13 @@ urlpatterns = [
     path('c_view', views.c_view, name='c_view'),
     path('select', views.select, name='select'),
     path('profile', views.profile, name='profile'),
-    path('common_search', views.common_search, name='common_search'),
     path('contact/', views.contact, name='contact'),
     path('about/', views.about, name='about'),
     path('s_profile/', s_profile, name='s_profile'),
     path('seller_profile/', views.seller_profile, name='seller_profile'),
+    path('customer_profile/', views.customer_profile, name='customer_profile'),
     path('complete_s_profile/', complete_s_profile, name='complete_s_profile'),
+    path('complete_c_profile/', complete_c_profile, name='complete_c_profile'),
     path('vaccination/<int:cattle_id>/', views.vac_details, name='vac_details'),
     path('insurance/<int:cattle_id>/', views.ins_details, name='ins_details'),
     path('usercount/', views.usercount, name='usercount'),
@@ -48,5 +48,8 @@ urlpatterns = [
     path('activate-customer/<str:email>/', views.activate_customer, name='activate_c'),
     path('deactivate-customer/<str:email>/', views.deactivate_customer, name='deactivate_c'),
     path('activate-seller/<str:email>/', views.activate_seller, name='activate_s'),
-    path('deactivate-seller/<str:email>/', views.deactivate_seller, name='deactivate_s'),
+    path('deactivate-seller/<str:email>/', views.deactivate_seller, name='deactivate_s'),        
+    path('seller/password_change/', SellerPasswordChangeView.as_view(), name='seller_password_change'),
+    path('admin_view_cattle/', views.admin_view_cattle, name='admin_view_cattle'),
+    path('search-sellers/', views.search_sellers, name='search_sellers'),
 ]

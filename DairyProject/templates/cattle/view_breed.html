@@ -4,58 +4,10 @@
     <meta charset="UTF-8">
     <title>Breeds</title>
     <style>
-        /* CSS for Breeds */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
 
-        h1 {
-            text-align: center;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-
-        li a {
-            color: #007bff;
-            text-decoration: none;
-            margin-left: 10px;
-        }
-
-        li a:hover {
-            text-decoration: underline;
-        }
-
-        p {
-            text-align: center;
-        }
-
-        .add-breed-link {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            text-decoration: none;
-            color: #007bff;
-        }
-
-        .add-breed-link:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
-    <h1>Breeds</h1>
     {% if breeds %}
         <ul>
             {% for breed in breeds %}
@@ -64,10 +16,11 @@
                     <a href="{% if breed.id %}{% url 'delete_breed' breed.id %}{% endif %}">Delete</a>
                 </li>
             {% endfor %}
+            <a class="add-breed-link" href="{% url 'add_breed' %}">Add Breed</a>
+
         </ul>
     {% else %}
         <p>No breeds available.</p>
     {% endif %}
-    <a class="add-breed-link" href="{% url 'add_breed' %}">Add Breed</a>
 </body>
 </html>

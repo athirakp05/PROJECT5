@@ -14,7 +14,7 @@ class ProductForm(forms.ModelForm):
 class MilkCollectionForm(forms.ModelForm):
     class Meta:
         model = MilkCollection
-        fields = ['seller', 'cattle', 'collection_date', 'collection_time', 'quantity', 'density_level', 'price', 'description']
+        fields = ['seller','cattle', 'collection_date', 'collection_time', 'quantity', 'density_level', 'price', 'description']
         widgets = {
             'collection_date': forms.DateInput(attrs={'type': 'date'}),
         }

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Profile</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .profile-section {
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .profile-section p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .edit-profile-link {
+            display: inline-block;
+            background-color: #63a6ed;
+            color: #ffffff;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .edit-profile-link:hover {
+            background-color: #b8cde4;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Customer Profile</h1>
+        <div class="profile-section">
+        {% if customer_profile.profile_photo %}
+            <img src="{{ customer_profile.profile_photo.url }}" alt="Profile Photo" height="100" width="100">
+        {% else %}
+            <p>No Profile Photo Available</p>
+        {% endif %}
+            <p>First Name: {{ customer_profile.first_name }} {{ customer_profile.last_name }}</p>
+            
+            <p>Gender: {{ customer_profile.gender }}</p>
+            <p>Date of Birth: {{ customer_profile.dob }}</p>
+            <p>Account No: {{ customer_profile.card_number }}</p>
+            <div><h5>Address</h5>
+                <p>House Name: {{ customer_profile.house_name }}</p>
+                <p>City: {{ customer_profile.city }}</p>
+                <div><h5>Contact</h5><p>Email: {{ customer_profile.email }}</p>
+                    <p>Mobile: {{ customer_profile.mobile }}</p></div>
+                
+ 
+            <a href="{% url 'complete_c_profile' %}" class="edit-profile-link">Edit Profile</a>
+        </div>
+    </div>
+</body>
+
+</html>

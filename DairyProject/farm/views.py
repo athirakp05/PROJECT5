@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login
@@ -6,14 +7,16 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect,HttpResponse
+from product.models import Product
 from .models import CustomUser, Customer, Seller,CattleType
 from django.http import JsonResponse
 from django.urls import reverse
+from django.db.models import Q  # Import the Q object
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Permission
-from .forms import SellerEditProfileForm
-from .models import Cattle,Login_Details,SellerEditProfile,Breed,Insurance,Vaccination,ContactMessage
+from .forms import CustomerEditProfileForm, SellerEditProfileForm, SellerPasswordChangeForm
+from .models import Cattle,Login_Details,SellerEditProfile,Breed,Insurance,Vaccination,ContactMessage,CustomerEditProfile
 from .forms import CattleForm, VaccinationForm, InsuranceForm,SellerProfileForm,BreedForm,ContactForm
 from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
 import matplotlib
@@ -117,14 +120,16 @@ def c_register(request):
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirmpassword')
 
-        if Login_Details.objects.filter(email=email).exists():
+        if CustomUser.objects.filter(email=email).exists():
             messages.error(request, "Email already exists")
         elif password != confirm_password:
             messages.error(request, "Passwords do not match")
         else:
-            user = CustomUser.objects.create_user(email=email, password=password, role='Customer')
+            user =CustomUser.objects.create_user(email=email, password=password, role='Customer')
             customer = Customer(user=user, first_name=firstname, last_name=lastname, mobile=mobile)
             customer.save()
+            customer_edit_profile = CustomerEditProfile(user=user, customer=customer, first_name=firstname, last_name=lastname, mobile=mobile, email=email)
+            customer_edit_profile.save()
             login = Login_Details(email=email, password=password, role='Customer')
             login.save()
             messages.success(request, "Registered successfully")
@@ -181,9 +186,25 @@ def complete_s_profile(request):
         form = SellerEditProfileForm(instance=seller_profile)
     return render(request, 'profile_edit/complete_s_profile.html', {'form': form})
 
+@login_required
+def complete_c_profile(request):
+    user = request.user
+    customer_profile, created =CustomerEditProfile.objects.get_or_create(user=user.customer.user)
+    if request.method == 'POST':
+        form = CustomerEditProfileForm(request.POST, request.FILES, instance=customer_profile)
+        if form.is_valid():
+            form.save()
+            return redirect('customer_profile')  
+    else:
+        form = CustomerEditProfileForm(instance=customer_profile)
+    return render(request, 'profile_edit/complete_c_profile.html', {'form': form})
+
 def seller_profile(request):
     seller_profile = SellerEditProfile.objects.get(user=request.user.seller.user)
     return render(request, 'profile_edit/seller_profile.html', {'seller_profile': seller_profile})
+def customer_profile(request):
+    customer_profile = CustomerEditProfile.objects.get(user=request.user.customer.user)
+    return render(request, 'profile_edit/customer_profile.html', {'customer_profile': customer_profile})
 
 def logout_user(request):
     auth_logout(request)
@@ -243,12 +264,9 @@ def s_dashboard(request):
 def s_view(request):
     sellers_list = SellerEditProfile.objects.all()
     paginator = Paginator(sellers_list, 10)  # Show 10 sellers per page
-
     page_number = request.GET.get('page')
     sellers = paginator.get_page(page_number)
-
     return render(request, 'view/s_view.html', {'sellers': sellers})
-
 
 def c_view(request):
     customers = Customer.objects.all()
@@ -267,14 +285,16 @@ def profile(request):
 def select(request):
     return render(request, 'select.html')
     
+def search_sellers(request):
+    query = request.GET.get('query')
+    sellers = Seller.objects.all()
+    if query:
+        sellers = sellers.filter(
+            Q(first_name__icontains=query) | Q(last_name__icontains=query)
+        )
+    context = {'sellers': sellers, 'query': query}
+    return render(request, 'other/team.html', context)
 
-def common_search(request):
-        firstname = request.GET.get('name')
-        if firstname is not None:
-            results = Seller.objects.filter(firstname=firstname)  # Replace 'name' with the actual field you want to search
-            return render(request, 'search_results.html', {'results': results})
-    # If no search term provided, return to the dashboard or another appropriate page
-        return redirect('a_dashboard') 
     
 def contact(request):
     # Add your view logic here
@@ -337,7 +357,14 @@ def view_cattle(request):
     page_number = request.GET.get('page')
     user_cattle = paginator.get_page(page_number)
     return render(request, 'cattle/view_cattle.html', {'user_cattle': user_cattle})
-    
+
+def admin_view_cattle(request):
+    cattle_list = Cattle.objects.all()
+    paginator = Paginator(cattle_list, 10)  # Show 10 cattle per page
+    page_number = request.GET.get('page')
+    cattle = paginator.get_page(page_number)
+    return render(request, 'admin/admin_view_cattle.html', {'cattle': cattle})
+
 @login_required
 def edit_cattle(request, cattle_id):
     cattle = get_object_or_404(Cattle, pk=cattle_id)
@@ -430,17 +457,20 @@ def delete_breed(request, breed_id):
     return render(request, 'cattle/delete_breed.html', {'breed': breed})
 def fetch_breeds(request):
     cattle_type = request.GET.get('cattleType')
-    # Query breeds based on cattle_type
-    breeds = Breed.objects.filter(cattle_type__name=cattle_type).values_list('name', flat=True)
+    breeds = Breed.objects.filter(cattle_type=cattle_type).values_list('name', flat=True)
     return JsonResponse({'breeds': list(breeds)})
 
 def usercount(request):
     customer_count = Customer.objects.count()
     seller_count = Seller.objects.count()
+    product_count = Product.objects.count()
+    #order_count = OrderedDict.objects.count()
 
     data = {
         'customer_count': customer_count,
         'seller_count': seller_count,
+        'product_count': product_count,
+      #  'order_count': order_count,
     }
 
     return render(request, 'view/usercount.html', data)
@@ -521,3 +551,29 @@ def get_new_messages(request):
 
     # Return new messages as JSON response
     return JsonResponse({'messages': serialized_messages})
+
+
+# views.py
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.views import PasswordChangeView
+from django.urls import reverse_lazy
+from .forms import SellerPasswordChangeForm
+
+class SellerPasswordChangeView(PasswordChangeView):
+    form_class = SellerPasswordChangeForm
+    template_name = 'profile_edit/s_change_password.html'  # Path to your change password template
+    success_url = reverse_lazy('login')  # Replace with your success URL
+
+    def form_valid(self, form):
+        seller_profile = form.save()
+        login_details = seller_profile.login_details
+        login_details.password = seller_profile.password
+        login_details.save()
+        seller = seller_profile.seller
+        seller.password = seller_profile.password
+        seller.save()
+        update_session_auth_hash(self.request, seller_profile)
+        
+        # Add success message
+        messages.success(self.request, 'Password changed successfully.')
+        return super().form_valid(form)

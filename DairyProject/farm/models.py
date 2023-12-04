@@ -135,11 +135,14 @@ class Customer(models.Model):
 
 class CustomerEditProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
-    mobile = models.CharField(max_length=20, blank=True, null=True)
-    district = models.CharField(max_length=50)
-    city = models.CharField(max_length=50)
-    dob = models.DateField()
-    card_number = models.CharField(max_length=20)
+    customer = models.OneToOneField(Customer, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=50,default=True)  # Added for Customer's first name
+    last_name = models.CharField(max_length=50,default=True,)  # Added for Customer's last name
+    email = models.EmailField(null=False)
+    mobile = models.CharField(max_length=20, blank=True, null=False)
+    city = models.CharField(max_length=50,null=True)
+    dob = models.DateField(null=True)
+    card_number = models.CharField(max_length=20,null=True)
     profile_photo = models.ImageField(upload_to='Your_Profile/', null=True, blank=True)
     def __str__(self):
         return self.first_name

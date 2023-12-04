@@ -64,3 +64,15 @@ class Cart(models.Model):
         if isinstance(self.quantity, (int, float)) and isinstance(self.product.price, (int, float)):
             return self.quantity * self.product.price
         return 0
+    
+
+class Payment(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_date = models.DateTimeField(auto_now_add=True)
+    payment_method = models.CharField(max_length=50)
+    transaction_id = models.CharField(max_length=100)
+    is_successful = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Payment of {self.amount} by {self.user.username} on {self.payment_date}"

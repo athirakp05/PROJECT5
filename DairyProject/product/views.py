@@ -26,12 +26,25 @@ def product_add(request):
         form = ProductForm(initial=initial_data)
     return render(request, 'category/product_add.html', {'form': form})
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+@login_required
 def prod_view(request):
     seller = Seller.objects.get(user=request.user)
-    products = Product.objects.filter(seller=seller)
+    products_list = Product.objects.filter(seller=seller)
+    
+    # Pagination
+    page = request.GET.get('page', 1)
+    paginator = Paginator(products_list, 10)  # Show 10 products per page
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        products = paginator.page(1)
+    except EmptyPage:
+        products = paginator.page(paginator.num_pages)
+    
     context = {'products': products}
     return render(request, 'category/prod_view.html', context)
-
 
 def product_detail(request):
     category = request.GET.get('category', None)
@@ -50,52 +63,46 @@ def p_detail(request):
 
     # Handle non-AJAX or invalid requests gracefully
     return HttpResponseBadRequest("Invalid request")
-    
-def milk_details(request):
+
+def add_milk_details(request):
     if request.method == 'POST':
         form = MilkCollectionForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('milk_view')
+            return redirect('all_milk_details')  # Redirect to the view all milk details page
     else:
         form = MilkCollectionForm()
-    context = {'form': form}
-    return render(request, 'category/milk_details.html', {'form': form})
+    return render(request, 'admin/add_milk_detail.html', {'form': form})
 
-
-def milk_edit(request, pk):
-    collection = get_object_or_404(MilkCollection, pk=pk)
-
-    if request.method == "POST":
-        form = MilkCollectionForm(request.POST, instance=collection)
+def edit_milk_details(request, pk):
+    milk_detail = MilkCollection.objects.get(pk=pk)
+    if request.method == 'POST':
+        form = MilkCollectionForm(request.POST, instance=milk_detail)
         if form.is_valid():
             form.save()
-            return redirect('milk_list')
+            return redirect('all_milk_details')  # Redirect to the view all milk details page
     else:
-        form = MilkCollectionForm(instance=collection)
+        form = MilkCollectionForm(instance=milk_detail)
+    return render(request, 'admin/edit_milk_details.html', {'form': form})
 
-    return render(request, 'category/milk_edit.html', {'form': form, 'collection': collection})
+def all_milk_details(request):
+    all_milk_details = MilkCollection.objects.all()
+    context = {'all_milk_details': all_milk_details}
+    return render(request, 'admin/all_milk_details.html', context)
 
+from django.contrib.auth import get_user_model
 
-def milk_list(request):
-    collections = MilkCollection.objects.all()
-    context = {'collections': collections}
-    return render(request, 'category/milk_view.html', context)
+def view_carts(request):
+    User = get_user_model()
+    carts = Cart.objects.select_related('product', 'user').all()
+    context = {'carts': carts}
+    return render(request, 'admin/view_carts.html', context)
 
-def milk_view(request, pk):
-    collection = MilkCollection.objects.get(pk=pk)
-    context = {'collection': collection}
-    return render(request, 'category/milk_view.html', context)
-
-
-# def common_search(request):
-#     if request.method=='GET':
-#         query = request.GET.get('query','')
-#         products=Product.objects.filter(Q(p_name__icontains=query))
-#         context={
-#         'products' : products,
-#         }
-#         return render(request,'category/product_detail.html',context)
+def own_milk_details(request):
+    seller = request.user.seller  # Assuming the seller is linked to the user
+    seller_milk_details = MilkCollection.objects.filter(seller=seller)
+    context = {'seller_milk_details': seller_milk_details}
+    return render(request, 'category/own_milk_details.html', context)
 
 
 @login_required
@@ -159,3 +166,12 @@ def process_payment(request):
         return HttpResponse("Payment processed successfully!") 
     else:
         return HttpResponse("Invalid request method")
+    
+def search_products(request):
+    query = request.GET.get('query', None)
+    if query:
+        products = Product.objects.filter(Q(p_name__icontains=query))
+    else:
+        products = Product.objects.all()
+    context = {'products': products}
+    return render(request, 'category/product_detail.html', context)
