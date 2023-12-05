@@ -17,7 +17,7 @@
         }
     
         .sidebar {
-            width: 150px;
+            width: 200px;
             height: 100vh;
             background-color: #f3f3f3;
         }
@@ -90,9 +90,9 @@
         <div class="sidebar">
             <nav class="sidebar sidebar-offcanvas active" id="sidebar">
                 <ul class="nav">
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="{% url 'admindash' %}" data-url="{% url 'admindash' %}">Dashboard</a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'view_breed' %}" data-url="{% url 'view_breed' %}">Breed</a>
                     </li>
@@ -100,18 +100,18 @@
                         <a class="nav-link" href="{% url 'message' %}" data-url="{% url 'message' %}">Request</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'all_milk_details' %}" data-url="{% url 'all_milk_details' %}">Milk</a>
+                        <a class="nav-link" href="{% url 'all_milk_details' %}" data-url="{% url 'all_milk_details' %}">Collection Report</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'admin_view_cattle' %}" data-url="{% url 'admin_view_cattle' %}">Cattle</a>
-                    </li>
+                    </li><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'view_carts' %}" data-url="{% url 'view_carts' %}">Cart</a>
-                    </li>
-                   
+                    </li><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<!--                    
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'society_seller_count' %}" data-url="{% url 'society_seller_count' %}">Graph</a>
-                    </li>
+                        <a class="nav-link" href="{% url 'society_seller_count' %}" data-url="{% url 'society_seller_count' %}">--</a>
+                    </li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'pending_sellers' %}" data-url="{% url 'pending_sellers' %}">Request</a>
                     </li>
@@ -125,6 +125,8 @@
                 </ul>
             </nav>
         </div>
+        <a class="nav-link" href="{% url 'logout' %}" data-url="{% url 'logout' %}">logout</a>
+
         <div class="main-content">
             <div id="dashboard-content"></div>
         </div>

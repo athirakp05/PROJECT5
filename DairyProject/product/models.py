@@ -36,7 +36,7 @@ class MilkCollection(models.Model):
         ('Goat', 'Goat'),
         # Add more cattle types as needed
     ]
-    cattle = models.CharField(max_length=10, choices=CATTLE_CHOICES, default='Cow')
+    milk_type = models.CharField(max_length=10, choices=CATTLE_CHOICES, default='Cow')
     collection_date = models.DateField()
     COLLECTION_CHOICES = [
         ('1', 'ForeNoon'),
@@ -45,11 +45,11 @@ class MilkCollection(models.Model):
     collection_time = models.CharField(max_length=50,  choices=COLLECTION_CHOICES,default='1.027-1.03')
     quantity = models.PositiveIntegerField()
     DENSITY_CHOICES = [
-        ('1', '1.03+'),
-        ('2', '1.027-1.03'),
-        ('3', '1.03-'),
+        ('density-level above 1.03', 'density-level above 1.03'),
+        ('density-level between 1.027-1.03', 'density-level between 1.027-1.03'),
+        ('density-level below 1.03', 'density-level below 1.03'),
 ]
-    density_level = models.CharField(max_length=10, choices=DENSITY_CHOICES,default='1.027-1.03')
+    quality_test_report= models.CharField(max_length=50, choices=DENSITY_CHOICES,default='1.027-1.03')
     price = models.FloatField()
     description = models.TextField()
     

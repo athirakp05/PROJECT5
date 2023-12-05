@@ -1,11 +1,87 @@
 <!-- Seller View Template to Display Their Own Milk Details -->
+<style>/* Apply styling to the table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+  }
+  
+  /* Alternating row colors for better readability */
+  tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  /* Hover effect on rows */
+  tbody tr:hover {
+    background-color: #f5f5f5;
+  }
+  
+  /* Responsive table for smaller screens */
+  @media screen and (max-width: 600px) {
+    table {
+      width: 100%;
+    }
+  
+    table, thead, tbody, th, td, tr {
+      display: block;
+    }
+  
+    /* Hide table headers */
+    thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+  
+    td {
+      border: none;
+      border-bottom: 1px solid #eee;
+      position: relative;
+      padding-left: 50%;
+      text-align: left;
+    }
+  
+    /* Create space for data */
+    td:before {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      width: 45%;
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+  
+    /* Label the data */
+    td:nth-of-type(1):before { content: "Cattle:"; }
+    td:nth-of-type(2):before { content: "Collection Date:"; }
+    td:nth-of-type(3):before { content: "Quantity:"; }
+    /* Add other labels as needed */
+  }
+  </style>
   <h1>Your Milk Details</h1>
   <table>
     <thead>
       <tr>
+        <th>Your Name</th>
         <th>Cattle</th>
         <th>Collection Date</th>
         <th>Quantity</th>
+        <th>Test Result</th>
+        <th>Obtained Payment</th>
+        <th>Description</th>
+
+
         <!-- Add other fields as needed -->
       </tr>
     </thead>
@@ -13,10 +89,10 @@
       {% for milk_detail in seller_milk_details %}
         <tr>
           <td>{{ milk_detail.seller }}</td>
-          <td>{{ milk_detail.cattle }}</td>
+          <td>{{ milk_detail.milk_type }}</td>
           <td>{{ milk_detail.collection_date }}</td>
           <td>{{ milk_detail.quantity }}</td>
-          <td>{{ milk_detail.density_level }}</td>
+          <td>{{ milk_detail.quality_test_report }}</td>
           <td>{{ milk_detail.price }}</td>
           <td>{{ milk_detail.description }}</td>
           <!-- Add other fields similarly -->

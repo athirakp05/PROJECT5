@@ -87,10 +87,14 @@ def edit_milk_details(request, pk):
         form = MilkCollectionForm(instance=milk_detail)
     return render(request, 'admin/edit_milk_details.html', {'form': form})
 
+from datetime import date
+
 def all_milk_details(request):
-    all_milk_details = MilkCollection.objects.all()
+    today = date.today()
+    all_milk_details = MilkCollection.objects.filter(collection_date=today)
     context = {'all_milk_details': all_milk_details}
     return render(request, 'admin/all_milk_details.html', context)
+
 
 from django.contrib.auth import get_user_model
 
