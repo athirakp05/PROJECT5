@@ -1,4 +1,5 @@
 # views.py
+import razorpay
 from .models import Product
 from .forms import ProductForm
 from .models import MilkCollection,Cart
@@ -10,7 +11,7 @@ from django.db.models import Q,F
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.views.decorators.http import require_POST
-from farm.models import Seller  # Import the Seller model
+from farm.models import CustomerEditProfile, Seller  # Import the Seller model
 from django.contrib import messages
 
 @login_required
@@ -165,7 +166,18 @@ def search_products(request):
 
 
 def payment(request):
-    return render(request, 'category/payment.html')
+    if request.method == 'POST':
+        amount = 50000  # Set your amount dynamically or as required
+        order_currency = 'INR'
+        client = razorpay.Client(auth=('rzp_test_VsNzgoQtqip5Wd', 'rcn7optyjJTyzOsFlhJQ6GYX'))
+        payment = client.order.create({'amount': amount, 'currency': order_currency, 'payment_capture': '1'})
+        # Handle payment response
+        return render(request, 'pay/payment.html', {'payment': payment})  # Render the payment HTML page with payment details
+    return render(request, 'pay/payment.html')  
+
+
+def success(request):
+    return render(request, 'pay/success.html')
 
 def process_payment(request):
     if request.method == 'POST':
@@ -176,3 +188,26 @@ def process_payment(request):
     else:
         return HttpResponse("Invalid request method")
     
+
+def payment(request):
+    if request.method == 'POST':
+        amount = 50000  # Set your amount dynamically or as required
+        order_currency = 'INR'
+        client = razorpay.Client(auth=('rzp_test_VsNzgoQtqip5Wd', 'rcn7optyjJTyzOsFlhJQ6GYX'))
+        payment = client.order.create({'amount': amount, 'currency': order_currency, 'payment_capture': '1'})
+        # Handle payment response
+        # Redirect to success page on successful payment
+        return render(request, 'pay/payment.html', {'payment': payment})
+    return render(request, 'pay/payment.html')
+
+def success(request):
+    return render(request, 'pay/success.html')
+
+def process_payment(request):
+    if request.method == 'POST':
+        card_number = request.POST.get('card_number')
+        expiry_date = request.POST.get('expiry_date')
+        cvv = request.POST.get('cvv')
+        return redirect('success')  # Redirect to success page on successful payment
+    else:
+        return HttpResponse("Invalid request method")

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GFG</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f5f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background-color: white;
+            padding: 25px;
+            border: 1px solid #bbbbbb;
+            border-radius: 5px;
+            box-shadow: 1px 1px 10px 0px rgb(0 0 0 / 25%);
+            text-align: center;
+        }
+
+        .title {
+            margin-bottom: 10px;
+            font-size: 1.5em;
+            color: #333;
+        }
+
+        .btn_container {
+            padding: 20px;
+        }
+
+        .btn {
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 10px 20px;
+            background-color: #ffaaa7;
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <form class="" action="{% url 'success' %}" method="POST">
+        <div class="card">
+            <h1 class="title">Continue with Payment</h1>
+            <div class="btn_container">
+                <!-- Payment Button -->
+                <button class="btn" id="pay-btn">Pay Now</button>
+            </div>
+        </div>
+    <!-- Razorpay's Javascript code -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        var options = {
+            key: "rzp_test_VsNzgoQtqip5Wd", // Enter your Razorpay Key ID
+            amount: "50000", // Amount is in currency subunits, i.e., 100 paise = ₹1
+            currency: "INR", // Specify your currency here
+            name: "DairySync", // Your/store name
+            description: "Donation", // Payment description
+            order_id: "{{payment.id}}", // Pass the order ID received from your backend
+            image: " ", // URL of your logo
+            theme: {
+                color: "lightblue" // Specify your preferred color theme
+            },
+            prefill: {
+                name: "John Doe", // Donor's name
+                email: "john@example.com" // Donor's email
+            },
+            handler: function (response) {
+                // Handle payment response here
+                if (response.razorpay_payment_id) {
+                    // Payment successful, redirect to success page
+                    window.location.href = "/success";
+                } else {
+                    // Payment failed or incomplete
+                    alert("Payment failed. Please try again.");
+                }
+            }
+        };
+    
+        document.getElementById("pay-btn").onclick = function (e) {
+            var rzp = new Razorpay(options);
+            rzp.open();
+            e.preventDefault();
+        };
+    </script>
+</form>
+</body>
+</html>
