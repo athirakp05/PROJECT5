@@ -35,7 +35,6 @@ def prod_view(request):
     seller = Seller.objects.get(user=request.user)
     products_list = Product.objects.filter(seller=seller)
     
-    # Pagination
     page = request.GET.get('page', 1)
     paginator = Paginator(products_list, 10)  # Show 10 products per page
     try:
@@ -62,8 +61,6 @@ def p_detail(request):
         product_id = request.GET.get('product_id')
         product = get_object_or_404(Product, id=product_id)
         return render(request, 'category/p_detail.html', {'product': product})
-
-    # Handle non-AJAX or invalid requests gracefully
     return HttpResponseBadRequest("Invalid request")
 
 def add_milk_details(request):
