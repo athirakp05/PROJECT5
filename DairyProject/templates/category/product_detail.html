@@ -35,7 +35,7 @@
                                     </div>
                                 </div>
                                 <div class="text-center p-4">
-                                    <a class="d-block h5" href="#">{{ product.name }}</a>
+                                    <a class="d-block h5" href="#">{{ product.p_name }}</a>
                                     <span class="text-primary me-1">₹{{ product.price }}</span>
                                 </div>
                             </div>
@@ -49,6 +49,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <img class="img-fluid" src="{{ product.image.url }}" alt="{{ product.name }}">
+                                        <p>{{ product. }}</p>
                                         <p>{{ product.description }}</p>
                                         <p>Price: ₹{{ product.price }}</p>
                                     </div>

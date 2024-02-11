@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views  
 from django.contrib.auth.views import PasswordResetView,PasswordResetDoneView,PasswordResetConfirmView,PasswordResetCompleteView
-from .views import SellerPasswordChangeView, complete_c_profile, s_profile, complete_s_profile
+from .views import SellerPasswordChangeView, complete_c_profile, s_profile, complete_s_profile,v_register
 
 urlpatterns = [
     path('',views.index,name='home'),
@@ -52,4 +52,6 @@ urlpatterns = [
     path('seller/password_change/', SellerPasswordChangeView.as_view(), name='seller_password_change'),
     path('admin_view_cattle/', views.admin_view_cattle, name='admin_view_cattle'),
     path('search-sellers/', views.search_sellers, name='search_sellers'),
+    path('v_register/', v_register, name='v_register'),
+
 ]

@@ -31,11 +31,13 @@ class CustomUser(AbstractUser):
     CUSTOMER = 'Customer'
     SELLER = 'Seller'
     ADMIN = 'Admin'
+    VETERINARIAN='Veterinarian'
 
     ROLE_CHOICES = [
         (CUSTOMER, 'Customer'),
         (SELLER, 'Seller'),
         (ADMIN, 'Admin'),
+        (VETERINARIAN, 'Veterinarian'),
     ]
     
     role = models.CharField(max_length=15, choices=ROLE_CHOICES)
@@ -240,4 +242,39 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return self.subject
-    
+class Veterinarian(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True, default=True)
+    doctor_name = models.CharField(max_length=50, null=False)
+    mobile = models.IntegerField(null=False)
+    email = models.EmailField(null=False)
+    specialization = models.CharField(
+        max_length=50,
+        choices=[
+            ('Bovine Practitioner', 'Bovine Practitioner'),
+            ('Reproductive Specialist', 'Reproductive Specialist'),
+            ('Herd Health Veterinarian', 'Herd Health Veterinarian'),
+            ('Cattle Surgery Specialist', 'Cattle Surgery Specialist'),
+            ('Food Animal Veterinarian', 'Food Animal Veterinarian'),
+            ('Veterinary Epidemiologist', 'Veterinary Epidemiologist'),
+            ('Dairy Cattle Veterinarian', 'Dairy Cattle Veterinarian'),
+        ],
+        null=False
+    )
+
+    def __str__(self):
+        return f"Dr. {self.doctor_name} - {self.specialization}"
+
+class VetEditProfile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    veterinarian = models.OneToOneField(Veterinarian, on_delete=models.CASCADE)
+    house_name = models.CharField(max_length=200)
+    city = models.CharField(max_length=50)
+    pin_code = models.IntegerField(null=True, blank=True, default=None)
+    gender = models.CharField(max_length=10)
+    age = models.IntegerField(null=True, blank=True, default=None)
+    email = models.EmailField(null=True)
+    mobile = models.CharField(max_length=20, blank=True, null=True)
+    profile_photo = models.ImageField(upload_to='vet_profile_photos/', null=True, blank=True)
+
+    def __str__(self):
+        return f"Dr. {self.doctor_name} - {self.veterinarian.specialization}"

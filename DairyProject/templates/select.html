@@ -12,12 +12,12 @@
                 background-repeat: no-repeat;
                 background-attachment: fixed;
             }
-
+        
             .button-container {
                 text-align: center;
                 padding-top: 100px;
             }
-
+        
             /* Style for the Seller button */
             .seller-btn {
                 background-image: url("{% static 'img/farmer.jpg' %}");
@@ -26,18 +26,18 @@
                 background-color: transparent;
                 color: #fff;
                 padding: 100px 100px;
-                border-radius: 50px;
+                border-radius: 50%;
                 margin: 10px;
                 font-weight: bold;
                 text-transform: uppercase;
                 transition: background-color 0.3s;
                 text-decoration: none;
             }
-
+        
             .seller-btn:hover {
                 background-color: #0056b3;
             }
-
+        
             /* Style for the Customer button */
             .customer-btn {
                 background-image: url("{% static 'img/customer.jpg' %}");
@@ -46,18 +46,39 @@
                 background-color: transparent;
                 color: #fff;
                 padding: 100px 100px;
-                border-radius: 50px;
+                border-radius: 50%;
                 margin: 10px;
                 font-weight: bold;
                 text-transform: uppercase;
                 transition: background-color 0.3s;
                 text-decoration: none;
             }
-
+        
             .customer-btn:hover {
                 background-color: #0056b3;
             }
+        
+            /* Style for the Veterinarian button */
+            .vet-btn {
+                background-image: url("{% static 'img/vet.jpg' %}");
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-color: transparent;
+                color: #fff;
+                padding: 100px 100px;
+                border-radius: 50%;
+                margin: 10px;
+                font-weight: bold;
+                text-transform: uppercase;
+                transition: background-color 0.3s;
+                text-decoration: none;
+            }
+        
+            .vet-btn:hover {
+                background-color: #0056b3;
+            }
         </style>
+        
     </head>
     <body>
         <center><h1>What's your role?</h1></center>
@@ -65,6 +86,7 @@
         <div class="button-container">
             <a href="{% url 's_register' %}" class="seller-btn">Seller</a>
             <a href="{% url 'c_register' %}" class="customer-btn">Customer</a>
+            <a href="{% url 'v_register' %}" class="vet-btn">Veterinarian</a>
         </div>
         {% endblock %}
     </body>

@@ -16,8 +16,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Permission
 from .forms import CustomerEditProfileForm, SellerEditProfileForm, SellerPasswordChangeForm
-from .models import Cattle,Login_Details,SellerEditProfile,Breed,Insurance,Vaccination,ContactMessage,CustomerEditProfile
-from .forms import CattleForm, VaccinationForm, InsuranceForm,SellerProfileForm,BreedForm,ContactForm
+from .models import Cattle,Login_Details,SellerEditProfile,Breed,Insurance,Vaccination,ContactMessage,CustomerEditProfile,VetEditProfile,Veterinarian
+from .forms import CattleForm, VaccinationForm, InsuranceForm,SellerProfileForm,BreedForm,ContactForm,VetEditProfileForm
 from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
 import matplotlib
 matplotlib.use('Agg')  # Set the backend to 'Agg'
@@ -205,6 +205,58 @@ def seller_profile(request):
 def customer_profile(request):
     customer_profile = CustomerEditProfile.objects.get(user=request.user.customer.user)
     return render(request, 'profile_edit/customer_profile.html', {'customer_profile': customer_profile})
+def v_register(request):
+    if request.method == "POST":
+        doctor_name = request.POST.get('doctor_name')
+        doctor_license = request.POST.get('doctor_license')
+        email = request.POST.get('email')
+        mobile = request.POST.get('mobile')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirmpassword')
+
+        if CustomUser.objects.filter(email=email).exists():
+            messages.error(request, "Email already exists")
+        elif VetEditProfile.objects.filter(doctor_license=doctor_license).exists():
+            messages.error(request, "Veterinarian with this license already exists. Please use a different license.")
+            return redirect("v_register")
+
+        elif password != confirm_password:
+            messages.error(request, "Passwords do not match")
+        else:
+            user = CustomUser.objects.create_user(email=email, password=password, role='Veterinarian')
+            veterinarian = Veterinarian(user=user, doctor_license=doctor_license, mobile=mobile)
+            veterinarian.save()
+            vet_edit_profile = VetEditProfile(user=user, doctor_name=doctor_name, doctor_license=doctor_license, mobile=mobile)
+            vet_edit_profile.save()
+            login_details = Login_Details(email=email, password=password, role='Veterinarian')
+            login_details.save()
+            messages.success(request, "Registered successfully. Pending approval.")
+            return redirect("login")
+
+    return render(request, 'v_register.html')
+
+
+@login_required
+def vetprofile(request):
+    user = request.user
+    if user.is_veterinarian:
+        vet_profile = VetEditProfile.objects.get(user=user.veterinarian.user)
+        return render(request, 'profile_edit/vet_profile.html', {'vet_profile': vet_profile})
+    else:
+        return redirect('home')
+
+@login_required
+def complete_vet_profile(request):
+    user = request.user
+    vet_profile, created = VetEditProfile.objects.get_or_create(user=user.veterinarian.user)
+    if request.method == 'POST':
+        form = VetEditProfileForm(request.POST, request.FILES, instance=vet_profile)
+        if form.is_valid():
+            form.save()
+            return redirect('vet_profile')
+    else:
+        form = VetEditProfileForm(instance=vet_profile)
+    return render(request, 'profile_edit/complete_vet_profile.html', {'form': form})
 
 def logout_user(request):
     auth_logout(request)
@@ -311,8 +363,6 @@ def contact(request):
         form = ContactForm(initial=initial_data)
 
     return render(request, 'contact.html', {'form': form})
-
-
 
 def about(request):
     # Add your view logic here
