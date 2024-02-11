@@ -1,0 +1,12 @@
+{% extends 'layout/main.html' %}
+
+{% block body %}
+    <div class="dashboard-container">
+        <h1>Welcome, Dr. {{ user.veterinarian.doctor_name }}!</h1>
+        <p>Your Specialization: {{ user.veterinarian.specialization }}</p>
+
+        <!-- Add more content specific to the veterinarian dashboard as needed -->
+
+        <a href="{% url 'logout' %}">Logout</a>
+    </div>
+{% endblock body %}

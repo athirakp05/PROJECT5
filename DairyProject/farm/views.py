@@ -54,6 +54,13 @@ def loginn(request):
                     else:
                         messages.warning(request, "Your account has been disabled. Please contact the administrator.")
                         return render(request, 'login.html')  # Render login page with a message
+                elif user.role == 'Veterinarian':
+                    if user.veterinarian.is_active:
+                        messages.success(request, "Login successful!")
+                        return redirect("v_dashboard")  # Redirect to the seller dashboard
+                    else:
+                        messages.warning(request, "Your account has been disabled. Please contact the administrator.")
+                        return render(request, 'login.html')  # Render login page with a message
                 else:
                     # Handle unknown or unsupported roles here
                     messages.error(request, "Unknown user role or unsupported role.")
@@ -216,7 +223,7 @@ def v_register(request):
 
         if CustomUser.objects.filter(email=email).exists():
             messages.error(request, "Email already exists")
-        elif VetEditProfile.objects.filter(doctor_license=doctor_license).exists():
+        elif Veterinarian.objects.filter(doctor_license=doctor_license).exists():  # Update this line
             messages.error(request, "Veterinarian with this license already exists. Please use a different license.")
             return redirect("v_register")
 
@@ -224,9 +231,9 @@ def v_register(request):
             messages.error(request, "Passwords do not match")
         else:
             user = CustomUser.objects.create_user(email=email, password=password, role='Veterinarian')
-            veterinarian = Veterinarian(user=user, doctor_license=doctor_license, mobile=mobile)
+            veterinarian = Veterinarian(user=user,doctor_name=doctor_name,doctor_license=doctor_license,email=email,mobile=mobile)
             veterinarian.save()
-            vet_edit_profile = VetEditProfile(user=user, doctor_name=doctor_name, doctor_license=doctor_license, mobile=mobile)
+            vet_edit_profile = VetEditProfile(user=user, veterinarian=veterinarian)
             vet_edit_profile.save()
             login_details = Login_Details(email=email, password=password, role='Veterinarian')
             login_details.save()
@@ -269,7 +276,20 @@ def admindash(request):
         return response
     else:
         return redirect('home')
-
+def v_dashboard(request):
+    if 'email' in request.session:
+        response = render(request, 'dash/v_dashboard.html')
+        response['Cache-Control'] = 'no-store, must-revalidate'
+        return response
+    else:
+        return redirect('home')
+def delivery_dashboard(request):
+    if 'email' in request.session:
+        response = render(request, 'dash/delivery_dashboard.html')
+        response['Cache-Control'] = 'no-store, must-revalidate'
+        return response
+    else:
+        return redirect('home')
 def c_dashboard(request):
     if 'email' in request.session:
         response = render(request, 'dash/c_dashboard.html')

@@ -5,7 +5,6 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
 from .custom_models import CustomGroup  # Import your custom models from custom_models.py
 from django.core.validators import RegexValidator
 
-
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, role=None, mobile=None, **extra_fields):
         if not email:
@@ -52,6 +51,7 @@ class CustomUser(AbstractUser):
     is_customer = models.BooleanField(default=False)
     is_seller = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
+    is_veterinarian = models.BooleanField(default=False)
     groups = models.ManyToManyField(CustomGroup, blank=True, related_name='custom_user_groups')
     user_permissions = models.ManyToManyField(Permission, blank=True, related_name='custom_user_permissions')
     def save(self, *args, **kwargs):
@@ -62,6 +62,8 @@ class CustomUser(AbstractUser):
             self.is_seller = True
         elif self.role == CustomUser.ADMIN:
             self.is_admin = True
+        elif self.role == CustomUser.VETERINARIAN:
+            self.is_veterinarian = True    
 
         super().save(*args, **kwargs)
     def __str__(self):
@@ -246,7 +248,9 @@ class Veterinarian(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True, default=True)
     doctor_name = models.CharField(max_length=50, null=False)
     mobile = models.IntegerField(null=False)
+    doctor_license = models.CharField(max_length=10, null=False, unique=True,default=True)  # Update this line
     email = models.EmailField(null=False)
+    is_active = models.BooleanField(default=True)  # Field to track account status
     specialization = models.CharField(
         max_length=50,
         choices=[
@@ -258,7 +262,7 @@ class Veterinarian(models.Model):
             ('Veterinary Epidemiologist', 'Veterinary Epidemiologist'),
             ('Dairy Cattle Veterinarian', 'Dairy Cattle Veterinarian'),
         ],
-        null=False
+        null=False,default=True
     )
 
     def __str__(self):
@@ -277,4 +281,33 @@ class VetEditProfile(models.Model):
     profile_photo = models.ImageField(upload_to='vet_profile_photos/', null=True, blank=True)
 
     def __str__(self):
-        return f"Dr. {self.doctor_name} - {self.veterinarian.specialization}"
+        return f"Dr. {self.veterinarian.doctor_name} - {self.veterinarian.specialization}"
+    
+class DeliveryBoy(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    name = models.CharField(max_length=100)
+    mobile = models.CharField(max_length=15)
+    email = models.EmailField(null=True)
+    is_active = models.BooleanField(default=True)  # Field to track account status
+
+    def __str__(self):
+        return self.name
+    
+class Delivery(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Out for Delivery', 'Out for Delivery'),
+        ('Delivered', 'Delivered'),
+        ('Failed', 'Failed'),
+    ]
+
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    product = models.ForeignKey('product.Product', on_delete=models.CASCADE)
+    delivery_boy = models.ForeignKey(DeliveryBoy, on_delete=models.SET_NULL, null=True, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+    delivery_date = models.DateTimeField(null=True, blank=True)
+    delivery_time = models.DateTimeField(null=True, blank=True)
+    notes = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.customer} - {self.product} - {self.status}"
