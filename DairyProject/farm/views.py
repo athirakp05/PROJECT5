@@ -22,6 +22,8 @@ from django.shortcuts import render, redirect, get_object_or_404  # Import get_o
 import matplotlib
 matplotlib.use('Agg')  # Set the backend to 'Agg'
 import matplotlib.pyplot as plt
+from seller.models import DeliveryBoy
+from seller.forms import DeliveryBoyLoginForm
 
 def index(request):
     return render(request, 'index.html')
@@ -57,7 +59,11 @@ def loginn(request):
                 elif user.role == 'Veterinarian':
                     if user.veterinarian.is_active:
                         messages.success(request, "Login successful!")
-                        return redirect("v_dashboard")  # Redirect to the seller dashboard
+                        return redirect("v_dashboard") 
+                elif user.role == 'DeliveryBoy':
+                    if user.DeliveryBoy.is_active:
+                        messages.success(request, "Login successful!")
+                        return redirect("deliveryboy_dashboard") 
                     else:
                         messages.warning(request, "Your account has been disabled. Please contact the administrator.")
                         return render(request, 'login.html')  # Render login page with a message
@@ -264,6 +270,7 @@ def complete_vet_profile(request):
     else:
         form = VetEditProfileForm(instance=vet_profile)
     return render(request, 'profile_edit/complete_vet_profile.html', {'form': form})
+
 
 def logout_user(request):
     auth_logout(request)
