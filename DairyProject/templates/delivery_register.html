@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Boy Registration</title>
+</head>
+<body>
+
+<h2>Delivery Boy Registration</h2>
+
+<form method="post" action="{% url 'delivery_register' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <!-- Name -->
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br>
+
+    <!-- Email -->
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br>
+
+    <!-- Mobile -->
+    <label for="mobile">Mobile:</label>
+    <input type="text" id="mobile" name="mobile" required><br>
+
+    <!-- Password -->
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required><br>
+
+    <!-- Confirm Password -->
+    <label for="confirm_password">Confirm Password:</label>
+    <input type="password" id="confirm_password" name="confirm_password" required><br>
+
+    <!-- Driving License Upload -->
+    <label for="driving_license">Upload Driving License:</label>
+    <input type="file" id="driving_license" name="driving_license" accept="image/*" required><br>
+
+    <button type="submit">Register</button>
+</form>
+
+</body>
+</html>

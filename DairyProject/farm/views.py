@@ -23,7 +23,6 @@ import matplotlib
 matplotlib.use('Agg')  # Set the backend to 'Agg'
 import matplotlib.pyplot as plt
 from seller.models import DeliveryBoy
-from seller.forms import DeliveryBoyLoginForm
 
 def index(request):
     return render(request, 'index.html')
@@ -290,13 +289,7 @@ def v_dashboard(request):
         return response
     else:
         return redirect('home')
-def delivery_dashboard(request):
-    if 'email' in request.session:
-        response = render(request, 'dash/delivery_dashboard.html')
-        response['Cache-Control'] = 'no-store, must-revalidate'
-        return response
-    else:
-        return redirect('home')
+
 def c_dashboard(request):
     if 'email' in request.session:
         response = render(request, 'dash/c_dashboard.html')

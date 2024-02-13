@@ -41,13 +41,11 @@ class CustomUser(AbstractUser):
         (DELIVERY_BOY , 'DeliveryBoy'),
 
     ]
-    
     role = models.CharField(max_length=15, choices=ROLE_CHOICES)
     forget_password_token = models.UUIDField(null=True, blank=True)
     email = models.EmailField(unique=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['role']
-
     objects = CustomUserManager()
     username = None
     mobile = models.CharField(max_length=20, blank=True, null=True)
@@ -255,6 +253,7 @@ class Veterinarian(models.Model):
     mobile = models.IntegerField(null=False)
     doctor_license = models.CharField(max_length=10, null=False, unique=True,default=True)  # Update this line
     email = models.EmailField(null=False)
+    start_year = models.PositiveIntegerField(null=True, blank=True)  # New field for start year
     is_active = models.BooleanField(default=True)  # Field to track account status
     specialization = models.CharField(
         max_length=50,
@@ -279,6 +278,7 @@ class VetEditProfile(models.Model):
     house_name = models.CharField(max_length=200)
     city = models.CharField(max_length=50)
     pin_code = models.IntegerField(null=True, blank=True, default=None)
+    start_year = models.PositiveIntegerField(null=True, blank=True)  # New field for start year
     gender = models.CharField(max_length=10)
     age = models.IntegerField(null=True, blank=True, default=None)
     email = models.EmailField(null=True)

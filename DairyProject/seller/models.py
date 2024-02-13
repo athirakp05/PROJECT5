@@ -6,10 +6,29 @@ class DeliveryBoy(models.Model):
     name = models.CharField(max_length=100)
     mobile = models.CharField(max_length=15)
     email = models.EmailField(null=True)
+    driving_license = models.FileField(upload_to='driving_licenses/', null=True, unique=True)
+    is_approved = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)  # Field to track account status
 
     def __str__(self):
         return self.name
+
+    
+class DeliveryBoyEdit(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    delivery_boy = models.OneToOneField(DeliveryBoy, on_delete=models.CASCADE)
+    driving_license = models.FileField(upload_to='driving_licenses/', null=True, unique=True)
+    house_name = models.CharField(max_length=200, null=True)
+    city = models.CharField(max_length=50, null=True)
+    pin_code = models.IntegerField(null=True, blank=True, default=None)
+    gender = models.CharField(max_length=10, null=True)
+    age = models.IntegerField(null=True, blank=True, default=None)
+    email = models.EmailField(unique=True, null=True)
+    mobile = models.CharField(max_length=20, blank=True, null=True)
+    profile_photo = models.ImageField(upload_to='vet_profile_photos/', null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username
     
 class Delivery(models.Model):
     STATUS_CHOICES = [

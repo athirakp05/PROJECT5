@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Delivery Boy Approval</title>
+</head>
+<body>
+
+<h2>Pending Delivery Boy Registrations</h2>
+
+{% for registration in registrations %}
+    <div>
+        <p>Name: {{ registration.name }}</p>
+        <p>Email: {{ registration.email }}</p>
+        <p>Driving License: <a href="{{ registration.driving_license.url }}" target="_blank">View</a></p>
+        <form method="post" action="{% url 'approve_delivery_registration' registration.id %}">
+            {% csrf_token %}
+            <button type="submit">Approve</button>
+        </form>
+        <hr>
+    </div>
+{% endfor %}
+
+</body>
+</html>
