@@ -1,7 +1,7 @@
 # views.py
 import razorpay
 from .models import Product
-from .forms import ProductForm
+from .forms import ProductForm, SampleTestReportForm
 from .models import MilkCollection,Cart
 from .forms import MilkCollectionForm
 from django.urls import reverse
@@ -92,11 +92,18 @@ from datetime import date
 def all_milk_details(request):
     today = date.today()
     all_milk_details = MilkCollection.objects.filter(collection_date=today)
+    date_filter = request.GET.get('date')
+    seller_filter = request.GET.get('seller')
+
+    if date_filter:
+        all_milk_details = all_milk_details.filter(collection_date=date_filter)
+
+    if seller_filter:
+        all_milk_details = all_milk_details.filter(seller__name=seller_filter)
+
     context = {'all_milk_details': all_milk_details}
     return render(request, 'admin/all_milk_details.html', context)
 
-
-from django.contrib.auth import get_user_model
 
 @login_required
 def view_carts(request):
@@ -257,3 +264,18 @@ def process_payment(request):
         return redirect('success')  # Redirect to success page on successful payment
     else:
         return HttpResponse("Invalid request method")
+    
+def sample_report(request):
+    return render(request, 'category/sample_report.html')
+
+
+@login_required
+def addSample_test(request):
+    if request.method == 'POST':
+        form = SampleTestReportForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('addSample_test')  # Redirect to the list view of sample test reports
+    else:
+        form = SampleTestReportForm()
+    return render(request, 'admin/addSample_test.html', {'form': form})

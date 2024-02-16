@@ -20,3 +20,9 @@ class MilkCollectionForm(forms.ModelForm):
         }
 class ProductSearchForm(forms.Form):
     query = forms.CharField(label='Search', max_length=100)
+
+from .models import SampleTestReport
+class SampleTestReportForm(forms.ModelForm):
+    class Meta:
+        model = SampleTestReport
+        fields = '__all__'

@@ -80,6 +80,7 @@
         <th>Test Result</th>
         <th>Obtained Payment</th>
         <th>Description</th>
+        <th>Sample test report</th>
 
 
         <!-- Add other fields as needed -->
@@ -95,7 +96,7 @@
           <td>{{ milk_detail.quality_test_report }}</td>
           <td>{{ milk_detail.price }}</td>
           <td>{{ milk_detail.description }}</td>
-          <!-- Add other fields similarly -->
+          <td><a href="{ % url 'sample_report' % }">Click Here</a></td> <!-- Link to detailed view -->
         </tr>
       {% endfor %}
     </tbody>

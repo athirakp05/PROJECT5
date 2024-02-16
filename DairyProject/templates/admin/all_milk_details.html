@@ -14,6 +14,7 @@
               <th>Price</th>
               <th>Description</th>
               <th>Actions</th>
+              <th>Sample test report</th>
           </tr>
       </thead>
       <tbody>
@@ -31,6 +32,7 @@
                       <button>Edit</button>
                   </a>
               </td>
+              <td><a href="{% url 'addSample_test' %}">Click Here</a></td> <!-- Link to detailed view -->
           </tr>
           {% endfor %}
       </tbody>

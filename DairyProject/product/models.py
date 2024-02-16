@@ -3,6 +3,7 @@ from farm.models import Seller,CustomUser
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 
 class Product(models.Model):
     p_code = models.AutoField(primary_key=True, unique=True)
@@ -77,3 +78,24 @@ class Payment(models.Model):
     def __str__(self):
         return f"Payment of {self.amount} by {self.user.username} on {self.payment_date}"
 
+class SampleTestReport(models.Model):
+    CATEGORY_CHOICES = [
+        ('Cow', 'Cow Milk'),
+        ('Goat', 'Goat Milk'),
+        ('Buffalo', 'Buffalo Milk'),
+    ]
+
+    seller = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='sample_test_reports')
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
+    status = models.CharField(max_length=50)
+    density = models.DecimalField(max_digits=5, decimal_places=2)
+    bacterial_content = models.DecimalField(max_digits=5, decimal_places=2)
+    antibiotic_residue = models.CharField(max_length=50)
+    freezing_point = models.DecimalField(max_digits=5, decimal_places=2)
+    somatic_cell_count = models.PositiveIntegerField()
+    lactose_content = models.DecimalField(max_digits=5, decimal_places=2)
+    protein_content = models.DecimalField(max_digits=5, decimal_places=2)
+    fat_content = models.DecimalField(max_digits=5, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.seller.username} - {self.category} Milk Test Report"

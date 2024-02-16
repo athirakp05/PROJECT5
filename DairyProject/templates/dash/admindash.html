@@ -61,8 +61,12 @@
         }
     
         .main-content {
+            flex: 1; 
             padding: 20px;
             box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     
         #dashboard-content {
@@ -126,7 +130,6 @@
             </nav>
         </div>
         <a class="nav-link" href="{% url 'logout' %}" data-url="{% url 'logout' %}">logout</a>
-
         <div class="main-content">
             <div id="dashboard-content"></div>
         </div>
