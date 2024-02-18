@@ -22,7 +22,12 @@ class ProductSearchForm(forms.Form):
     query = forms.CharField(label='Search', max_length=100)
 
 from .models import SampleTestReport
+# in forms.py
+from django import forms
+from .models import SampleTestReport
+
 class SampleTestReportForm(forms.ModelForm):
     class Meta:
         model = SampleTestReport
-        fields = '__all__'
+        fields = ['category', 'density', 'bacterial_content', 'turbidity', 'somatic_cell_count',
+                  'lactose_content', 'protein_content', 'fat_content', 'grade']

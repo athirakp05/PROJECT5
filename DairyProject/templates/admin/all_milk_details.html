@@ -1,24 +1,30 @@
 <!-- all_milk_details.html -->
 <div>
     <h1>All Milk Details</h1>
-    <td><a href="{% url 'milk_parameters' %}">Normal Milk Count</a></td> <!-- Link to detailed view -->
-    <form method="get">
+    <form method="get" action="{% url 'all_milk_details' %}">
         <label for="date">Select Date:</label>
-        <input type="date" name="date" id="date">
-
+        <input type="date" name="date" id="date" value="{{ request.GET.date }}">
         <label for="seller">Select Seller:</label>
         <select name="seller" id="seller">
             <option value="">-- All Sellers --</option>
-            {% for seller in sellers %}
-                <option value="{{ seller.name }}">{{ seller.name }}</option>
-            {% endfor %}
+            {% if sellers %}
+                {% for seller in sellers %}
+                    <option value="{{ seller.name }}" {% if request.GET.seller == seller.name %}selected{% endif %}>
+                        {{ seller.name }}
+                    </option>
+                {% endfor %}
+            {% else %}
+                <option value="" disabled>No data available</option>
+            {% endif %}
         </select>
-
         <button type="submit">Filter</button>
     </form>
   <a href="{% url 'add_milk_details' %}">
       <button>Add Milk Details</button>
   </a>
+  <a href="{% url 'milk_parameters' %}" style="float: right;">
+    <button>Normal Milk Parameters</button>
+</a>
   <table>
       <thead>
           <tr>
@@ -48,7 +54,7 @@
                       <button>Edit</button>
                   </a>
               </td>
-              <td><a href="{% url 'addSample_test' %}">Click Here</a></td> <!-- Link to detailed view -->
+              <td><a href="{% url 'addSample_test' %}"><button>Click Here</button></a></td> <!-- Link to detailed view -->
           </tr>
           {% endfor %}
       </tbody>
@@ -73,4 +79,23 @@
   th {
       background-color: #f2f2f2;
   }
+  .milk-details-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.action-button {
+    margin-top: 10px;
+    margin-right: 10px;
+    text-decoration: none;
+}
+
+.action-button button {
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+.action-link {
+    text-decoration: none;
+}
 </style>

@@ -1,12 +1,127 @@
-{% extends 'layout/main.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{% static 'assets/css/vertical-layout-light/style.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendors/feather/feather.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendors/ti-icons/css/themify-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        /* General styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            position: fixed;
+            top: 60px; /* Adjust this value based on your navbar height */
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            background-color: rgb(44, 151, 193);
+            color: #fff;
+            padding-top: 50px;
+        }
+
+        .user-info {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .user-avatar img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-name {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+        }
+
+        .sidebar a:hover {
+            background-color: rgb(44, 151, 193);
+        }
+
+        /* Content area */
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            padding-top: 80px; /* Adjust this value based on your navbar height */
+        }
+
+        /* Media queries for responsiveness */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100px;
+            }
+
+            .content {
+                margin-left: 100px;
+            }
+        }
+    </style>
+</head>
 
 {% block body %}
-    <div class="dashboard-container">
-        <h1>Welcome, Dr. {{ user.veterinarian.doctor_name }}!</h1>
-        <p>Your Specialization: {{ user.veterinarian.specialization }}</p>
+<body>
 
-        <!-- Add more content specific to the veterinarian dashboard as needed -->
+    {% include 'inc/delnav.html' %}
 
-        <a href="{% url 'logout' %}">Logout</a>
+    
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <img src="{% static 'img/vt.jpg' %}" alt="User Avatar">
+                </div>
+                <div class="user-name">{{ user.veterinarian.doctor_name }}</div>
+            </div>
+            <a href="{% url 'complete_v_profile' %}" data-url="{% url 'complete_v_profile' %}"><i class="fas fa-user-edit"></i> Edit Profile</a>
+            <a href="#" data-url="#"><i class="fas fa-calendar"></i> View Appointments</a>
+            <!-- Add more links based on your requirements -->
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <header>
+                <div class="dashboard-container">
+                    <h1>Welcome, Dr. {{ user.veterinarian.doctor_name }}!</h1>
+                    <p>Your Specialization: {{ user.veterinarian.specialization }}</p>
+                        </header>
+            <main>
+                <!-- Placeholder content, replace with your actual content -->
+                <div id="dashboard-content">
+                    <p>Main content goes here...</p>
+                </div>
+            </main>
+        </div>
+
     </div>
-{% endblock body %}
+
+    <!-- Bootstrap JS and jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Your additional scripts can go here
+    </script>
+
+</body>
+{% endblock %}
+
+</html>

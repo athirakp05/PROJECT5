@@ -258,7 +258,7 @@ def vetprofile(request):
         return redirect('home')
 
 @login_required
-def complete_vet_profile(request):
+def complete_v_profile(request):
     user = request.user
     vet_profile, created = VetEditProfile.objects.get_or_create(user=user.veterinarian.user)
     if request.method == 'POST':
@@ -268,7 +268,7 @@ def complete_vet_profile(request):
             return redirect('vet_profile')
     else:
         form = VetEditProfileForm(instance=vet_profile)
-    return render(request, 'profile_edit/complete_vet_profile.html', {'form': form})
+    return render(request, 'profile_edit/complete_v_profile.html', {'form': form})
 
 
 def logout_user(request):
@@ -534,12 +534,11 @@ def view_breed(request):
     return render(request, 'cattle/view_breed.html', {'breeds': breeds})
 
 def delete_breed(request, breed_id):
-    breed = get_object_or_404(Breed, pk=breed_id)
+    breed = get_object_or_404(Breed, id=breed_id)
     if request.method == 'POST':
         breed.delete()
         return redirect('view_breed')  # Redirect to view breed page
     
-    return render(request, 'cattle/delete_breed.html', {'breed': breed})
 def fetch_breeds(request):
     cattle_type = request.GET.get('cattleType')
     breeds = Breed.objects.filter(cattle_type=cattle_type).values_list('name', flat=True)
@@ -633,8 +632,7 @@ def get_new_messages(request):
         }
         for message in new_messages
     ]
-
-    # Return new messages as JSON response
+    new_messages.update(is_read=True)
     return JsonResponse({'messages': serialized_messages})
 
 

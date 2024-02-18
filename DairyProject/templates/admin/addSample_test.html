@@ -1,8 +1,65 @@
+<!-- add_sample_test.html -->
+
 {% block content %}
-  <h2>Add Sample Test Report</h2>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit</button>
-  </form>
+  <div class="sample-test-container">
+    <h1>Add Sample Test Report</h1>
+    <form method="post" action="{% url 'addSample_test' %}" class="sample-test-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="submit-button">Submit</button>
+    </form>
+  </div>
 {% endblock %}
+<style>/* Add CSS styling for the add_sample_test page */
+
+  .sample-test-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+      margin-top: 20px;
+  }
+  
+  .sample-test-form {
+      margin-top: 20px;
+  }
+  
+  .sample-test-form label {
+      display: block;
+      margin-bottom: 5px;
+  }
+  
+  .sample-test-form input[type="text"],
+  .sample-test-form input[type="date"],
+  .sample-test-form input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+  }
+  
+  .sample-test-form select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+  }
+  
+  .sample-test-form .submit-button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+  }
+  
+  .sample-test-form .submit-button:hover {
+      background-color: #45a049;
+  }
+  
+  /* Add more styles as needed */
+  </style>

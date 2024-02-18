@@ -88,21 +88,24 @@ def edit_milk_details(request, pk):
     return render(request, 'admin/edit_milk_details.html', {'form': form})
 
 from datetime import date
+from datetime import datetime
 
 def all_milk_details(request):
-    today = date.today()
-    all_milk_details = MilkCollection.objects.filter(collection_date=today)
+    all_milk_details = MilkCollection.objects.all()
+    sellers = Seller.objects.all()  # Fetch all sellers for the filter dropdown
     date_filter = request.GET.get('date')
     seller_filter = request.GET.get('seller')
 
     if date_filter:
+        date_filter = datetime.strptime(date_filter, '%Y-%m-%d').date()
         all_milk_details = all_milk_details.filter(collection_date=date_filter)
 
     if seller_filter:
         all_milk_details = all_milk_details.filter(seller__name=seller_filter)
 
-    context = {'all_milk_details': all_milk_details}
+    context = {'all_milk_details': all_milk_details, 'sellers': sellers}
     return render(request, 'admin/all_milk_details.html', context)
+
 
 
 @login_required
@@ -274,12 +277,18 @@ def addSample_test(request):
     if request.method == 'POST':
         form = SampleTestReportForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('addSample_test')  # Redirect to the list view of sample test reports
+            sample_test = form.save(commit=False)
+            sample_test.seller = request.user
+            sample_test.save()
+            messages.success(request, 'Sample test report added successfully.')
+            return redirect('all_milk_details')  # Redirect to the milk details page
+        else:
+            messages.error(request, 'Error in the form submission. Please check the data.')
     else:
         form = SampleTestReportForm()
-    return render(request, 'admin/addSample_test.html', {'form': form})
 
+    context = {'form': form}
+    return render(request, 'admin/addSample_test.html', context)
 
 def milk_parameters(request):
     return render(request, 'other/milk_parameters.html')
