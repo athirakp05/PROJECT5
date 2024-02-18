@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views  
-from .views import addSample_test, p_detail,update_quantity
+from .views import addSample_test, milk_parameters, p_detail,update_quantity
 from .views import sample_report
 
 urlpatterns = [
@@ -24,5 +24,6 @@ urlpatterns = [
     path('update_quantity/', update_quantity, name='update_quantity'),
     path('sample_report/', sample_report, name='sample_report'),
     path('addSample_test/', addSample_test, name='addSample_test'),
+    path('milk_parameters/', milk_parameters, name='milk_parameters'),
 
 ]

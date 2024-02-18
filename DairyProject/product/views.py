@@ -279,3 +279,7 @@ def addSample_test(request):
     else:
         form = SampleTestReportForm()
     return render(request, 'admin/addSample_test.html', {'form': form})
+
+
+def milk_parameters(request):
+    return render(request, 'other/milk_parameters.html')

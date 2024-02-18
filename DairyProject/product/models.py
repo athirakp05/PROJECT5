@@ -87,15 +87,14 @@ class SampleTestReport(models.Model):
 
     seller = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='sample_test_reports')
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
-    status = models.CharField(max_length=50)
     density = models.DecimalField(max_digits=5, decimal_places=2)
     bacterial_content = models.DecimalField(max_digits=5, decimal_places=2)
-    antibiotic_residue = models.CharField(max_length=50)
-    freezing_point = models.DecimalField(max_digits=5, decimal_places=2)
+    turbidity = models.DecimalField(max_digits=5, decimal_places=2)
     somatic_cell_count = models.PositiveIntegerField()
     lactose_content = models.DecimalField(max_digits=5, decimal_places=2)
     protein_content = models.DecimalField(max_digits=5, decimal_places=2)
     fat_content = models.DecimalField(max_digits=5, decimal_places=2)
+    grade = models.CharField(max_length=50)
 
     def __str__(self):
         return f"{self.seller.username} - {self.category} Milk Test Report"
