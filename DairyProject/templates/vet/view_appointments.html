@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Appointments</title>
+
+    <!-- Add these lines to the head section of your HTML template -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.7/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.7/js/jquery.dataTables.js"></script>
+
+</head>
+<body>
+
+    <div id="content">
+        <h2>View Appointments</h2>
+        
+        <table id="appointments-table">
+            <thead>
+                <tr>
+                    <th>Seller ID</th>
+                    <th>Veterinarian Name</th>
+                    <th>Appointment ID</th>
+                    <th>Appointment Date</th>
+                    <th>Appointment Time</th>
+                    <th>Reason/Symptom</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in appointments %}
+                    <tr>
+                        <td>{{ appointment.seller_id.id }}</td>
+                        <td>{{ appointment.veterinarian.doctor_name }}</td>
+                        <td>{{ appointment.appointment_id }}</td>
+                        <td>{{ appointment.appointment_date }}</td>
+                        <td>{{ appointment.appointment_time }}</td>
+                        <td>{{ appointment.reason_or_symptom }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        $(document).ready( function () {
+            $('#appointments-table').DataTable({
+                searching: true,  // Enable search bar
+                paging: true,      // Enable pagination
+                ordering: true,    // Enable column sorting
+            });
+        });
+    </script>
+
+</body>
+</html>

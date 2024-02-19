@@ -85,14 +85,11 @@
     
         <!-- Sidebar -->
         <div class="sidebar">
-            <div class="user-info">
-                <div class="user-avatar">
-                    <img src="{% static 'img/vt.jpg' %}" alt="User Avatar">
-                </div>
-                <div class="user-name">{{ user.veterinarian.doctor_name }}</div>
+            <div class="user-info">        
+                <div class="user-name">Dr.{{ user.veterinarian.doctor_name }}</div>
             </div>
             <a href="{% url 'complete_v_profile' %}" data-url="{% url 'complete_v_profile' %}"><i class="fas fa-user-edit"></i> Edit Profile</a>
-            <a href="#" data-url="#"><i class="fas fa-calendar"></i> View Appointments</a>
+            <a href="{% url 'view_appointments' %}" data-url="{% url 'view_appointments' %}"><i class="fas fa-calendar"></i> View Appointments</a>
             <!-- Add more links based on your requirements -->
         </div>
 
@@ -113,15 +110,39 @@
 
     </div>
 
-    <!-- Bootstrap JS and jQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap JS and jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        // Your additional scripts can go here
-    </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+        const dashboardContent = document.getElementById('dashboard-content');
+
+        sidebarLinks.forEach(function(link) {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const url = link.getAttribute('data-url');
+                if (url) {
+                    loadContent(url);
+                }
+            });
+        });
+        loadContent("{% url 'vet_profile' %}");
+        function loadContent(url) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    dashboardContent.innerHTML = xhr.responseText;
+                }
+            };
+            xhr.open('GET', url, true);
+            xhr.send();
+        }
+    });
+</script>
 
 </body>
 {% endblock %}
-
 </html>
+

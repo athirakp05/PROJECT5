@@ -278,13 +278,25 @@ class VetEditProfile(models.Model):
     house_name = models.CharField(max_length=200)
     city = models.CharField(max_length=50)
     pin_code = models.IntegerField(null=True, blank=True, default=None)
-    start_year = models.PositiveIntegerField(null=True, blank=True)  # New field for start year
+    start_year = models.PositiveIntegerField(null=True, blank=True)
     gender = models.CharField(max_length=10)
     age = models.IntegerField(null=True, blank=True, default=None)
     email = models.EmailField(null=True)
     mobile = models.CharField(max_length=20, blank=True, null=True)
     profile_photo = models.ImageField(upload_to='vet_profile_photos/', null=True, blank=True)
+    doctor_name = models.CharField(max_length=50, null=True)  # Add this line
+    doctor_license = models.CharField(max_length=10, null=True)  # Add this line
+    specialization = models.CharField(max_length=50, null=True)  # Add this line
 
     def __str__(self):
         return f"Dr. {self.veterinarian.doctor_name} - {self.veterinarian.specialization}"
-    
+class Appointment(models.Model):
+    seller_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='appointments')
+    veterinarian = models.ForeignKey(Veterinarian, on_delete=models.CASCADE)
+    appointment_id = models.AutoField(primary_key=True)
+    appointment_date = models.DateField()
+    appointment_time = models.TimeField()
+    symptom = models.TextField()
+
+    def __str__(self):
+        return f"Appointment #{self.appointment_id} - {self.appointment_date}"

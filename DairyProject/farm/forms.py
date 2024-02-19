@@ -1,6 +1,6 @@
 from django.core.validators import RegexValidator
 from django import forms
-from .models import Cattle, CustomerEditProfile,Insurance,Vaccination,SellerEditProfile,Breed,CattleType,ContactMessage,VetEditProfile
+from .models import Appointment, Cattle, CustomerEditProfile,Insurance,Vaccination,SellerEditProfile,Breed,CattleType,ContactMessage,VetEditProfile
 class CustomerRegistrationForm(forms.Form):
     first_name = forms.CharField(max_length=50)
     last_name = forms.CharField(max_length=50)
@@ -111,6 +111,7 @@ class SellerPasswordChangeForm(PasswordChangeForm):
         model = SellerEditProfile
         fields = '__all__'
 
+# forms.py
 class VetEditProfileForm(forms.ModelForm):
     class Meta:
         model = VetEditProfile
@@ -119,3 +120,7 @@ class VetEditProfileForm(forms.ModelForm):
             'dob': forms.DateInput(attrs={'type': 'date'}),
             'gender': forms.Select(choices=[('---', '---'), ('Male', 'Male'), ('Female', 'Female'), ('Others', 'Others')]),
         }
+class AppointmentForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = '__all__'

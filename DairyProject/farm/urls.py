@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views  
 from django.contrib.auth.views import PasswordResetView,PasswordResetDoneView,PasswordResetConfirmView,PasswordResetCompleteView
-from .views import SellerPasswordChangeView, complete_c_profile, s_profile, complete_s_profile,v_register
+from .views import SellerPasswordChangeView, complete_c_profile, complete_v_profile, s_profile, complete_s_profile,v_register, view_appointments
 
 urlpatterns = [
     path('',views.index,name='home'),
@@ -34,9 +34,11 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('s_profile/', s_profile, name='s_profile'),
     path('seller_profile/', views.seller_profile, name='seller_profile'),
+    path('vet_profile/', views.vet_profile, name='vet_profile'),
     path('customer_profile/', views.customer_profile, name='customer_profile'),
     path('complete_s_profile/', complete_s_profile, name='complete_s_profile'),
     path('complete_c_profile/', complete_c_profile, name='complete_c_profile'),
+    path('complete_v_profile/', complete_v_profile, name='complete_v_profile'),
     path('vaccination/<int:cattle_id>/', views.vac_details, name='vac_details'),
     path('insurance/<int:cattle_id>/', views.ins_details, name='ins_details'),
     path('usercount/', views.usercount, name='usercount'),
@@ -55,5 +57,6 @@ urlpatterns = [
     path('admin_view_cattle/', views.admin_view_cattle, name='admin_view_cattle'),
     path('search-sellers/', views.search_sellers, name='search_sellers'),
     path('v_register/', v_register, name='v_register'),
+    path('view_appointments/', view_appointments, name='view_appointments'),
 
 ]

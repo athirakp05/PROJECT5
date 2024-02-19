@@ -1,0 +1,87 @@
+{% load static %}
+
+<style>
+    /* Add this CSS block to your existing styles or create a new style block */
+    form {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select,
+    textarea {
+        width: calc(100% - 12px);
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    input[type="date"] {
+        appearance: none;
+        -webkit-appearance: none;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        padding: 8px;
+    }
+
+    button {
+        padding: 10px 20px;
+        background-color: #63a6ed;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    button:hover {
+        background-color: #b8cde4;
+    }
+
+    /* Additional styling based on your preferences */
+    .container {
+        width: 80%;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    h2 {
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    img {
+        max-width: 100%; /* Ensure the image doesn't exceed its container */
+        height: auto;    /* Maintain the aspect ratio */
+    }
+</style>
+
+{% block content %}
+    <div class="container">
+        <h2>Veterinarian Profile</h2>
+        <div>
+            <img src="{{ vet_profile.veterinarian.profile_photo.url }}" alt="Profile Photo">
+        </div>
+        <p><strong>Name:</strong> Dr. {{ vet_profile.veterinarian.doctor_name }}</p>
+        <p><strong>Specialization:</strong> {{ vet_profile.veterinarian.specialization }}</p>
+        <p><strong>Email:</strong> {{ vet_profile.email }}</p>
+        <p><strong>Mobile:</strong> {{ vet_profile.mobile }}</p>
+        <p><strong>Address:</strong> {{ vet_profile.house_name }}, {{ vet_profile.city }}, {{ vet_profile.pin_code }}</p>
+        <p><strong>Gender:</strong> {{ vet_profile.gender }}</p>
+        <p><strong>Age:</strong> {{ vet_profile.age }}</p>
+        <!-- Add more fields as needed -->
+
+        <a href="{% url 'complete_v_profile' %}">Edit Profile</a>
+    </div>
+{% endblock %}

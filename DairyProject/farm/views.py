@@ -8,14 +8,14 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect,HttpResponse
 from product.models import Product
-from .models import CustomUser, Customer, Seller,CattleType
+from .models import Appointment, CustomUser, Customer, Seller,CattleType
 from django.http import JsonResponse
 from django.urls import reverse
 from django.db.models import Q  # Import the Q object
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Permission
-from .forms import CustomerEditProfileForm, SellerEditProfileForm, SellerPasswordChangeForm
+from .forms import AppointmentForm, CustomerEditProfileForm, SellerEditProfileForm, SellerPasswordChangeForm
 from .models import Cattle,Login_Details,SellerEditProfile,Breed,Insurance,Vaccination,ContactMessage,CustomerEditProfile,VetEditProfile,Veterinarian
 from .forms import CattleForm, VaccinationForm, InsuranceForm,SellerProfileForm,BreedForm,ContactForm,VetEditProfileForm
 from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
@@ -225,6 +225,8 @@ def v_register(request):
         mobile = request.POST.get('mobile')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirmpassword')
+        start_year = request.POST.get('start_year')
+        specialization = request.POST.get('specialization')  # Add this line
 
         if CustomUser.objects.filter(email=email).exists():
             messages.error(request, "Email already exists")
@@ -236,9 +238,9 @@ def v_register(request):
             messages.error(request, "Passwords do not match")
         else:
             user = CustomUser.objects.create_user(email=email, password=password, role='Veterinarian')
-            veterinarian = Veterinarian(user=user,doctor_name=doctor_name,doctor_license=doctor_license,email=email,mobile=mobile)
+            veterinarian = Veterinarian(user=user,doctor_name=doctor_name,doctor_license=doctor_license,email=email,mobile=mobile,start_year=start_year, specialization=specialization)
             veterinarian.save()
-            vet_edit_profile = VetEditProfile(user=user, veterinarian=veterinarian)
+            vet_edit_profile = VetEditProfile(user=user, veterinarian=veterinarian,doctor_name=doctor_name,doctor_license=doctor_license,email=email,mobile=mobile,start_year=start_year, specialization=specialization)
             vet_edit_profile.save()
             login_details = Login_Details(email=email, password=password, role='Veterinarian')
             login_details.save()
@@ -249,13 +251,13 @@ def v_register(request):
 
 
 @login_required
-def vetprofile(request):
+def vet_profile(request):
     user = request.user
     if user.is_veterinarian:
         vet_profile = VetEditProfile.objects.get(user=user.veterinarian.user)
-        return render(request, 'profile_edit/vet_profile.html', {'vet_profile': vet_profile})
+        return render(request, 'view/vet_profile.html', {'vet_profile': vet_profile})
     else:
-        return redirect('home')
+        return redirect('v_dashboard')
 
 @login_required
 def complete_v_profile(request):
@@ -660,3 +662,7 @@ class SellerPasswordChangeView(PasswordChangeView):
         # Add success message
         messages.success(self.request, 'Password changed successfully.')
         return super().form_valid(form)
+    
+def view_appointments(request):
+    appointments = Appointment.objects.all()
+    return render(request, 'vet/view_appointments.html', {'appointments': appointments})
