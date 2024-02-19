@@ -1,79 +1,70 @@
 from django.shortcuts import redirect, render
+from .forms import DeliveryBoyApprovalForm, DeliveryBoyRegistrationForm
 from farm.models import CustomUser, Login_Details
-from .models import DeliveryBoy, DeliveryBoyEdit
+from .models import  ApprovalRequest, DeliveryBoyEdit
 from django.core.mail import send_mail
 from django.contrib import messages
 from .models import DeliveryBoy
+from django.contrib.auth.decorators import login_required
 
 def delivery_register(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        mobile = request.POST.get('mobile')
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
-        driving_license = request.FILES.get('driving_license')
+        form = DeliveryBoyRegistrationForm(request.POST, request.FILES)
+        if form.is_valid():
+            delivery_boy = form.save(commit=False)
+            
+            # Ensure that the user is a CustomUser instance
+            if isinstance(request.user, CustomUser):
+                delivery_boy.user = request.user
+                delivery_boy.is_active = False  # Set is_active to False until admin approval
+                delivery_boy.save()
 
-        # Basic validation
-        if password != confirm_password:
-            messages.error(request, 'Password and Confirm Password do not match.')
-            return redirect('delivery_register')
+                # Send registration details to admin (you may use Django signals or other methods)
 
-        # Create a CustomUser instance
-        user = CustomUser.objects.create(
-            email=email,
-            role='DeliveryBoy',  # Assuming 'DeliveryBoy' is a valid role in your system
-            mobile=mobile,
-        )
-        user.set_password(password)
-        user.save()
+                messages.success(request, 'Your registration is pending approval from the admin.')
+                return redirect('delivery_register')
+            else:
+                messages.error(request, 'Invalid user type.')
+    else:
+        form = DeliveryBoyRegistrationForm()
 
-        # Create a DeliveryBoy instance (not approved yet)
-        delivery_boy = DeliveryBoy.objects.create(
-            user=user,
-            name=name,
-            email=email,
-            mobile=mobile,
-            driving_license=driving_license,
-            is_approved=False,
-        )
+    return render(request, 'delivery_register.html', {'form': form})
 
-        # Create a Login_Details instance
-        login_details = Login_Details.objects.create(
-            email=email,
-            password=password,  # Note: In a real-world scenario, you should hash the password
-            role='DeliveryBoy',  # Assuming 'DeliveryBoy' is a valid role in your system
-        )
+@login_required
+def deliveryboy_approval(request):
+    if request.method == 'POST':
+        form = DeliveryBoyApprovalForm(request.POST)
+        if form.is_valid():
+            approval_request_id = form.cleaned_data['approval_request_id']
+            is_approved = form.cleaned_data['is_approved']
 
-        # Create a DeliveryBoyEdit instance
-        delivery_boy_edit = DeliveryBoyEdit.objects.create(
-            user=user,
-            delivery_boy=delivery_boy,
-            driving_license=driving_license,
-        )
+            approval_request = ApprovalRequest.objects.get(id=approval_request_id)
+            delivery_boy = approval_request.delivery_boy
 
-        # Send registration details to admin via email for approval
-        send_approval_email(delivery_boy)
+            if is_approved:
+                delivery_boy.is_active = True
+                delivery_boy.save()
 
-        messages.success(request, 'Registration successful. Wait for admin approval.')
+            approval_request.is_approved = is_approved
+            approval_request.save()
 
-        return redirect('home')  # Redirect to your home page
+            messages.success(request, 'Approval status updated successfully.')
+            return redirect('deliveryboy_approval')
+    else:
+        approval_requests = ApprovalRequest.objects.filter(is_approved=False)
+        form = DeliveryBoyApprovalForm()
 
-    return render(request, 'delivery_register.html')
-
-def send_approval_email(delivery_boy):
-    subject = 'New Delivery Boy Registration - Approval Required'
-    message = f"Name: {delivery_boy.name}\nEmail: {delivery_boy.email}\nMobile: {delivery_boy.mobile}"
-
-    # Replace 'admin@example.com' with your admin's email
-    recipient_email = 'athirakp808@gmail.com'
-    send_mail(subject, message, 'from@example.com', [recipient_email])
-
+    return render(request, 'deliveryboy_approval.html', {'approval_requests': approval_requests, 'form': form})
 
 def delivery_dashboard(request):
     if 'email' in request.session:
-        response = render(request, 'dash/delivery_dashboard.html')
-        response['Cache-Control'] = 'no-store, must-revalidate'
-        return response
+        # Check if the user is a delivery boy and is approved
+        if request.user.is_authenticated and request.user.is_deliveryboy and request.user.deliveryboy.is_active:
+            response = render(request, 'dash/delivery_dashboard.html')
+            response['Cache-Control'] = 'no-store, must-revalidate'
+            return response
+        else:
+            messages.warning(request, 'You need admin approval to access the dashboard.')
+            return redirect('home')
     else:
         return redirect('home')

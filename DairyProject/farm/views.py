@@ -254,7 +254,7 @@ def v_register(request):
 def vet_profile(request):
     user = request.user
     if user.is_veterinarian:
-        vet_profile = VetEditProfile.objects.get(user=user.veterinarian.user)
+        vet_profile = VetEditProfile.objects.get(user=request.user)
         return render(request, 'view/vet_profile.html', {'vet_profile': vet_profile})
     else:
         return redirect('v_dashboard')
@@ -262,7 +262,15 @@ def vet_profile(request):
 @login_required
 def complete_v_profile(request):
     user = request.user
+    veterinarian = Veterinarian.objects.get(user=request.user)
     vet_profile, created = VetEditProfile.objects.get_or_create(user=user.veterinarian.user)
+
+    # Fetch the start year from the Veterinarian table
+    start_year = veterinarian.start_year
+
+    # Pass the start_year as initial data to the form
+    form = VetEditProfileForm(initial={'start_year': start_year})
+
     if request.method == 'POST':
         form = VetEditProfileForm(request.POST, request.FILES, instance=vet_profile)
         if form.is_valid():
@@ -270,6 +278,7 @@ def complete_v_profile(request):
             return redirect('vet_profile')
     else:
         form = VetEditProfileForm(instance=vet_profile)
+
     return render(request, 'profile_edit/complete_v_profile.html', {'form': form})
 
 

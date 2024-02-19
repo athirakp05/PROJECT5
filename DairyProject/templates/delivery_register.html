@@ -1,43 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery Boy Registration</title>
-</head>
-<body>
+{% extends 'layout/main.html' %}
+{% load static %}
 
+{% block body %}
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #1d66c1;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+
+</head>
 <h2>Delivery Boy Registration</h2>
 
-<form method="post" action="{% url 'delivery_register' %}" enctype="multipart/form-data">
-    {% csrf_token %}
-    
-    <!-- Name -->
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required><br>
-
-    <!-- Email -->
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required><br>
-
-    <!-- Mobile -->
-    <label for="mobile">Mobile:</label>
-    <input type="text" id="mobile" name="mobile" required><br>
-
-    <!-- Password -->
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required><br>
-
-    <!-- Confirm Password -->
-    <label for="confirm_password">Confirm Password:</label>
-    <input type="password" id="confirm_password" name="confirm_password" required><br>
-
-    <!-- Driving License Upload -->
-    <label for="driving_license">Upload Driving License:</label>
-    <input type="file" id="driving_license" name="driving_license" accept="image/*" required><br>
-
-    <button type="submit">Register</button>
-</form>
-
+<body>
+    <form method="post" action="{% url 'delivery_register' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Register</button>
+    </form>
 </body>
+{% endblock %}
+
 </html>

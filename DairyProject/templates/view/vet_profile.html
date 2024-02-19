@@ -70,9 +70,12 @@
 {% block content %}
     <div class="container">
         <h2>Veterinarian Profile</h2>
-        <div>
-            <img src="{{ vet_profile.veterinarian.profile_photo.url }}" alt="Profile Photo">
-        </div>
+        {% if vet_profile.profile_photo %}
+        <img src="{{ vet_profile.profile_photo.url }}" alt="Profile Photo" height="100" width="100">
+    {% else %}
+        <p>No Profile Photo Available</p>
+    {% endif %}
+    
         <p><strong>Name:</strong> Dr. {{ vet_profile.veterinarian.doctor_name }}</p>
         <p><strong>Specialization:</strong> {{ vet_profile.veterinarian.specialization }}</p>
         <p><strong>Email:</strong> {{ vet_profile.email }}</p>

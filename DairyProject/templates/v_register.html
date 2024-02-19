@@ -199,7 +199,26 @@ nav {
                 passwordToggle.classList.remove('fa-eye-slash');
             }
         }
+        function validateCustomYear() {
+            const customYearInput = document.querySelector('input[name="custom_year"]');
+            const customYearValue = customYearInput.value;
+            const customYearError = document.querySelector('#customYearError');
+            const currentYear = new Date().getFullYear();
     
+            if (customYearValue.length === 0) {
+                customYearError.textContent = ''; // No error message if the input is empty
+            } else if (
+                customYearValue.length !== 4 ||
+                isNaN(customYearValue) ||
+                parseInt(customYearValue) < 1974 ||
+                parseInt(customYearValue) > 2024 ||
+                !/^[1-2]\d{3}$/.test(customYearValue) // Ensure the input starts with 1 or 2 and is followed by 3 digits
+            ) {
+                customYearError.textContent = 'Invalid custom year.';
+            } else {
+                customYearError.textContent = '';
+            }
+        }
         // Function to validate the entire form
         function validateForm() {
             // Add additional validations if needed
@@ -208,7 +227,7 @@ nav {
             validatemobileNumber();
             validatePassword();
             validateConfirmPassword();
-    
+            validateCustomYear();
             // Example: Check if any error messages are present
             const errorMessages = document.querySelectorAll('.error-message');
             for (const errorMessage of errorMessages) {
@@ -268,9 +287,9 @@ nav {
                     <div class="error-message" id="confirmpasswordError"></div>
                 </div>
                 <div class="form-group">
-                    <label for="started_year"></label>
-                    <input type="date" name="started_year" id="started_year" placeholder="Start Year" required>
-                    <div class="error-message" id="startedYearError"></div>
+                    <label for="custom_year">Custom Year (4-digit, 1974-2023):</label>
+                    <input type="text" name="custom_year" id="custom_year" placeholder="Enter Year" maxlength="4" pattern="[0-9]{4}" required>
+                    <div class="error-message" id="customYearError"></div>
                 </div>
                 <div class="form-group">
                     <label for="specialization">Specialization:</label>

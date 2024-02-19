@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,15 +9,101 @@
 
     <!-- Add these lines to the head section of your HTML template -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.7/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.7/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        #content {
+            max-width: 1200px; /* Increased max-width for a wider container */
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 25px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 50px;
+        }
+
+        h2 {
+            color: #343a40;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #dee2e6;
+        }
+
+        th, td {
+            padding: 20px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #5c82ab;
+            color: #ffffff;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .no-data {
+            margin-top: 10px;
+            color: #555;
+        }
+    </style>
 
 </head>
 <body>
 
     <div id="content">
         <h2>View Appointments</h2>
-        
+
+        <div>
+            <label for="dateFilter">Filter by Date:</label>
+            <input type="text" id="dateFilter" placeholder="YYYY-MM-DD">
+        </div>
+
+        <div>
+            <label for="sellerFilter">Filter by Seller Name:</label>
+            <input type="text" id="sellerFilter" placeholder="Seller Name">
+        </div>
+
+        <button onclick="clearFilters()">Clear Filters</button>
+
         <table id="appointments-table">
             <thead>
                 <tr>
@@ -25,31 +113,69 @@
                     <th>Appointment Date</th>
                     <th>Appointment Time</th>
                     <th>Reason/Symptom</th>
+                    <th>Approval</th>
                 </tr>
             </thead>
             <tbody>
-                {% for appointment in appointments %}
+                {% if appointments %}
+                    {% for appointment in appointments %}
+                        <tr>
+                            <td>{{ appointment.seller_id.id }}</td>
+                            <td>{{ appointment.veterinarian.doctor_name }}</td>
+                            <td>{{ appointment.appointment_id }}</td>
+                            <td>{{ appointment.appointment_date }}</td>
+                            <td>{{ appointment.appointment_time }}</td>
+                            <td>{{ appointment.reason_or_symptom }}</td>
+                            <td>
+                                <button onclick="approveAppointment('{{ appointment.appointment_id }}')">Approve</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
                     <tr>
-                        <td>{{ appointment.seller_id.id }}</td>
-                        <td>{{ appointment.veterinarian.doctor_name }}</td>
-                        <td>{{ appointment.appointment_id }}</td>
-                        <td>{{ appointment.appointment_date }}</td>
-                        <td>{{ appointment.appointment_time }}</td>
-                        <td>{{ appointment.reason_or_symptom }}</td>
+                        <td colspan="7" class="no-data">No data available</td>
                     </tr>
-                {% endfor %}
+                {% endif %}
             </tbody>
         </table>
     </div>
 
     <script>
-        $(document).ready( function () {
-            $('#appointments-table').DataTable({
-                searching: true,  // Enable search bar
-                paging: true,      // Enable pagination
-                ordering: true,    // Enable column sorting
+        $(document).ready(function () {
+            // Initialize Datepicker
+            $('#dateFilter').datepicker({
+                dateFormat: 'yy-mm-dd',
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true
+            });
+
+            var table = $('#appointments-table').DataTable({
+                searching: true,
+                paging: true,
+                ordering: true,
+            });
+
+            // Add event listeners to the filters
+            $('#dateFilter').on('change', function () {
+                table.column(3).search(this.value).draw();
+            });
+
+            $('#sellerFilter').on('keyup', function () {
+                table.column(1).search(this.value).draw();
             });
         });
+
+        function approveAppointment(appointmentId) {
+            // Add logic to handle appointment approval
+            alert('Appointment ' + appointmentId + ' approved!');
+        }
+
+        function clearFilters() {
+            $('#dateFilter').val('');
+            $('#sellerFilter').val('');
+            $('#appointments-table').DataTable().search('').columns().search('').draw();
+        }
     </script>
 
 </body>

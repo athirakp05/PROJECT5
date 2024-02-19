@@ -253,7 +253,7 @@ class Veterinarian(models.Model):
     mobile = models.IntegerField(null=False)
     doctor_license = models.CharField(max_length=10, null=False, unique=True,default=True)  # Update this line
     email = models.EmailField(null=False)
-    start_year = models.PositiveIntegerField(null=True, blank=True)  # New field for start year
+    start_year = models.PositiveIntegerField(null=True, blank=True)
     is_active = models.BooleanField(default=True)  # Field to track account status
     specialization = models.CharField(
         max_length=50,

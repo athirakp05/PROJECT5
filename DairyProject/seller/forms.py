@@ -7,10 +7,11 @@ from .models import DeliveryBoy, DeliveryBoyEdit
 from django import forms
 from .models import DeliveryBoy
 
-class DeliveryBoyRegistrationForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-    confirmpassword = forms.CharField(widget=forms.PasswordInput)
+# farm/forms.py
+from django import forms
+from .models import DeliveryBoy
 
+class DeliveryBoyRegistrationForm(forms.ModelForm):
     class Meta:
         model = DeliveryBoy
         fields = ['name', 'mobile', 'email', 'driving_license']
@@ -34,3 +35,9 @@ class DeliveryBoyEditForm(forms.ModelForm):
             'profile_photo': forms.ClearableFileInput(),
             'driving_license': forms.ClearableFileInput(),
         }
+
+from .models import ApprovalRequest
+class DeliveryBoyApprovalForm(forms.ModelForm):
+    class Meta:
+        model = ApprovalRequest
+        fields = ['is_approved']

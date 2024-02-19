@@ -47,3 +47,11 @@ class Delivery(models.Model):
 
     def __str__(self):
         return f"{self.customer} - {self.product} - {self.status}"
+
+class ApprovalRequest(models.Model):
+    delivery_boy = models.OneToOneField(DeliveryBoy, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_approved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Approval Request for {self.delivery_boy.name}"

@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,14 +34,6 @@
             padding: 20px;
             text-align: center;
         }
-
-        .user-avatar img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
         .user-name {
             margin-top: 10px;
             font-weight: bold;
@@ -62,6 +55,16 @@
             margin-left: 250px;
             padding: 20px;
             padding-top: 80px; /* Adjust this value based on your navbar height */
+            position: relative;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.1;
+            pointer-events: none;
         }
 
         /* Media queries for responsiveness */
@@ -95,11 +98,16 @@
 
         <!-- Main Content -->
         <div class="content">
+            <div class="watermark">
+                <!-- Doctor symbol goes here -->
+                <img src="{% static 'img/v.jpeg' %}" alt="Doctor Symbol" height="300" width="300">
+            </div>
             <header>
                 <div class="dashboard-container">
                     <h1>Welcome, Dr. {{ user.veterinarian.doctor_name }}!</h1>
-                    <p>Your Specialization: {{ user.veterinarian.specialization }}</p>
-                        </header>
+                    <b><p> {{ user.veterinarian.specialization }}</p></b>
+                </div>
+            </header>
             <main>
                 <!-- Placeholder content, replace with your actual content -->
                 <div id="dashboard-content">
@@ -145,4 +153,3 @@
 </body>
 {% endblock %}
 </html>
-
