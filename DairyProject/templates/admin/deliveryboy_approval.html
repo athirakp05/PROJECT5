@@ -10,6 +10,10 @@
         <thead>
           <tr>
             <th>Delivery Boy</th>
+            <th>Name</th>
+            <th>Mobile</th>
+            <th>Email</th>
+            <th>Driving License</th>
             <th>Created At</th>
             <th>Approve</th>
           </tr>
@@ -18,6 +22,16 @@
           {% for request in approval_requests %}
             <tr>
               <td>{{ request.delivery_boy.name }}</td>
+              <td>{{ request.delivery_boy.name }}</td>
+              <td>{{ request.delivery_boy.mobile }}</td>
+              <td>{{ request.delivery_boy.email }}</td>
+              <td>
+                {% if request.delivery_boy.driving_license %}
+                  <a href="{{ request.delivery_boy.driving_license.url }}" target="_blank">View License</a>
+                {% else %}
+                  N/A
+                {% endif %}
+              </td>
               <td>{{ request.created_at }}</td>
               <td>
                 <input type="checkbox" name="approval_request_id" value="{{ request.id }}" id="id_approval_request_{{ forloop.counter }}">

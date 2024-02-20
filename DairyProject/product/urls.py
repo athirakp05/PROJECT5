@@ -25,5 +25,6 @@ urlpatterns = [
     path('sample_report/', sample_report, name='sample_report'),
     path('addSample_test/', addSample_test, name='addSample_test'),
     path('milk_parameters/', milk_parameters, name='milk_parameters'),
+    path('admin_cart/', views.admin_cart, name='admin_cart'),
 
 ]

@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from .forms import DeliveryBoyApprovalForm, DeliveryBoyRegistrationForm
 from farm.models import CustomUser, Login_Details
 from .models import  ApprovalRequest, DeliveryBoyEdit
@@ -19,7 +19,8 @@ def delivery_register(request):
                 delivery_boy.is_active = False  # Set is_active to False until admin approval
                 delivery_boy.save()
 
-                # Send registration details to admin (you may use Django signals or other methods)
+                # Create an ApprovalRequest
+                approval_request = ApprovalRequest.objects.create(delivery_boy=delivery_boy)
 
                 messages.success(request, 'Your registration is pending approval from the admin.')
                 return redirect('delivery_register')
@@ -32,13 +33,15 @@ def delivery_register(request):
 
 @login_required
 def deliveryboy_approval(request):
+    approval_requests = ApprovalRequest.objects.filter(is_approved=False)
+
     if request.method == 'POST':
         form = DeliveryBoyApprovalForm(request.POST)
         if form.is_valid():
             approval_request_id = form.cleaned_data['approval_request_id']
             is_approved = form.cleaned_data['is_approved']
 
-            approval_request = ApprovalRequest.objects.get(id=approval_request_id)
+            approval_request = get_object_or_404(ApprovalRequest, id=approval_request_id)
             delivery_boy = approval_request.delivery_boy
 
             if is_approved:
@@ -51,11 +54,9 @@ def deliveryboy_approval(request):
             messages.success(request, 'Approval status updated successfully.')
             return redirect('deliveryboy_approval')
     else:
-        approval_requests = ApprovalRequest.objects.filter(is_approved=False)
         form = DeliveryBoyApprovalForm()
 
-    return render(request, 'deliveryboy_approval.html', {'approval_requests': approval_requests, 'form': form})
-
+    return render(request, 'admin/deliveryboy_approval.html', {'approval_requests': approval_requests, 'form': form})
 def delivery_dashboard(request):
     if 'email' in request.session:
         # Check if the user is a delivery boy and is approved
@@ -68,3 +69,7 @@ def delivery_dashboard(request):
             return redirect('home')
     else:
         return redirect('home')
+
+def delivery_boys(request):
+    delivery_boys = DeliveryBoy.objects.all()
+    return render(request, 'admin/delivery_boys.html', {'delivery_boys': delivery_boys})

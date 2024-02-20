@@ -128,7 +128,7 @@ body {
     </a>    <a href="{% url 'all_milk_details' %}" data-url="{% url 'all_milk_details' %}"><i class="fas fa-hand-holding"></i> Milk Collection</a>
     <a href="{% url 'admin_view_cattle' %}" data-url="{% url 'admin_view_cattle' %}"><i class="fas fa-shopping-cart"></i> Cattle</a>
     <a href="{% url 'product_detail' %}" data-url="{% url 'product_detail' %}"><i class="fas fa-horse"></i> Products</a>
-    <a href="{% url 'view_carts' %}" data-url="{% url 'view_carts' %}"><i class="fas fa-horse"></i> Carts</a>
+    <a href="{% url 'admin_cart' %}" data-url="{% url 'admin_cart' %}"><i class="fas fa-horse"></i> Carts</a>
     <a href="{% url 'view_carts' %}" data-url="{% url 'view_carts' %}"><i class="fas fa-horse"></i> Orders  </a>
     <a href="{% url 'pending_sellers' %}" data-url="{% url 'pending_sellers' %}"><i class="fas fa-horse"></i> Approve</a>
     <a href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -137,8 +137,8 @@ body {
     <div class="dropdown-menu">
         <a class="dropdown-item" href="{% url 's_view' %}" data-url="{% url 's_view' %}">Seller</a>
         <a class="dropdown-item" href="{% url 'c_view' %}" data-url="{% url 'c_view' %}">Customer</a>
-        <a class="dropdown-item" href="#" data-url="#">Veterinarian</a>
-        <a class="dropdown-item" href="#" data-url="#">Delivery Boy</a>
+        <a class="dropdown-item" href="{% url 'veterinarians' %}" data-url="{% url 'veterinarians' %}">Veterinarian</a>
+        <a class="dropdown-item" href="{% url 'delivery_boys' %}" data-url="{% url 'delivery_boys' %}">Delivery Boy</a>
     </div>
     
 </div>
@@ -151,6 +151,15 @@ body {
     <main>
         <div id="dashboard-content"></div>
     </main>
+    <a href="{% url 'product_detail' %}">
+        <img src="{% static 'img/e.jpg' %}" alt="Dashboard Image" style="width: 30%; height: 30%; border: 2px solid #e4cccc; border-radius: 8px;">
+    </a>
+    <a href="{% url 'product_detail' %}">
+        <img src="{% static 'img/e.jpg' %}" alt="Dashboard Image" style="width: 30%; height: 30%; border: 2px solid #e4cccc; border-radius: 8px;">
+    </a>
+    <a href="{% url 'product_detail' %}">
+        <img src="{% static 'img/e.jpg' %}" alt="Dashboard Image" style="width: 30%; height: 30%; border: 2px solid #e4cccc; border-radius: 8px;">
+    </a>
 </div>
 
 <!-- Bootstrap JS and jQuery -->

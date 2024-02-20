@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views  
 from django.contrib.auth.views import PasswordResetView,PasswordResetDoneView,PasswordResetConfirmView,PasswordResetCompleteView
-from .views import SellerPasswordChangeView, complete_c_profile, complete_v_profile, s_profile, complete_s_profile,v_register, view_appointments
+from .views import SellerPasswordChangeView, complete_c_profile, complete_v_profile, s_profile, complete_s_profile,v_register, veterinarians, view_appointments
 
 urlpatterns = [
     path('',views.index,name='home'),
@@ -58,5 +58,6 @@ urlpatterns = [
     path('search-sellers/', views.search_sellers, name='search_sellers'),
     path('v_register/', v_register, name='v_register'),
     path('view_appointments/', view_appointments, name='view_appointments'),
+    path('veterinarians/', veterinarians, name='veterinarians'),
 
 ]

@@ -675,3 +675,8 @@ class SellerPasswordChangeView(PasswordChangeView):
 def view_appointments(request):
     appointments = Appointment.objects.all()
     return render(request, 'vet/view_appointments.html', {'appointments': appointments})
+
+
+def veterinarians(request):
+    veterinarians = Veterinarian.objects.all()
+    return render(request, 'admin/veterinarians.html', {'veterinarians': veterinarians})

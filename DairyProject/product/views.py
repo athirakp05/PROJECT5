@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404  # Import get_o
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q,Sum,F
 from django.contrib.auth import get_user_model
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, JsonResponse
 from django.views.decorators.http import require_POST
 from farm.models import CustomerEditProfile, Seller  # Import the Seller model
 from django.contrib import messages
@@ -106,12 +106,21 @@ def all_milk_details(request):
     context = {'all_milk_details': all_milk_details, 'sellers': sellers}
     return render(request, 'admin/all_milk_details.html', context)
 
+@login_required
+def admin_cart(request):
+    if not request.user.is_staff:
+        return HttpResponseForbidden("You are not authorized to view this page.")
+    
+    # Get all cart items from the database
+    all_cart_items = Cart.objects.all()
 
+    context = {'all_cart_items': all_cart_items}
+    return render(request, 'admin/admin_cart.html', context)
 
 @login_required
 def view_carts(request):
     customer = request.user
-    cart_items = Cart.objects.filter(customer=customer)
+    cart_items = Cart.objects.filter(user=request.user)
     total_quantity = sum(item.quantity for item in cart_items)
     total_price = sum(item.total_price() for item in cart_items)
     context = {'cart_items': cart_items, 'total_quantity': total_quantity, 'total_price': total_price}

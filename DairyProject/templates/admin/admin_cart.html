@@ -1,0 +1,71 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin View Carts</title>
+    <link rel="stylesheet" href="{% static 'path/to/your/css/styles.css' %}">
+
+<style>/* Add your custom styles here */
+
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+    
+    h1 {
+        color: #333;
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    table {
+        width: 80%;
+        margin: 20px auto;
+        border-collapse: collapse;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    thead {
+        background-color: #007BFF;
+        color: #fff;
+    }
+    
+    th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+    </style></head>
+<body>
+    <h1>Admin View Carts</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cart_item in all_cart_items %}
+            <tr>
+                <td>{{ cart_item.user }}</td>
+                <td>{{ cart_item.product }}</td>
+                <td>{{ cart_item.quantity }}</td>
+                <td>{{ cart_item.total_price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
