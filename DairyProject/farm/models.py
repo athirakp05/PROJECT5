@@ -1,5 +1,6 @@
 # models.py
 
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
 from .custom_models import CustomGroup  # Import your custom models from custom_models.py
@@ -290,13 +291,24 @@ class VetEditProfile(models.Model):
 
     def __str__(self):
         return f"Dr. {self.veterinarian.doctor_name} - {self.veterinarian.specialization}"
+
+# models.py
+
 class Appointment(models.Model):
-    seller_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='appointments')
+    STATUS_CHOICES = (
+        ('Pending', 'Pending'),
+        ('Accepted', 'Accepted'),
+        ('Rejected', 'Rejected'),
+    )
+    date = models.DateField()
+    description = models.TextField(default=True)
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
     veterinarian = models.ForeignKey(Veterinarian, on_delete=models.CASCADE)
-    appointment_id = models.AutoField(primary_key=True)
-    appointment_date = models.DateField()
-    appointment_time = models.TimeField()
-    symptom = models.TextField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"Appointment #{self.appointment_id} - {self.appointment_date}"
+        return f"Appointment {self.id} for {self.seller.email} with Dr. {self.veterinarian.doctor_name} on {self.date}"
+
+

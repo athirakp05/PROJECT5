@@ -92,7 +92,6 @@
                 <div class="user-name">Dr.{{ user.veterinarian.doctor_name }}</div>
             </div>
             <a href="{% url 'complete_v_profile' %}" data-url="{% url 'complete_v_profile' %}"><i class="fas fa-user-edit"></i> Edit Profile</a>
-            <a href="{% url 'view_appointments' %}" data-url="{% url 'view_appointments' %}"><i class="fas fa-calendar"></i> View Appointments</a>
             <!-- Add more links based on your requirements -->
         </div>
 
@@ -111,10 +110,18 @@
             <main>
                 <!-- Placeholder content, replace with your actual content -->
                 <div id="dashboard-content">
-                    <p>Main content goes here...</p>
-                </div>
-            </main>
-        </div>
+                    <p>Main content goes here...</p> {% if user.is_veterinarian %}
+                    {% for appointment in user.veterinarian.appointment_set.all %}
+                        {% if appointment.status == 1 %} {# Assuming 1 represents 'Pending' status #}
+                            <p>Appointment ID: {{ appointment.id }} - {{ appointment.customer_name }}</p>
+                            <a href="{% url 'vet_accept_appointment' appointment.id %}">Approve</a>
+                            <a href="{% url 'vet_reject_appointment' appointment.id %}">Reject</a>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </main>
+    </div>
 
     </div>
 

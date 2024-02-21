@@ -13,6 +13,7 @@ class DeliveryBoy(models.Model):
     def __str__(self):
         return self.name
 
+
     
 class DeliveryBoyEdit(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)

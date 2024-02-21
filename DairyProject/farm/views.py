@@ -1,4 +1,7 @@
 from collections import OrderedDict
+from random import random
+import string
+import stringprep
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login
@@ -15,7 +18,7 @@ from django.db.models import Q  # Import the Q object
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Permission
-from .forms import AppointmentForm, CustomerEditProfileForm, SellerEditProfileForm, SellerPasswordChangeForm
+from .forms import  CustomerEditProfileForm,AppointmentForm, SellerEditProfileForm, SellerPasswordChangeForm
 from .models import Cattle,Login_Details,SellerEditProfile,Breed,Insurance,Vaccination,ContactMessage,CustomerEditProfile,VetEditProfile,Veterinarian
 from .forms import CattleForm, VaccinationForm, InsuranceForm,SellerProfileForm,BreedForm,ContactForm,VetEditProfileForm
 from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
@@ -653,7 +656,7 @@ from django.contrib.auth.views import PasswordChangeView
 from django.urls import reverse_lazy
 from .forms import SellerPasswordChangeForm
 
-class SellerPasswordChangeView(PasswordChangeView):
+class s_change_password(PasswordChangeView):
     form_class = SellerPasswordChangeForm
     template_name = 'profile_edit/s_change_password.html'  # Path to your change password template
     success_url = reverse_lazy('login')  # Replace with your success URL
@@ -672,11 +675,42 @@ class SellerPasswordChangeView(PasswordChangeView):
         messages.success(self.request, 'Password changed successfully.')
         return super().form_valid(form)
     
-def view_appointments(request):
-    appointments = Appointment.objects.all()
-    return render(request, 'vet/view_appointments.html', {'appointments': appointments})
+
 
 
 def veterinarians(request):
     veterinarians = Veterinarian.objects.all()
     return render(request, 'admin/veterinarians.html', {'veterinarians': veterinarians})
+
+def appointment(request):
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            seller_profile = request.user.seller_profile
+            appointment = form.save(commit=False)
+            appointment.seller = seller_profile.seller
+            appointment.save()
+            return redirect('s_dashboard')
+    else:
+        form = AppointmentForm()
+    veterinarians = Veterinarian.objects.all()
+    return render(request, 'seller/appointment.html', {'form': form, 'veterinarians': veterinarians})
+
+def vet_appointments(request):
+    veterinarian_profile = request.user.veterinarian_profile
+    appointments = Appointment.objects.filter(veterinarian_profile=veterinarian_profile)
+    context = {'appointments': appointments}
+    return render(request, 'vat/vet_appointments.html', context)
+
+
+def accept_appointment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    appointment.status = 'Accepted'
+    appointment.save()
+    return redirect('vet_appointments')
+
+def reject_appointment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    appointment.status = 'Rejected'
+    appointment.save()
+    return redirect('vet_appointments')
