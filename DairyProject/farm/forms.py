@@ -122,11 +122,3 @@ class VetEditProfileForm(forms.ModelForm):
             'gender': forms.Select(choices=[('---', '---'), ('Male', 'Male'), ('Female', 'Female'), ('Others', 'Others')]),
         }
 
-# forms.py
-from django import forms
-from .models import Appointment, Veterinarian
-
-class AppointmentForm(forms.ModelForm):
-    class Meta:
-        model = Appointment
-        fields = ['date', 'description', 'veterinarian'] 

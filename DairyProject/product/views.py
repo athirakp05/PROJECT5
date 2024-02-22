@@ -4,6 +4,7 @@ from .models import Product
 from .forms import ProductForm, SampleTestReportForm
 from .models import MilkCollection,Cart
 from .forms import MilkCollectionForm
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -58,14 +59,25 @@ def product_detail(request):
     return render(request, 'category/product_detail.html', context)
 
 def p_detail(request):
-    if request.method == 'GET' and request.is_ajax():
-        product_id = request.GET.get('product_id')
-        product = get_object_or_404(Product, id=product_id)
-        return render(request, 'category/p_detail.html', {'product': product})
-
-    # Handle non-AJAX or invalid requests gracefully
-    return HttpResponseBadRequest("Invalid request")
-
+    products = Product.objects.all()
+    date_filter = request.GET.get('date_filter')
+    seller_filter = request.GET.get('seller_filter')
+    product_name_filter = request.GET.get('product_name_filter')
+    if date_filter:
+        products = products.filter(upload_datetime__date=date_filter)
+    if seller_filter:
+        products = products.filter(seller__name=seller_filter)
+    if product_name_filter:
+        products = products.filter(p_name__icontains=product_name_filter)
+    page = request.GET.get('page', 1)
+    paginator = Paginator(products, 10)  # Show 10 products per page
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        products = paginator.page(1)
+    except EmptyPage:
+        products = paginator.page(paginator.num_pages)
+    return render(request, 'category/p_detail.html', {'products': products})
 def add_milk_details(request):
     if request.method == 'POST':
         form = MilkCollectionForm(request.POST)
@@ -123,9 +135,31 @@ def view_carts(request):
     cart_items = Cart.objects.filter(user=request.user)
     total_quantity = sum(item.quantity for item in cart_items)
     total_price = sum(item.total_price() for item in cart_items)
-    context = {'cart_items': cart_items, 'total_quantity': total_quantity, 'total_price': total_price}
-    return render(request, 'view_carts.html', context)
 
+    # Convert cart_items to a list of dictionaries
+    cart_data = [
+        {
+            'id': item.id,
+            'product_name': item.product.p_name,
+            'product_image': item.product.image.url if item.product.image else None,
+            'user_name': item.user.email,
+            'quantity': item.quantity,
+            'total_amount': item.total_amount(),
+            'created_at': item.created_at,
+        }
+        for item in cart_items
+    ]
+    
+    context = {
+        'cart_items': cart_data,
+        'total_quantity': total_quantity,
+        'total_price': total_price,
+    }
+    
+    if request.headers.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+        return JsonResponse(context, safe=False)
+    
+    return render(request, 'admin/view_carts.html', context)
 def own_milk_details(request):
     seller = request.user.seller  # Assuming the seller is linked to the user
     seller_milk_details = MilkCollection.objects.filter(seller=seller)

@@ -2,7 +2,7 @@ from django.urls import path
 from . import views  
 from django.contrib.auth.views import PasswordResetView,PasswordResetDoneView,PasswordResetConfirmView,PasswordResetCompleteView
 from django.contrib.auth.views import PasswordChangeView
-from .views import   appointment, s_change_password, complete_c_profile, complete_v_profile, s_profile, complete_s_profile,  v_register, vet_appointments, veterinarians
+from .views import    s_change_password, complete_c_profile, complete_v_profile, s_profile, complete_s_profile,  v_register, veterinarians
 from farm.forms import SellerPasswordChangeForm
 
 urlpatterns = [
@@ -60,10 +60,5 @@ urlpatterns = [
     path('search-sellers/', views.search_sellers, name='search_sellers'),
     path('v_register/', v_register, name='v_register'),
     path('veterinarians/', veterinarians, name='veterinarians'),
-    path('appointment/', views.appointment, name='appointment'),
-    path('vet-appointments/', vet_appointments, name='vet_appointments'),
-    # path('vet_accept_appointment/<int:appointment_id>/', views.vet_accept_appointment, name='vet_accept_appointment'),
-    # path('vet_reject_appointment/<int:appointment_id>/', views.vet_reject_appointment, name='vet_reject_appointment'),
-    # path('view_my_appointments/', views.view_my_appointments, name='view_my_appointments'),
-
+   
 ]

@@ -11,14 +11,14 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect,HttpResponse
 from product.models import Product
-from .models import Appointment, CustomUser, Customer, Seller,CattleType
+from .models import  CustomUser, Customer, Seller,CattleType
 from django.http import JsonResponse
 from django.urls import reverse
 from django.db.models import Q  # Import the Q object
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Permission
-from .forms import  CustomerEditProfileForm,AppointmentForm, SellerEditProfileForm, SellerPasswordChangeForm
+from .forms import  CustomerEditProfileForm, SellerEditProfileForm, SellerPasswordChangeForm
 from .models import Cattle,Login_Details,SellerEditProfile,Breed,Insurance,Vaccination,ContactMessage,CustomerEditProfile,VetEditProfile,Veterinarian
 from .forms import CattleForm, VaccinationForm, InsuranceForm,SellerProfileForm,BreedForm,ContactForm,VetEditProfileForm
 from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
@@ -26,6 +26,10 @@ import matplotlib
 matplotlib.use('Agg')  # Set the backend to 'Agg'
 import matplotlib.pyplot as plt
 from seller.models import DeliveryBoy
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.views import PasswordChangeView
+from django.urls import reverse_lazy
+from .forms import SellerPasswordChangeForm
 
 def index(request):
     return render(request, 'index.html')
@@ -335,18 +339,7 @@ def s_dashboard(request):
         return response
     else:
         return redirect('home')
-# def s_dashboard(request):
-#     if 'email' in request.session:
-#         response = render(request, 'dash/s_dashboard.html')
-#         response['Cache-Control'] = 'no-store, must-revalidate'
-#         return response
-#     else:
-#         return redirect('home')
-
-
-# views.py
-
-# Other views
+    
 def s_view(request):
     sellers_list = SellerEditProfile.objects.all()
     paginator = Paginator(sellers_list, 10)  # Show 10 sellers per page
@@ -483,6 +476,7 @@ def delete_cattle(request, cattle_id):
         cattle.delete()
         return redirect('view_cattle')
     return render(request, 'cattle/delete_cattle.html', {'cattle': cattle})
+
 @login_required
 def vaccination(request, cattle_id):
     cattle = get_object_or_404(Cattle, pk=cattle_id)
@@ -496,12 +490,12 @@ def vaccination(request, cattle_id):
             return redirect('add_cattle')  # Redirect to success page after successful submission
     else:
         vaccination_form = VaccinationForm()
-
     context = {
         'vaccination_form': vaccination_form,
         'cattle_id': cattle_id,
     }
     return render(request, 'cattle/vaccination.html', context)
+
 @login_required
 def insurance(request, cattle_id):
     cattle = get_object_or_404(Cattle, pk=cattle_id)
@@ -515,12 +509,12 @@ def insurance(request, cattle_id):
             return redirect('add_cattle')  # Redirect to success page after successful submission
     else:
         insurance_form = InsuranceForm()
-
     context = {
         'insurance_form': insurance_form,
         'cattle_id': cattle_id,
     }
     return render(request, 'cattle/insurance.html', context)
+
 @login_required
 def vac_details(request, cattle_id):
     cattle = get_object_or_404(Cattle, pk=cattle_id)
@@ -532,6 +526,7 @@ def ins_details(request, cattle_id):
     cattle = get_object_or_404(Cattle, pk=cattle_id)
     insurance = Insurance.objects.filter(cattle=cattle).first()  # Fetch the insurance entry for the cattle if it exists
     return render(request, 'cattle/ins_details.html', {'cattle': cattle, 'insurance': insurance})
+
 @login_required
 def add_breed(request):
     if request.method == 'POST':
@@ -541,8 +536,8 @@ def add_breed(request):
             return redirect('view_breed')  # Redirect to view breed page
     else:
         form = BreedForm()
-    
     return render(request, 'cattle/add_breed.html', {'form': form})
+
 def view_breed(request):
     breeds = Breed.objects.all()
     return render(request, 'cattle/view_breed.html', {'breeds': breeds})
@@ -562,15 +557,16 @@ def usercount(request):
     customer_count = Customer.objects.count()
     seller_count = Seller.objects.count()
     product_count = Product.objects.count()
-    #order_count = OrderedDict.objects.count()
+    veterinarian_count = Veterinarian.objects.count()
+    delivery_boy_count = DeliveryBoy.objects.count()
 
     data = {
         'customer_count': customer_count,
         'seller_count': seller_count,
         'product_count': product_count,
-      #  'order_count': order_count,
+        'veterinarian_count': veterinarian_count,
+        'delivery_boy_count': delivery_boy_count,
     }
-
     return render(request, 'view/usercount.html', data)
 
 def team(request):
@@ -587,10 +583,8 @@ def society_seller_count(request):
         else:
             society_count[society] = 1
 
-    # Prepare data for plotting
     societies = list(society_count.keys())
     seller_counts = list(society_count.values())
-    # Check data types and contents
     print("Societies:", societies)
     print("Seller Counts:", seller_counts)
     try:
@@ -601,16 +595,13 @@ def society_seller_count(request):
         plt.title('Number of Sellers in Each Society')
         plt.xticks(rotation=45)
         plt.tight_layout()
-
-        # Save the plot to a file
         plot_path = 'path/to/save/plot.png'
         plt.savefig(plot_path)
         return render(request, 'other/society_seller_count.html', {'plot_path': plot_path})
     except Exception as e:
         print("Error:", e)  # Print the exact error message for further debugging
-
-        # Handle the exception appropriately or return an error response
         return HttpResponse("Error occurred during plotting.")
+    
 def contact(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
@@ -618,24 +609,18 @@ def contact(request):
             form.save()
             return JsonResponse({'success': True})
         else:
-            # Print form errors for debugging
             print(form.errors)
             return JsonResponse({'success': False, 'errors': form.errors})
     else:
         form = ContactForm()
     return render(request, 'contact.html', {'form': form})
 
-
-# from django.contrib.admin.views.decorators import staff_member_required
 def message(request):
     messages = ContactMessage.objects.all().order_by('-created_at')
     return render(request, 'admin/message.html', {'messages': messages})
 
 def get_new_messages(request):
-    # Fetch new messages (logic to determine new messages goes here)
     new_messages = ContactMessage.objects.filter(is_read=False)  # Adjust this filter based on your logic
-
-    # Serialize new messages data
     serialized_messages = [
         {
             'name': message.name,
@@ -650,17 +635,10 @@ def get_new_messages(request):
     return JsonResponse({'messages': serialized_messages})
 
 
-# views.py
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.views import PasswordChangeView
-from django.urls import reverse_lazy
-from .forms import SellerPasswordChangeForm
-
 class s_change_password(PasswordChangeView):
     form_class = SellerPasswordChangeForm
     template_name = 'profile_edit/s_change_password.html'  # Path to your change password template
     success_url = reverse_lazy('login')  # Replace with your success URL
-
     def form_valid(self, form):
         seller_profile = form.save()
         login_details = seller_profile.login_details
@@ -670,47 +648,13 @@ class s_change_password(PasswordChangeView):
         seller.password = seller_profile.password
         seller.save()
         update_session_auth_hash(self.request, seller_profile)
-        
-        # Add success message
         messages.success(self.request, 'Password changed successfully.')
         return super().form_valid(form)
     
-
-
-
 def veterinarians(request):
     veterinarians = Veterinarian.objects.all()
+    paginator = Paginator(veterinarians, 10)  # Show 10 veterinarians per page
+    page_number = request.GET.get('page')
+    veterinarians = paginator.get_page(page_number)
     return render(request, 'admin/veterinarians.html', {'veterinarians': veterinarians})
 
-def appointment(request):
-    if request.method == 'POST':
-        form = AppointmentForm(request.POST)
-        if form.is_valid():
-            seller_profile = request.user.seller_profile
-            appointment = form.save(commit=False)
-            appointment.seller = seller_profile.seller
-            appointment.save()
-            return redirect('s_dashboard')
-    else:
-        form = AppointmentForm()
-    veterinarians = Veterinarian.objects.all()
-    return render(request, 'seller/appointment.html', {'form': form, 'veterinarians': veterinarians})
-
-def vet_appointments(request):
-    veterinarian_profile = request.user.veterinarian_profile
-    appointments = Appointment.objects.filter(veterinarian_profile=veterinarian_profile)
-    context = {'appointments': appointments}
-    return render(request, 'vat/vet_appointments.html', context)
-
-
-def accept_appointment(request, appointment_id):
-    appointment = get_object_or_404(Appointment, id=appointment_id)
-    appointment.status = 'Accepted'
-    appointment.save()
-    return redirect('vet_appointments')
-
-def reject_appointment(request, appointment_id):
-    appointment = get_object_or_404(Appointment, id=appointment_id)
-    appointment.status = 'Rejected'
-    appointment.save()
-    return redirect('vet_appointments')
