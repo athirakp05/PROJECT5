@@ -50,6 +50,7 @@
 <body>
     <form class="" action="{% url 'success' %}" method="POST">
         {% csrf_token %}
+
         <div class="card">
             <h1 class="title">Continue with Payment</h1>
             <div class="btn_container">
@@ -62,7 +63,7 @@
     <script>
         var options = {
             key: "rzp_test_VsNzgoQtqip5Wd", // Enter your Razorpay Key ID
-            amount: "{{ total_amount|floatformat:2 }}", // Amount is in currency subunits, i.e., 100 paise = ₹1
+            amount: "50000", // Amount is in currency subunits, i.e., 100 paise = ₹1
             currency: "INR", // Specify your currency here
             name: "DairySync", // Your/store name
             description: "Donation", // Payment description

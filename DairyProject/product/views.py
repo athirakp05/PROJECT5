@@ -191,7 +191,7 @@ def add_to_cart(request):
 @login_required
 def view_cart(request):
     # Get all cart items for the current user
-    cart_items = Cart.objects.filter(customer=request.user)
+    cart_items = Cart.objects.filter(user=request.user)  # Change 'customer' to 'user'
 
     # Calculate total quantity by summing up quantities of all items
     total_quantity = cart_items.aggregate(Sum('quantity'))['quantity__sum'] or 0
@@ -209,20 +209,15 @@ def view_cart(request):
     }
 
     if request.method == 'POST':
-        # Integrate Razorpay payment logic here
-        # Note: Ensure that you replace "your_key" and "your_secret" with your actual Razorpay key and secret
         client = razorpay.Client(auth=("rzp_test_VsNzgoQtqip5Wd", "rcn7optyjJTyzOsFlhJQ6GYX"))
-
-        # You may need to modify the data dictionary based on your requirements
         data = {
             "amount": total_price_in_paise,
             "currency": "INR",
             "receipt": "order_rcptid_11"
         }
-
         payment = client.order.create(data)
+    return render(request, 'category/view_cart.html', data)
 
-    return render(request, 'view_cart.html', data)
 @login_required
 def remove_from_cart(request, cart_id):
     cart_item = get_object_or_404(Cart, pk=cart_id)
@@ -256,8 +251,6 @@ def search_products(request):
     context = {'products': products}
     return render(request, 'category/product_detail.html', context)
 
-
-
 def payment(request):
     if request.method == 'POST':
         amount = 50000  # Set your amount dynamically or as required
@@ -284,19 +277,13 @@ def process_payment(request):
 
 def payment(request):
     if request.method == 'POST':
-        user = request.user
-        total_amount = Cart.objects.filter(user=user).aggregate(Sum('product__price'))['product__price__sum']
-        
-        if total_amount is None:
-            # Set a default amount if there are no products in the cart
-            total_amount = 0
-
+        amount = 50000  # Set your amount dynamically or as required
         order_currency = 'INR'
         client = razorpay.Client(auth=('rzp_test_VsNzgoQtqip5Wd', 'rcn7optyjJTyzOsFlhJQ6GYX'))
-        payment = client.order.create({'amount': total_amount * 100, 'currency': order_currency, 'payment_capture': '1'})
+        payment = client.order.create({'amount': amount, 'currency': order_currency, 'payment_capture': '1'})
         # Handle payment response
         # Redirect to success page on successful payment
-        return render(request, 'pay/payment.html', {'payment': payment,'total_amount': total_amount})
+        return render(request, 'pay/payment.html', {'payment': payment})
     return render(request, 'pay/payment.html')
 
 def success(request):

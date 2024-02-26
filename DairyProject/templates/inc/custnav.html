@@ -1,30 +1,42 @@
 <!-- customer_navbar.html -->
 {% load static %}
 
-<nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-    <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
-        <a href="{%  url 'home' %}" >
-            <img class="img-fluid" src="{% static '/img/logo.jpeg' %}" height="80" width="80" alt="Logo">
-        </a>
-        <ul class="navbar-nav navbar-nav-right">   
-            <li class="nav-item nav-profile dropdown">
-                <a class="nav-link dropdown-toggle" href="{% url 'customer_profile' %}" data-toggle="dropdown" id="profileDropdown">
-                    {% if customer_profile.profile_photo %}
-                        <img src="{{ customer_profile.profile_photo.url }}" alt="Profile Photo" height="60" width="60" style="border-radius: 50%; object-fit: cover;"> {{ customer_profile.first_name }} {{ customer_profile.last_name }}
-                    {% else %}
-                        <i class="ti-user"></i>
-                    {% endif %}
+
+
+<nav class="navbar col-lg-12 col-12 p-0 d-flex flex-row">
+
+<div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+    <ul class="navbar-nav navbar-nav-right">
+        <li class="nav-item nav-profile dropdown">
+            <a class="nav-link dropdown-toggle" href="{% url 'customer_profile' %}" data-toggle="dropdown" id="profileDropdown">
+                {% if customer_profile.profile_photo %}
+                <img src="{{ customer_profile.profile_photo.url }}" alt="Profile Photo" height="100" width="100">
+                {% else %}
+                    <i class="ti-user"></i>
+                {% endif %}
+                {{ customer_profile.first_name }}
+            </a>
+            <a href="{% url 'product_detail' %}" data-url="{% url 'product_detail' %}"><i class="fas fa-key"></i>  <button>Products</button></a>
+            <a href="{% url 'contact' %}" data-url="{% url 'contact' %}"><i class="fas fa-box"></i><button>FeedBack</button> </a>
+            <a href="{% url 'view_cart' %}" data-url="{% url 'view_cart' %}"><i class="fas fa-shopping-cart"></i><button>Cart</button>  </a>
+
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                <a class="dropdown-item" href="{% url 's_change_password' %}" data-url="{% url 's_change_password' %}">
+                    <i class="fas fa-key"></i> Change Password
                 </a>
-                <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-                    <a class="dropdown-item" href="{% url 's_change_password' %}" data-url="{% url 's_change_password' %}">
-                        <i class="fas fa-key"></i> Change Password
-                    </a>
-                    <a class="dropdown-item" href="{% url 'logout' %}">
-                        <i class="ti-power-off text-primary"></i>
-                        Logout
-                    </a>
-                </div>
-            </li>
-        </ul>
-    </div>
+                <a class="dropdown-item" href="{% url 'logout' %}">
+                    <i class="ti-power-off text-primary"></i>
+                    Logout
+                </a>
+            </div>
+        </li>
+    </ul>
+</div>
 </nav>
+
+
+
+
+
+
+

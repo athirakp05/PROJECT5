@@ -8,7 +8,8 @@
             <img class="img-fluid" src="{% static '/img/logo.jpeg' %}" height="80" width="80" alt="Logo">
     </a>
         <ul class="navbar-nav navbar-nav-right">   
-            
+            <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
+
             <li class="nav-item nav-profile dropdown">
                 <a class="nav-link dropdown-toggle" href="{% url 'seller_profile' %}" data-toggle="dropdown" id="profileDropdown">
                     {% if seller_profile.profile_photo %}

@@ -97,7 +97,7 @@
                     <i class="fas fa-minus"></i>
                 </button>
             </div>
-            <div class="total-amount" id="total-{{ item.id }}">{{ item.total_amount }}</div>
+            <div class="total-amount" id="total-{{ item.id }}">{{ item.total_price }}</div>
             <div class="actions">
                 <form action="{% url 'remove_from_cart' cart_id=item.id %}" method="post">
                     {% csrf_token %}
@@ -118,26 +118,27 @@
                 var id = $(this).attr('data-id');
                 var quantity = parseInt($('#quantity-' + id).val()) + 1;
                 $('#quantity-' + id).val(quantity);
-                updateQuantity(id, quantity);
+                updateQuantity(id, quantity, 'increment');  // Pass 'increment' as the action
             });
-
+    
             $('.minus-cart').click(function() {
                 var id = $(this).attr('data-id');
                 var quantity = parseInt($('#quantity-' + id).val());
                 if (quantity > 1) {
                     quantity -= 1;
                     $('#quantity-' + id).val(quantity);
-                    updateQuantity(id, quantity);
+                    updateQuantity(id, quantity, 'decrement');  // Pass 'decrement' as the action
                 }
             });
-
-            function updateQuantity(id, quantity) {
+    
+            function updateQuantity(id, quantity, action) {
                 $.ajax({
-                    url: '/update_quantity/', // Replace with your actual URL for updating quantity
+                    url: '/update_quantity/',
                     method: 'POST',
                     data: {
                         'cart_id': id,
                         'quantity': quantity,
+                        'action': action,  // Pass the action parameter
                         'csrfmiddlewaretoken': '{{ csrf_token }}'
                     },
                     success: function(data) {
@@ -149,7 +150,6 @@
                     }
                 });
             }
-
             $('#make-payment').click(function() {
                 // Redirect to the payment page or perform any necessary actions
                 window.location.href = '{% url "payment" %}';
