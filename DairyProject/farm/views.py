@@ -1,9 +1,3 @@
-from collections import OrderedDict
-from random import random
-import string
-import stringprep
-from django.contrib import admin
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
@@ -11,21 +5,19 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect,HttpResponse
 from product.models import Product
-from .models import  CustomUser, Customer, Seller,CattleType
+from .models import  CustomUser, Customer, DeliveryBoy, DeliveryBoyEditProfile, Seller,CattleType
 from django.http import JsonResponse
 from django.urls import reverse
-from django.db.models import Q  # Import the Q object
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q  
+from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Permission
 from .forms import  CustomerEditProfileForm, SellerEditProfileForm, SellerPasswordChangeForm
 from .models import Cattle,Login_Details,SellerEditProfile,Breed,Insurance,Vaccination,ContactMessage,CustomerEditProfile,VetEditProfile,Veterinarian
 from .forms import CattleForm, VaccinationForm, InsuranceForm,SellerProfileForm,BreedForm,ContactForm,VetEditProfileForm
-from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404  
 import matplotlib
 matplotlib.use('Agg')  # Set the backend to 'Agg'
 import matplotlib.pyplot as plt
-from seller.models import DeliveryBoy
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.views import PasswordChangeView
 from django.urls import reverse_lazy
@@ -62,17 +54,23 @@ def loginn(request):
                     else:
                         messages.warning(request, "Your account has been disabled. Please contact the administrator.")
                         return render(request, 'login.html')  # Render login page with a message
+                    
                 elif user.role == 'Veterinarian':
                     if user.veterinarian.is_active:
                         messages.success(request, "Login successful!")
                         return redirect("v_dashboard") 
-                elif user.role == 'DeliveryBoy':
-                    if user.DeliveryBoy.is_active:
-                        messages.success(request, "Login successful!")
-                        return redirect("deliveryboy_dashboard") 
                     else:
                         messages.warning(request, "Your account has been disabled. Please contact the administrator.")
                         return render(request, 'login.html')  # Render login page with a message
+                    
+                elif user.role == 'Delivery Boy':
+                    if user.deliveryboy.is_active:
+                        messages.success(request, "Login successful!")
+                        return redirect("delivery_dashboard") 
+                    else:
+                        messages.warning(request, "Your account has been disabled. Please contact the administrator.")
+                        return render(request, 'login.html')
+                    
                 else:
                     # Handle unknown or unsupported roles here
                     messages.error(request, "Unknown user role or unsupported role.")
@@ -315,6 +313,7 @@ def c_dashboard(request):
         return response
     else:
         return redirect('home')
+    
 def s_dashboard(request):
     if 'email' in request.session:
         user = request.user
@@ -340,6 +339,16 @@ def s_dashboard(request):
     else:
         return redirect('home')
     
+def delivery_dashboard(request):
+    if 'email' in request.session:
+        response = render(request, 'dash/delivery_dashboard.html')
+        response['Cache-Control'] = 'no-store, must-revalidate'
+        return response
+    else:
+        return redirect('home')
+    
+
+
 def s_view(request):
     sellers_list = SellerEditProfile.objects.all()
     paginator = Paginator(sellers_list, 10)  # Show 10 sellers per page
@@ -658,3 +667,32 @@ def veterinarians(request):
     veterinarians = paginator.get_page(page_number)
     return render(request, 'admin/veterinarians.html', {'veterinarians': veterinarians})
 
+
+
+def delivery_register(request):
+    if request.method == "POST":
+        firstname = request.POST.get('firstname')
+        lastname = request.POST.get('lastname')
+        driving_license = request.POST.get('driving_license')
+        email = request.POST.get('email')
+        mobile = request.POST.get('mobile')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirmpassword')
+        if DeliveryBoy.objects.filter(driving_license=driving_license).exists():
+            messages.error(request, "Deliver Boy with this  license already exists. Please use a different license.")
+            return redirect("delivery_register")
+        if CustomUser.objects.filter(email=email).exists():
+            messages.error(request, "Email already exists")
+        elif password != confirm_password:
+            messages.error(request, "Passwords do not match")
+        else:
+            user = CustomUser.objects.create_user(email=email, password=password,role='Delivery Boy')
+            delivery_boy = DeliveryBoy(user=user, first_name=firstname, last_name=lastname,driving_license=driving_license,  mobile=mobile)
+            delivery_boy.save()
+            delivery_edit_profile = DeliveryBoyEditProfile(user=user, delivery_boy=delivery_boy, first_name=firstname, last_name=lastname, mobile=mobile, email=email, driving_license=driving_license)
+            delivery_edit_profile.save()
+            login = Login_Details(email=email, password=password, role='Delivery Boy')
+            login.save()
+            messages.success(request, "Registered pending approval")
+            return redirect("login") 
+    return render(request, 'delivery_register.html')

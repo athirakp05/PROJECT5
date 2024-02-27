@@ -15,7 +15,7 @@ urlpatterns = [
     path('c_dashboard', views.c_dashboard, name='c_dashboard'),
     path('s_dashboard', views.s_dashboard, name='s_dashboard'),
     path('v_dashboard', views.v_dashboard, name='v_dashboard'),
-    # path('delivery_dashboard', views.delivery_dashboard, name='delivery_dashboard'),
+    path('delivery_dashboard', views.delivery_dashboard, name='delivery_dashboard'),
     path('admindash/', views.admindash, name='admindash'),
     path('add_cattle', views.add_cattle, name='add_cattle'),
     path('fetch_breeds/', views.fetch_breeds, name='fetch_breeds'),
@@ -60,5 +60,7 @@ urlpatterns = [
     path('search-sellers/', views.search_sellers, name='search_sellers'),
     path('v_register/', v_register, name='v_register'),
     path('veterinarians/', veterinarians, name='veterinarians'),
-   
+    path('delivery_register/', views.delivery_register, name='delivery_register'),
+    # path('delboy_verify/', views.delboy_verify, name='delboy_verify'),
+
 ]

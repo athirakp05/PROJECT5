@@ -9,12 +9,11 @@
             margin: 0;
         }
 
-
         .registration-container {
             background-color: whitesmoke;
             border: 1px solid #fafcfd;
             border-radius: 5px;
-            padding: 20px;
+            padding: 15px;
             box-shadow: 10px 10px 10px rgba(178, 179, 180, 0.1);
             text-align: center;
             max-width: 500px;
@@ -24,9 +23,6 @@
 
         h1 {
             color: #060606;
-        }
-        h3{
-            color: #FF0000;
         }
 
         form {
@@ -128,80 +124,17 @@
             }
         }
 
-        function validateName() {
-            const nameInput = document.querySelector('input[name="name"]');
-            const nameValue = nameInput.value;
-            const namePattern = /^[a-zA-Z ]*$/; // Only alphabets and space allowed
-            const nameError = document.querySelector('#nameError');
-
-            if (!namePattern.test(nameValue)) {
-                nameError.textContent = 'Name should contain only alphabets and spaces';
-            } else {
-                nameError.textContent = '';
-            }
-        }
-
         function validatemobileNumber() {
-            const mobileInput = document.querySelector('input[name="phone"]');
+            const mobileInput = document.querySelector('input[name="mobile"]');
             const mobileValue = mobileInput.value;
-            const mobilePattern = /^[6789]\d{9}$/; // Improved Indian standard format
-            const mobileError = document.querySelector('#phoneError');
+            const mobilePattern = /^(9|8|7|6)[0-9]{9}$/; // Assuming Indian standard format
+            const mobileError = document.querySelector('#mobileError');
 
             if (!mobilePattern.test(mobileValue)) {
                 mobileError.textContent = 'Invalid mobile number format';
             } else {
                 mobileError.textContent = '';
             }
-        }
-
-        function validateDrivingLicense() {
-            const drivingLicenseInput = document.querySelector('input[name="driving_license"]');
-            const drivingLicenseValue = drivingLicenseInput.value;
-            const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
-            const drivingLicenseError = document.querySelector('#drivingLicenseError');
-
-            if (!allowedExtensions.exec(drivingLicenseValue)) {
-                drivingLicenseError.textContent = 'Invalid file format. Please upload a valid image file (JPG, JPEG, PNG).';
-            } else {
-                drivingLicenseError.textContent = '';
-            }
-        }
-
-        function validateForm() {
-            const nameInput = document.querySelector('input[name="name"]');
-            const phoneInput = document.querySelector('input[name="phone"]');
-            const drivingLicenseInput = document.querySelector('input[name="driving_license"]');
-            const nameValue = nameInput.value;
-            const phoneValue = phoneInput.value;
-            const drivingLicenseValue = drivingLicenseInput.value;
-            const nameError = document.querySelector('#nameError');
-            const phoneError = document.querySelector('#phoneError');
-            const drivingLicenseError = document.querySelector('#drivingLicenseError');
-
-            // Validate name
-            if (nameValue.trim() === '') {
-                nameError.textContent = 'Name is required';
-            } else {
-                validateName();
-            }
-
-            // Validate phone
-            if (phoneValue.trim() === '') {
-                phoneError.textContent = 'Phone is required';
-            } else {
-                const mobilePattern = /^[6789]\d{9}$/; // Improved Indian standard format
-                if (!mobilePattern.test(phoneValue)) {
-                    phoneError.textContent = 'Invalid mobile number format';
-                } else {
-                    phoneError.textContent = '';
-                }
-            }
-
-            // Additional validation for driving license
-            validateDrivingLicense();
-
-            // Return true if all validations pass
-            return nameError.textContent === '' && phoneError.textContent === '' && drivingLicenseError.textContent === '';
         }
 
         function validatePassword() {
@@ -212,7 +145,6 @@
 
             if (!passwordPattern.test(passwordValue)) {
                 passwordError.innerHTML = "Password must be:<br>6 characters!<br>at least one number!<br>at least one special symbol!";
-
             } else {
                 passwordError.textContent = '';
             }
@@ -243,56 +175,81 @@
                 passwordToggle.classList.remove('fa-eye-slash');
             }
         }
-
-        function showAlert(message, isError = false) {
-            const alert = document.getElementById('alert');
-            alert.textContent = message;
-            alert.style.display = 'block';
-            alert.style.color = isError ? 'red' : 'green';
-
-            if (!isError) {
-                // If it's a success message, hide it after 3 seconds
-                setTimeout(function () {
-                    alert.style.display = 'none';
-                }, 3000);
+        function validateDrivingLicense() {
+            const drivingLicenseInput = document.querySelector('input[name="driving_license"]');
+            const drivingLicenseError = document.querySelector('#drivingLicenseError');
+            const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i; // Adjust the allowed file extensions
+    
+            if (!drivingLicenseInput.value) {
+                drivingLicenseError.textContent = 'Please upload your driving license image';
+                return false; // Prevent form submission if validation fails
+            } else if (!allowedExtensions.exec(drivingLicenseInput.value)) {
+                drivingLicenseError.textContent = 'Invalid file format. Please upload a valid image (jpg, jpeg, png)';
+                return false; // Prevent form submission if validation fails
+            } else {
+                drivingLicenseError.textContent = '';
+                return true; // Allow form submission if validation passes
             }
         }
+    
+        function validateForm() {
+            const drivingLicenseInput = document.querySelector('input[name="driving_license"]');
+            const drivingLicenseValue = drivingLicenseInput.value;
+            const drivingLicenseError = document.querySelector('#farmerLicenseError');
+            const drivingLicensePattern = /^F-\d{5}$/; // Pattern: F- followed by exactly 5 digits
+    
+            if (!drivingLicensePattern.test(drivingLicenseValue)) {
+                drivingLicenseError.textContent = 'Farmer License format should be F- followed by exactly 5 digits';
+                return false; // Prevent form submission if validation fails
+            } else {
+                drivingLicenseError.textContent = '';
+                return true; // Allow form submission if validation passes
+            }
+        }
+    
     </script>
+   
+    
 
     <body>
         <div class="registration-container">
-            <h1>Delivery Boy</h1>
-            <h5>Register Here</h5>
-            <form method="POST" action="{% url 'delivery_register' %}" onsubmit="return validateForm()" enctype="multipart/form-data">
+            <h1>Delivery Registration</h1>
+            <form method="POST" action="{% url 'delivery_register' %}" onsubmit="return validateForm()">
                 {% csrf_token %}
                 <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" name="name" id="name" placeholder="Full Name" required oninput="capitalizeFirstLetter('name')" onchange="validateName()">
-                    <div class="error-message" id="nameError"></div>
+                    <label for="firstname"></label>
+                    <input type="text" name="firstname" id="firstname" placeholder="First Name" required oninput="capitalizeFirstLetter('firstname')">
+                    <div class="error-message" id="firstnameError"></div>
                 </div>
                 <div class="form-group">
-                    <label for="email">Email</label>
+                    <label for="lastname"></label>
+                    <input type="text" name="lastname" id="lastname" placeholder="Last Name" oninput="capitalizeFirstLetter('lastname')">
+                    <div class="error-message" id="lastnameError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="driving_license">Upload Driving License</label>
+                    <input type="file" name="driving_license" id="driving_license" accept="image/*" required>
+                    <div class="error-message" id="drivingLicenseError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email"></label>
                     <input type="email" name="email" id="email" placeholder="Email" required oninput="validateEmail()">
                     <div class="error-message" id="emailError"></div>
                 </div>
                 <div class="form-group">
-                    <label for="phone">Phone</label>
+                    <label for="mobile"></label>
                     <div class="mobile-input-container">
                         <select name="country_code" id="country_code">
                             <option value="+91">+91 (India)</option>
                             <!-- Add more options for other countries -->
                         </select>
-                        <input type="text" name="phone" id="phone" placeholder="Phone" required oninput="validatemobileNumber()">
+                        <input type="text" name="mobile" id="mobile" placeholder="Mobile" required oninput="validatemobileNumber()">
                     </div>
-                    <div class="error-message" id="phoneError"></div>
+                    <div class="error-message" id="mobileError"></div>
                 </div>
                 <div class="form-group">
-                    <label for="driving_license">Driving License</label>
-                    <input type="file" name="driving_license" id="driving_license" accept=".jpg, .jpeg, .png" required onchange="validateDrivingLicense()">
-                    <div class="error-message" id="drivingLicenseError"></div>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
+                    <label for="password"></label>
                     <div class="password-input-container">
                         <input type="password" name="password" id="password" placeholder="Password" required oninput="validatePassword()">
                         <i class="fa fa-eye" id="passwordToggle" onclick="togglePasswordVisibility('password')"></i>
@@ -300,7 +257,7 @@
                     <div class="error-message" id="passwordError"></div>
                 </div>
                 <div class="form-group">
-                    <label for="confirmpassword">Confirm Password</label>
+                    <label for="confirmpassword"></label>
                     <div class="password-input-container">
                         <input type="password" name="confirmpassword" id="confirmpassword" placeholder="Confirm Password" required oninput="validateConfirmPassword()">
                         <i class="fa fa-eye" id="confirmpasswordToggle" onclick="togglePasswordVisibility('confirmpassword')"></i>
@@ -308,14 +265,24 @@
                     <div class="error-message" id="confirmpasswordError"></div>
                 </div>
                 <div class="form-group">
-                    <button type="submit" id="submit">Register</button>
+                    <button type="submit">SignUp</button>
                 </div>
             </form>
+            <div id="alert" style="display: none;">
+            </div>
             <a href="{% url 'login' %}">Already have an account? Login</a>
-        </div>
+            <div id="alert">
+                <div id="alert">
+                    {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                                <li class="{{ message.tags }}">{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                
+        
+        
     </body>
-
-    {% for message in messages %}
-        <h3>{{ message }}</h3>
-    {% endfor %}
 {% endblock body %}

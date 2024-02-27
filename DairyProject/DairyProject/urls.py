@@ -8,7 +8,6 @@ urlpatterns = [
     path('',include('farm.urls')),
     path('',include('product.urls')),
     path('',include('payment.urls')),
-    path('',include('seller.urls')),
 
 ]
 if settings.DEBUG:

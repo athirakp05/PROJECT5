@@ -1,5 +1,5 @@
 {
-    "editor.inlineSuggest.showToolbar": "onHover",
+    "editor.inlineSuggest.showToolbar": "always",
     "python.analysis.extraPaths": [
         "./DairyProject"
     ]

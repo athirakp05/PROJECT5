@@ -1,5 +1,0 @@
-<!-- activation_email.html -->
-
-<p>Hi {{ delivery_boy.name }},</p>
-<p>Please click the link below to activate your account:</p>
-<a href="{{ protocol }}://{{ domain }}{% url 'activate_delivery_boy' uidb64=uid token=token %}">Activate Account</a>

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Customer,Seller,Login_Details
-from .models import CustomUser, SellerEditProfile, Society, IFSCCode,CattleType,Breed,Cattle,Insurance,Vaccination,ContactMessage,CustomerEditProfile,Veterinarian,VetEditProfile
+from .models import CustomUser, SellerEditProfile, Society, IFSCCode,CattleType,Breed,Cattle,Insurance,Vaccination,ContactMessage,CustomerEditProfile,Veterinarian,VetEditProfile,DeliveryBoyEditProfile,DeliveryBoy
 
 
 # Register your models here.
@@ -20,3 +20,5 @@ admin.site.register(Insurance)
 admin.site.register(ContactMessage)
 admin.site.register(Veterinarian)
 admin.site.register(VetEditProfile)
+admin.site.register(DeliveryBoy)
+admin.site.register(DeliveryBoyEditProfile)

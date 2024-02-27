@@ -3,8 +3,7 @@
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
-from .custom_models import CustomGroup  # Import your custom models from custom_models.py
-from django.core.validators import RegexValidator
+from .custom_models import CustomGroup
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, role=None, mobile=None, **extra_fields):
@@ -32,14 +31,14 @@ class CustomUser(AbstractUser):
     SELLER = 'Seller'
     ADMIN = 'Admin'
     VETERINARIAN='Veterinarian'
-    DELIVERY_BOY = 'DeliveryBoy'
+    DELIVERY_BOY = 'Delivery Boy'
 
     ROLE_CHOICES = [
         (CUSTOMER, 'Customer'),
         (SELLER, 'Seller'),
         (ADMIN, 'Admin'),
         (VETERINARIAN, 'Veterinarian'),
-        (DELIVERY_BOY , 'DeliveryBoy'),
+        (DELIVERY_BOY , 'Delivery Boy'),
 
     ]
     role = models.CharField(max_length=15, choices=ROLE_CHOICES)
@@ -54,7 +53,9 @@ class CustomUser(AbstractUser):
     is_seller = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_veterinarian = models.BooleanField(default=False)
+    is_delivery_boy = models.BooleanField(default=False)
     groups = models.ManyToManyField(CustomGroup, blank=True, related_name='custom_user_groups')
+    is_active = models.BooleanField(default=True)
     user_permissions = models.ManyToManyField(Permission, blank=True, related_name='custom_user_permissions')
     def save(self, *args, **kwargs):
         # Set is_customer, is_seller, or is_admin based on the role
@@ -311,4 +312,35 @@ class Appointment(models.Model):
     def __str__(self):
         return f"Appointment {self.id} for {self.seller.email} with Dr. {self.veterinarian.doctor_name} on {self.date}"
 
+class DeliveryBoy(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    mobile = models.CharField(max_length=20, blank=True, null=True)
+    driving_license = models.ImageField(upload_to='driving_license/', null=True, blank=True)
+    status_choices = [
+        ('Pending', 'Pending'),
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected'),
+    ]
+    status = models.CharField(max_length=10, choices=status_choices, default='Pending')
+    is_active = models.BooleanField(default=True)  # Field to track account status
 
+    def __str__(self):
+        return self.first_name
+    
+class DeliveryBoyEditProfile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    delivery_boy = models.OneToOneField(DeliveryBoy, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    house_name = models.CharField(max_length=200)
+    city = models.CharField(max_length=50)
+    pin_code = models.IntegerField(null=True, blank=True, default=None)
+    driving_license = models.CharField(max_length=50, unique=False)
+    email = models.EmailField(null=True)
+    mobile = models.CharField(max_length=20, blank=True, null=True)
+    profile_photo = models.ImageField(upload_to='delivery_boy_profile_photos/', null=True, blank=True)
+
+    def __str__(self):
+        return self.first_name
