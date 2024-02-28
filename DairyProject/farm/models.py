@@ -126,6 +126,7 @@ class SellerEditProfile(models.Model):
     society = models.ForeignKey(Society, on_delete=models.CASCADE, related_name='farmers', null=True, blank=True)
     profile_photo = models.ImageField(upload_to='seller_profile_photos/', null=True, blank=True)
     farmer_license = models.CharField(max_length=50, unique=False)
+    is_active = models.BooleanField(default=True)  # Field to track account status
 
     def __str__(self):
         return self.first_name
@@ -325,6 +326,7 @@ class DeliveryBoy(models.Model):
     ]
     status = models.CharField(max_length=10, choices=status_choices, default='Pending')
     is_active = models.BooleanField(default=True)  # Field to track account status
+    is_approved = models.BooleanField(default=False)  # Added field for approval status
 
     def __str__(self):
         return self.first_name
@@ -341,6 +343,7 @@ class DeliveryBoyEditProfile(models.Model):
     email = models.EmailField(null=True)
     mobile = models.CharField(max_length=20, blank=True, null=True)
     profile_photo = models.ImageField(upload_to='delivery_boy_profile_photos/', null=True, blank=True)
+    is_active = models.BooleanField(default=True)  # Field to track account status
 
     def __str__(self):
         return self.first_name

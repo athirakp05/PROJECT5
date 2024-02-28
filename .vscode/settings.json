@@ -1,6 +1,0 @@
-{
-    "editor.inlineSuggest.showToolbar": "always",
-    "python.analysis.extraPaths": [
-        "./DairyProject"
-    ]
-}

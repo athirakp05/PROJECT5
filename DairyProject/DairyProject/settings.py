@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'farm',
     'payment',
     'product',
-    
+    'events',    
 ]
 SITE_ID = 1
 
