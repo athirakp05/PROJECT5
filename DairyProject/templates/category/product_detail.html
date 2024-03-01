@@ -50,7 +50,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <img class="img-fluid" src="{{ product.image.url }}" alt="{{ product.name }}">
-                                        <p>{{ product. }}</p>
+                                        <p>{{ product.p_name }}</p>
                                         <p>{{ product.description }}</p>
                                         <p>Price: ₹{{ product.price }}</p>
                                     </div>
@@ -58,12 +58,11 @@
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                         <form method="post" id="wishlistForm">{% csrf_token %}</form>
                                         <button type="button" class="btn btn-primary" onclick="addToCart('{{ product.p_code }}')">Add to Cart</button>
-                                        <button type="button" class="btn btn-success">Buy</button>
+                                        <button type="button" class="btn btn-success" onclick="redirectToPayment('{{ product.p_code }}', '{{ product.p_name }}', '{{ product.price }}')">Buy</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- End Product Modal -->
                         {% endfor %}
                     </div>
                 </div>
@@ -78,7 +77,7 @@
 <script>
     function addToCart(p_code) {
         $.ajax({
-            url: '/add_to_cart/', 
+            url: '/add_to_cart/' + p_code + '/',  // Assuming the view requires the product code in the URL
             method: 'POST',
             data: {
                 'p_code': p_code,
@@ -97,6 +96,11 @@
             }
         });
     }
+    function redirectToPayment(p_code, p_name, price) {
+        // Redirect to the payment page with product details
+        window.location.href = `/payment/?p_code=${p_code}&p_name=${encodeURIComponent(p_name)}&price=${price}`;
+    }
+    
 </script>
 
 {% endblock %}

@@ -1,7 +1,7 @@
 # views.py
 import razorpay
-from .models import Product
-from .forms import ProductForm, SampleTestReportForm
+from .models import Order, Payment, Product
+from .forms import AddressForm, ProductForm, SampleTestReportForm
 from .models import MilkCollection,Cart
 from .forms import MilkCollectionForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q,Sum,F
-from django.contrib.auth import get_user_model
+from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, JsonResponse
 from django.views.decorators.http import require_POST
 from farm.models import CustomerEditProfile, Seller  # Import the Seller model
@@ -99,7 +99,7 @@ def edit_milk_details(request, pk):
         form = MilkCollectionForm(instance=milk_detail)
     return render(request, 'admin/edit_milk_details.html', {'form': form})
 
-from datetime import date
+from datetime import date, timezone
 from datetime import datetime
 
 def all_milk_details(request):
@@ -131,35 +131,19 @@ def admin_cart(request):
 
 @login_required
 def view_carts(request):
-    customer = request.user
-    cart_items = Cart.objects.filter(user=request.user)
-    total_quantity = sum(item.quantity for item in cart_items)
-    total_price = sum(item.total_price() for item in cart_items)
-
-    # Convert cart_items to a list of dictionaries
+    cart_items = Cart.objects.all()
     cart_data = [
         {
             'id': item.id,
             'product_name': item.product.p_name,
-            'product_image': item.product.image.url if item.product.image else None,
-            'user_name': item.user.email,
-            'quantity': item.quantity,
-            'total_amount': item.total_amount(),
-            'created_at': item.created_at,
+            'user_name': item.user.username,
         }
         for item in cart_items
     ]
-    
-    context = {
-        'cart_items': cart_data,
-        'total_quantity': total_quantity,
-        'total_price': total_price,
-    }
-    
     if request.headers.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
-        return JsonResponse(context, safe=False)
-    
-    return render(request, 'admin/view_carts.html', context)
+        return JsonResponse(cart_data, safe=False)
+    return render(request, 'admin/view_carts.html', {'cart_data': cart_data})
+
 def own_milk_details(request):
     seller = request.user.seller  # Assuming the seller is linked to the user
     seller_milk_details = MilkCollection.objects.filter(seller=seller)
@@ -168,46 +152,29 @@ def own_milk_details(request):
 
 
 @login_required
-def add_to_cart(request):
-    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        p_code = request.POST.get('p_code')
-        user = request.user
-        # Check if the product is already in the cart for the user
-        existing_product = Cart.objects.filter(user=user, product__p_code=p_code).exists()
-        if existing_product:
-            existing_product.quantity += 1
-            existing_product.save()
-        else:           
-            product = get_object_or_404(Product, p_code=p_code)
-            cart_item = Cart.objects.create(
-                user=user,
-                product=product,
-                quantity=1  # You can adjust the quantity as needed
-            )
+def add_to_cart(request, p_code):
+    product = get_object_or_404(Product, pk=p_code)
+    cart_item, created = Cart.objects.get_or_create(user=request.user, product=product)
+    if not created:
+            cart_item.quantity += 1
             cart_item.save()
-        return JsonResponse({'success': True})
-    return JsonResponse({'success': False})
-
+            messages.success(request, 'Product quantity updated in the cart.')
+    else:
+        messages.success(request, 'Product added to cart.')
+        return redirect('view_cart')
+    
 @login_required
 def view_cart(request):
-    # Get all cart items for the current user
-    cart_items = Cart.objects.filter(user=request.user)  # Change 'customer' to 'user'
-
-    # Calculate total quantity by summing up quantities of all items
+    cart_items = Cart.objects.filter(user=request.user)
     total_quantity = cart_items.aggregate(Sum('quantity'))['quantity__sum'] or 0
-
-    # Calculate total price by summing up the product of quantity and price for each item
     total_price = cart_items.annotate(item_total=F('quantity') * F('product__price')).aggregate(Sum('item_total'))['item_total__sum'] or 0
     total_price_in_paise = int(total_price * 100)
-
-    # Prepare data dictionary
     data = {
         'cart_items': cart_items,
         'total_quantity': total_quantity,
         'total_price': total_price,
         'sum': total_price_in_paise
     }
-
     if request.method == 'POST':
         client = razorpay.Client(auth=("rzp_test_VsNzgoQtqip5Wd", "rcn7optyjJTyzOsFlhJQ6GYX"))
         data = {
@@ -219,8 +186,8 @@ def view_cart(request):
     return render(request, 'category/view_cart.html', data)
 
 @login_required
-def remove_from_cart(request, cart_id):
-    cart_item = get_object_or_404(Cart, pk=cart_id)
+def remove_from_cart(request, p_code):
+    cart_item = get_object_or_404(Cart, product__p_code=p_code, user=request.user)
     cart_item.delete()
     messages.success(request, 'Product removed from cart.')
     return redirect('view_cart')
@@ -228,19 +195,80 @@ def remove_from_cart(request, cart_id):
 @login_required
 @require_POST
 def update_quantity(request, cart_item_id, action):
-    cart_item = get_object_or_404(Cart, pk=cart_item_id, customer=request.user)
-
+    cart_item = get_object_or_404(Cart, pk=cart_item_id, user=request.user)
     if action == 'increase':
         cart_item.quantity += 1
     elif action == 'decrease':
         if cart_item.quantity > 1:
             cart_item.quantity -= 1
         else:
-            cart_item.delete()  # Remove the item if the quantity becomes zero
-
+            cart_item.delete() 
     cart_item.save()
+    return redirect('view_cart') 
 
-    return redirect('view_cart')  # Redirect to the cart page
+@login_required
+def payment(request):
+    if request.method == 'POST':
+        cart_items = Cart.objects.filter(user=request.user)
+        total_price = sum(item.total_price for item in cart_items)
+        client = razorpay.Client(auth=('rzp_test_VsNzgoQtqip5Wd', 'rcn7optyjJTyzOsFlhJQ6GYX'))
+        order_params = {
+            'amount': int(total_price * 100),  
+            'currency': 'INR',
+            'payment_capture': '1',
+
+        }
+        order = client.order.create(order_params)
+        return render(request, 'pay/payment.html', {'order': order, 'cart_items': cart_items})
+    return render(request, 'pay/payment.html') 
+
+@login_required
+def confirm_order(request):
+    if request.method == 'POST':
+        form = AddressForm(request.POST)
+        if form.is_valid():
+            selected_address = form.cleaned_data['address']
+            cart_items = Cart.objects.filter(user=request.user)
+            total_price = sum(item.total_price for item in cart_items)
+
+            # Additional data to pass to the template
+            order_details = {
+                'total_amount': total_price,
+                'order_date': timezone.now(),
+                'products': [{'name': item.product.p_name, 'image': item.product.image.url} for item in cart_items],
+            }
+
+            order = Order.objects.create(user=request.user, total_price=total_price,
+                                         delivery_date=None, delivery_time=None,
+                                         delivery_address=selected_address, delivery_status='Pending')
+            order.items.set(cart_items)
+            order.delivery_date = timezone.now() + timezone.timedelta(minutes=30)
+            order.delivery_time = "30 minutes"
+            order.save()
+            cart_items.delete()
+            messages.success(request, 'Order confirmed successfully!')
+            
+            # Pass additional data to the template
+            return render(request, 'pay/confirm_order.html', {'form': form, 'order_details': order_details})
+
+    else:
+        form = AddressForm()
+        return render(request, 'pay/confirm_order.html', {'form': form})
+
+@csrf_exempt
+def success(request):
+    if request.method == 'POST':
+        order_id = request.POST.get('razorpay_order_id')
+        order = Order.objects.get(id=order_id)
+        order.delivery_status = 'Pending'  
+        order.save()
+        payment_id = request.POST.get('razorpay_payment_id')
+        payment = Payment.objects.get(order=order)
+        payment.transaction_id = payment_id
+        payment.is_paid = True
+        payment.save()
+        return HttpResponse("Payment Successful! Order will be processed.")
+    return HttpResponse("Invalid request method")
 
 def search_products(request):
     query = request.GET.get('query', None)
@@ -251,53 +279,7 @@ def search_products(request):
     context = {'products': products}
     return render(request, 'category/product_detail.html', context)
 
-def payment(request):
-    if request.method == 'POST':
-        amount = 50000  # Set your amount dynamically or as required
-        order_currency = 'INR'
-        client = razorpay.Client(auth=('rzp_test_VsNzgoQtqip5Wd', 'rcn7optyjJTyzOsFlhJQ6GYX'))
-        payment = client.order.create({'amount': amount, 'currency': order_currency, 'payment_capture': '1'})
-        # Handle payment response
-        return render(request, 'pay/payment.html', {'payment': payment})  # Render the payment HTML page with payment details
-    return render(request, 'pay/payment.html')  
 
-
-def success(request):
-    return render(request, 'pay/success.html')
-
-def process_payment(request):
-    if request.method == 'POST':
-        card_number = request.POST.get('card_number')
-        expiry_date = request.POST.get('expiry_date')
-        cvv = request.POST.get('cvv')
-        return HttpResponse("Payment processed successfully!") 
-    else:
-        return HttpResponse("Invalid request method")
-    
-
-def payment(request):
-    if request.method == 'POST':
-        amount = 50000  # Set your amount dynamically or as required
-        order_currency = 'INR'
-        client = razorpay.Client(auth=('rzp_test_VsNzgoQtqip5Wd', 'rcn7optyjJTyzOsFlhJQ6GYX'))
-        payment = client.order.create({'amount': amount, 'currency': order_currency, 'payment_capture': '1'})
-        # Handle payment response
-        # Redirect to success page on successful payment
-        return render(request, 'pay/payment.html', {'payment': payment})
-    return render(request, 'pay/payment.html')
-
-def success(request):
-    return render(request, 'pay/success.html')
-
-def process_payment(request):
-    if request.method == 'POST':
-        card_number = request.POST.get('card_number')
-        expiry_date = request.POST.get('expiry_date')
-        cvv = request.POST.get('cvv')
-        return redirect('success')  # Redirect to success page on successful payment
-    else:
-        return HttpResponse("Invalid request method")
-    
 def sample_report(request):
     return render(request, 'category/sample_report.html')
 
@@ -311,7 +293,7 @@ def addSample_test(request):
             sample_test.seller = request.user
             sample_test.save()
             messages.success(request, 'Sample test report added successfully.')
-            return redirect('all_milk_details')  # Redirect to the milk details page
+            return redirect('all_milk_details')  
         else:
             messages.error(request, 'Error in the form submission. Please check the data.')
     else:

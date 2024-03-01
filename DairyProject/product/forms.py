@@ -31,3 +31,5 @@ class SampleTestReportForm(forms.ModelForm):
         model = SampleTestReport
         fields = ['category', 'density', 'bacterial_content', 'turbidity', 'somatic_cell_count',
                   'lactose_content', 'protein_content', 'fat_content', 'grade']
+class AddressForm(forms.Form):
+    address = forms.CharField(widget=forms.Textarea(attrs={'rows': 4, 'cols': 30}))
