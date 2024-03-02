@@ -230,14 +230,11 @@ def confirm_order(request):
             selected_address = form.cleaned_data['address']
             cart_items = Cart.objects.filter(user=request.user)
             total_price = sum(item.total_price for item in cart_items)
-
-            # Additional data to pass to the template
             order_details = {
                 'total_amount': total_price,
                 'order_date': timezone.now(),
                 'products': [{'name': item.product.p_name, 'image': item.product.image.url} for item in cart_items],
             }
-
             order = Order.objects.create(user=request.user, total_price=total_price,
                                          delivery_date=None, delivery_time=None,
                                          delivery_address=selected_address, delivery_status='Pending')

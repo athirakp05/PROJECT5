@@ -63,7 +63,7 @@
     <script>
         var options = {
             key: "rzp_test_VsNzgoQtqip5Wd", // Enter your Razorpay Key ID
-            amount: "{{ order.amount }}",  // Use the amount received from Django context
+            amount: "{{ order.amount|add:2000 }}",  // Use the amount received from Django context
             currency: "INR", // Specify your currency here
             name: "DairySync", // Your/store name
             description: "Donation", // Payment description
