@@ -216,7 +216,6 @@ def payment(request):
             'amount': int(total_price * 100),  
             'currency': 'INR',
             'payment_capture': '1',
-
         }
         order = client.order.create(order_params)
         return render(request, 'pay/payment.html', {'order': order, 'cart_items': cart_items})
@@ -244,8 +243,6 @@ def confirm_order(request):
             order.save()
             cart_items.delete()
             messages.success(request, 'Order confirmed successfully!')
-            
-            # Pass additional data to the template
             return render(request, 'pay/confirm_order.html', {'form': form, 'order_details': order_details})
 
     else:

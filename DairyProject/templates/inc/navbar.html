@@ -1,18 +1,18 @@
 {% load static %}
+{% load i18n %}
+
 <!DOCTYPE html>
 <html lang="en">
     <body>
 <nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5">
-<a href="{%  url 'home' %}" class="navbar-brand d-flex align-items-center">
-            <img class="img-fluid" src="{% static '/img/logo.jpeg' %}" height="200" width="100" alt="Logo">
+    <img class="img-fluid" src="{% static '/img/logo.jpeg' %}" height="200" width="100" alt="Logo">
 </a>
     <button type="button" class="navbar-toggler me-0" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
         <div class="navbar-nav ms-auto p-4 p-lg-0">
-            <a href="{%  url 'home' %}"class="nav-item nav-link active">Home</a>
-            <a href="{% url 'about' %}" class="nav-item nav-link">About</a>
+            <a href="{% url 'home' %}" class="nav-item nav-link active">{% trans "Home" %}</a>
             <a href="{% url 'about' %}" class="nav-item nav-link">About</a>
             <a href="{% url 'meetinglist' %}" class="nav-item nav-link">Events</a>
             <div class="nav-item dropdown">
@@ -26,6 +26,15 @@
                 </div>
             </div>
             <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Language</a>
+                <div class="dropdown-menu bg-light rounded-0 m-0">
+                    <a href="#" class="dropdown-item">English</a>
+                    <a href="#" class="dropdown-item">Malayalam</a>
+                    <a href="#" class="dropdown-item">Hindi</a>
+                    <!-- Add more language options if needed -->
+                </div>
+            </div>
         </div>
     </div>
 </nav>
