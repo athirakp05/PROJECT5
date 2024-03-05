@@ -26,5 +26,6 @@ urlpatterns = [
     path('addSample_test/', addSample_test, name='addSample_test'),
     path('milk_parameters/', milk_parameters, name='milk_parameters'),
     path('admin_cart/', views.admin_cart, name='admin_cart'),
+    path('order_history/', views.order_history, name='order_history'),
 
 ]

@@ -1,0 +1,23 @@
+
+{% block body %}
+<h2>Your Order History</h2>
+
+{% if user_orders %}
+    <ul>
+        {% for order in user_orders %}
+            <li>
+                <strong>Order ID:</strong> {{ order.order_id }}<br>
+                <strong>Transaction ID:</strong> {{ order.transaction_id }}<br>
+                <strong>Order Date:</strong> {{ order.order_date }}<br>
+                <strong>Delivery Status:</strong> {{ order.delivery_status }}<br>
+                <strong>Total Amount:</strong> {{ order.calculate_total_amount }}<br>
+                <!-- Add other order details as needed -->
+            </li>
+            <hr>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No orders found.</p>
+{% endif %}
+
+{% endblock %}

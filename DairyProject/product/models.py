@@ -68,21 +68,18 @@ class Payment(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     order = models.ForeignKey('Order', on_delete=models.CASCADE, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_date = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
     transaction_id = models.CharField(max_length=100)
     is_paid = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Payment of {self.amount} by {self.user.username} on {self.payment_date}"
+        return f'{self.user.username} - {self.order.id}'
 
 class Order(models.Model):
+    order_id = models.AutoField(primary_key=True, unique=True,default=True)  # Add this field
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     items = models.ManyToManyField(Cart)
     order_date = models.DateTimeField(default=timezone.now)
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
-    delivery_date = models.DateTimeField(null=True, blank=True)
-    delivery_time = models.CharField(max_length=30, null=True, blank=True)
-    delivery_address = models.TextField(null=True, blank=True)  # Add this field
     status_choices = [
         ('Pending', 'Pending'),
         ('Delivered', 'Delivered'),
