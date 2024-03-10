@@ -269,7 +269,6 @@ def success(request):
         payment_id = request.POST.get('razorpay_payment_id')
         client = razorpay.Client(auth=('rzp_test_VsNzgoQtqip5Wd', 'rcn7optyjJTyzOsFlhJQ6GYX'))
         payment_status = client.payment.fetch(payment_id)['status']
-
         if payment_status == 'captured':
             order.delivery_status = 'Delivered'
             order.transaction_id = payment_id  

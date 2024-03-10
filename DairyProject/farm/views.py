@@ -85,14 +85,12 @@ def loginn(request):
 def pending_sellers(request):
     pending_sellers = Seller.objects.filter(is_approved=False)
     return render(request, 'admin/pending_sellers.html', {'pending_sellers': pending_sellers})
-
 @login_required
 def approve_seller(request, email):
     user = get_object_or_404(CustomUser, email=email)
     seller = Seller.objects.get(user=user)
     seller.is_approved = True
     seller.save()
-    # Redirect to a success page or a relevant view
     return redirect('pending_sellers')
 @login_required
 def reject_seller(request, email):

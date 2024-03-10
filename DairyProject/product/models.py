@@ -35,7 +35,6 @@ class MilkCollection(models.Model):
         ('Cow', 'Cow'),
         ('Buffalo', 'Buffalo'),
         ('Goat', 'Goat'),
-        # Add more cattle types as needed
     ]
     milk_type = models.CharField(max_length=10, choices=CATTLE_CHOICES, default='Cow')
     collection_date = models.DateField()

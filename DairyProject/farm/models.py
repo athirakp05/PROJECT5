@@ -83,10 +83,10 @@ class Login_Details(models.Model):
         return self.email
 
 class Society(models.Model):
-    society_code = models.CharField(max_length=20, default='default_value_here')
+    society_code = models.CharField(max_length=20, default='')
     district = models.CharField(max_length=20,default='')
     subdistrict = models.CharField(max_length=50,default='')
-    location = models.CharField(max_length=50, default='default_location')
+    pincode = models.IntegerField(null=True, blank=True, default=None)
 
     def __str__(self):
         return self.society_code
