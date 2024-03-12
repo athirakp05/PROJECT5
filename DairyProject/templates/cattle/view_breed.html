@@ -16,13 +16,20 @@
             border-radius: 5px;
         }
 
-        ul {
-            list-style: none;
-            padding: 0;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
 
-        li {
-            margin-bottom: 10px;
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
         }
 
         .add-breed-link {
@@ -41,18 +48,44 @@
     <h3>Breed List</h3>
     <div class="container">
         {% if breeds %}
-            <ul>
-                {% for breed in breeds %}
-                    <li>
-                        {{ breed.name }} - {{ breed.cattle_type }}
-                        <a href="{% if breed.id %}{% url 'delete_breed' breed.id %}{% endif %}">Delete</a>
-                    </li>
-                {% endfor %}
-                <a class="add-breed-link" href="{% url 'add_breed' %}">Add Breed</a>
-            </ul>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cow</th>
+                        <th>Goat</th>
+                        <th>Buffalo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            {% for breed in breeds %}
+                                {% if breed.cattle_type.name == 'cow' %}
+                                    {{ breed.name }}<br>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for breed in breeds %}
+                                {% if breed.cattle_type.name == 'goat' %}
+                                    {{ breed.name }}<br>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for breed in breeds %}
+                                {% if breed.cattle_type.name == 'buffalo' %}
+                                    {{ breed.name }}<br>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         {% else %}
             <p>No breeds available.</p>
         {% endif %}
     </div>
+    <a class="add-breed-link" href="{% url 'add_breed' %}"><button>Add Breed</button></a>
 </body>
 </html>

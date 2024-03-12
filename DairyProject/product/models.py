@@ -11,9 +11,9 @@ class Product(models.Model):
     mfg_date = models.DateField()
     expiry_date = models.DateField()
     quantity = models.PositiveIntegerField()
-    price = models.FloatField()
+    price = models.FloatField(null=True, blank=True, default=None)
     description = models.TextField()
-    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, default=1)
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, default=None)
     upload_datetime=models.DateTimeField(default=timezone.now)
     CATEGORY_CHOICES = [
     ('Milk', 'Milk'),
