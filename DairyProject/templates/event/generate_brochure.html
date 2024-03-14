@@ -2,14 +2,17 @@
 {% block body %}
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
       background-color: #f4f4f4;
       margin: 0;
       padding: 0;
+      color: #333; /* Dark text color */
     }
 
     h2 {
-      color: #333;
+      color: #3498db; /* Blue color for the heading */
+      border-bottom: 2px solid #3498db; /* Underline effect */
+      padding-bottom: 5px; /* Spacing between heading and content */
     }
 
     p {
@@ -17,28 +20,38 @@
       font-size: 16px;
     }
 
-    a {
+    .info-section {
+      background-color: #ecf0f1; /* Light background color for information */
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .download-button {
       display: inline-block;
-      background-color: #4caf50;
+      background-color: #2ecc71; /* Green color for the download button */
       color: white;
       padding: 10px 20px;
       text-decoration: none;
       border-radius: 4px;
       font-size: 16px;
-      margin-top: 10px;
+      margin-top: 20px; /* Increased top margin for better separation */
+      transition: background-color 0.3s ease-in-out;
     }
 
-    a:hover {
-      background-color: #45a049;
+    .download-button:hover {
+      background-color: #27ae60; /* Darker green on hover */
     }
   </style>
 
   <h2>Generate Brochure</h2>
-  <p>Meeting Title: {{ meeting.title }}</p>
-  <p>Date: {{ meeting.date }}</p>
-  <p>Time: {{ meeting.time }}</p>
-  <p>Location: {{ meeting.location }}</p>
-  <p>Description: {{ meeting.description }}</p>
+  <div class="info-section">
+    <p>Meeting Title: <strong>{{ meeting.title }}</strong></p>
+    <p>Date: <strong>{{ meeting.date }}</strong></p>
+    <p>Time: <strong>{{ meeting.time }}</strong></p>
+    <p>Location: <strong>{{ meeting.location }}</strong></p>
+    <p>Description: <strong>{{ meeting.description }}</strong></p>
+  </div>
 
-  <a href="{% url 'generate_brochure' meeting.meeting_id %}" target="_blank">Download Brochure</a>
+  <a class="download-button" href="{% url 'generate_brochure' meeting.meeting_id %}" target="_blank">Download Brochure</a>
 {% endblock %}

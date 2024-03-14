@@ -1,0 +1,39 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment History</title>
+</head>
+<body>
+    <h1>Payment History</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Payment Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for payment in payments %}
+            <tr>
+                <td>{{ payment.order.order_id }}</td>
+                <td>{{ payment.order.items.first.product.p_name }}</td>
+                <td>{{ payment.amount }}</td>
+                <td>{{ payment.order.items.first.quantity }}</td>
+                <td>{{ payment.amount }}</td>
+                <td>{{ payment.timestamp }}</td>
+                <td>{{ payment.is_paid }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

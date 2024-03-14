@@ -162,8 +162,8 @@ body {
         const sidebarLinks = document.querySelectorAll('.sidebar a');
         const dashboardContent = document.getElementById('dashboard-content');
 
-        sidebarLinks.forEach(function(link) {
-            link.addEventListener('click', function(event) {
+        sidebarLinks.forEach(function (link) {
+            link.addEventListener('click', function (event) {
                 event.preventDefault();
                 const url = link.getAttribute('data-url');
                 if (url) {

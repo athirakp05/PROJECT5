@@ -608,7 +608,7 @@ def society_seller_count(request):
     except Exception as e:
         print("Error:", e)  # Print the exact error message for further debugging
         return HttpResponse("Error occurred during plotting.")
-    
+ 
 def contact(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
@@ -616,7 +616,6 @@ def contact(request):
             form.save()
             return JsonResponse({'success': True})
         else:
-            print(form.errors)
             return JsonResponse({'success': False, 'errors': form.errors})
     else:
         form = ContactForm()
@@ -627,12 +626,13 @@ def message(request):
     return render(request, 'admin/message.html', {'messages': messages})
 
 def get_new_messages(request):
-    new_messages = ContactMessage.objects.filter(is_read=False)  # Adjust this filter based on your logic
+    new_messages = ContactMessage.objects.filter(is_read=False)
     serialized_messages = [
         {
             'name': message.name,
             'email': message.email,
-            'subject': message.subject,
+            'phone': message.phone,
+            'messagetype': message.messagetype,
             'message': message.message,
             'created_at': message.created_at.strftime('%Y-%m-%d %H:%M:%S')
         }
@@ -640,7 +640,6 @@ def get_new_messages(request):
     ]
     new_messages.update(is_read=True)
     return JsonResponse({'messages': serialized_messages})
-
 
 class s_change_password(PasswordChangeView):
     form_class = SellerPasswordChangeForm

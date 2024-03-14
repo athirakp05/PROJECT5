@@ -239,17 +239,18 @@ class Vaccination(models.Model):
     def __str__(self):
         return self.vaccine_name
 
-
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
-    subject = models.CharField(max_length=200)
+    phone = models.CharField(max_length=20,default=True)
+    messagetype = models.CharField(max_length=20,default='')
+    society = models.ForeignKey(Society, on_delete=models.CASCADE,default=True)
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    is_read = models.BooleanField(default=False)  # New field to mark message read or unread
+    is_read = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.subject
+        return self.name
 class Veterinarian(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True, default=True)
     doctor_name = models.CharField(max_length=50, null=False)

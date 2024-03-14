@@ -99,11 +99,7 @@ class ContactForm(forms.ModelForm):
 
     class Meta:
         model = ContactMessage  # Replace ContactModel with your actual model name
-        fields = ['name', 'email', 'subject', 'message']
-        widgets = {
-            'name': forms.HiddenInput(),  # Hide the name field for authenticated users
-            'email': forms.HiddenInput(),  # Hide the email field for authenticated users
-        }
+        fields = ['name', 'email', 'phone', 'messagetype', 'society', 'message']
 
 from django.contrib.auth.forms import PasswordChangeForm
 

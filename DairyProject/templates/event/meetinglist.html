@@ -2,31 +2,51 @@
 {% block body %}
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f4f4;
       margin: 0;
       padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     h2 {
       color: #333;
+      margin-bottom: 20px;
     }
 
     ul {
       list-style: none;
       padding: 0;
+      width: 60%;
     }
 
     li {
       background-color: #fff;
       border: 1px solid #ddd;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
       padding: 15px;
-      border-radius: 4px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    li:hover {
+      transform: scale(1.02);
+    }
+
+    p {
+      margin: 0;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .date {
+      letter-spacing: 1px;  /* Added letter spacing to the date */
     }
 
     a {
@@ -37,6 +57,7 @@
       text-decoration: none;
       border-radius: 4px;
       font-size: 14px;
+      transition: background-color 0.3s ease-in-out;
     }
 
     a:hover {
@@ -46,14 +67,70 @@
     span {
       color: #888;
     }
-  </style>
 
+    #calendar {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      width: 250px; /* Adjusted width */
+      height: 250px; /* Adjusted height */
+      font-size: 12px; /* Adjusted font size */
+      padding: 10px; /* Adjusted padding */
+      margin-top: 10px;
+      margin-bottom: 100px;
+    }
+    .fc-day {
+      margin-right: 10px; /* Adjust the value as needed */
+    }
+    .fc-head {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px;
+    }
+
+    .fc-body {
+      background-color: #fff;
+    }
+
+    .fc-event {
+      background-color: #e74c3c;
+      border: 1px solid #c0392b;
+      color: white;
+      border-radius: 4px;
+      margin-bottom: 2px;  /* Added margin-bottom for more space between events */
+    }
+
+    .fc-event:hover {
+      background-color: #c0392b;
+    }
+
+    /* Add the following styles for the arrow icons */
+    .fc-prev-button, .fc-next-button {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 5px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .fc-prev-button:hover, .fc-next-button:hover {
+      background-color: #45a049;
+    }
+
+    /* Add styles for today's date */
+    .fc-today {
+      background-color: #3498db;
+      color: white;
+    }
+  </style>
   <h2>Meeting List</h2>
   <ul>
     {% for meeting in meetings %}
       <li>
         <div>
-          <p>{{ meeting.title }} - {{ meeting.date }}</p>
+          <p>{{ meeting.title }} - <span class="date">{{ meeting.date }}</span></p>
         </div>
         <div>
           {% if meeting.meeting_id %}
@@ -65,4 +142,33 @@
       </li>
     {% endfor %}
   </ul>
+
+  <div id="calendar"></div>
+
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('#calendar').fullCalendar({
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,agendaWeek,agendaDay'
+        },
+        columnFormat: 'dd',
+        events: [
+            { title: '{{ meeting.title }}', start: '{{ meeting.date }}', color: '#e74c3c' },
+        ],
+        defaultView: 'month',
+        eventLimit: true,
+        eventRender: function (event, element) {
+          if (event.start.isSame(moment(), 'day')) {
+            element.addClass('fc-today');
+          }
+        }
+      });
+    });
+  </script>
+
 {% endblock %}

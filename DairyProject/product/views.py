@@ -265,7 +265,7 @@ def confirm_order(request):
 def success(request):
     if request.method == 'POST':
         order_id = request.POST.get('razorpay_order_id')
-        order = get_object_or_404(Order, id=order_id) 
+        order = get_object_or_404(Order, order_id=order_id) 
         payment_id = request.POST.get('razorpay_payment_id')
         client = razorpay.Client(auth=('rzp_test_VsNzgoQtqip5Wd', 'rcn7optyjJTyzOsFlhJQ6GYX'))
         payment_status = client.payment.fetch(payment_id)['status']
@@ -278,7 +278,7 @@ def success(request):
             payment.is_paid = True
             payment.save()
             Cart.objects.filter(user=request.user).delete()
-            return render(request, 'pay/success.html')
+            return render(request, 'pay/payment_history.html')
         else:
             order.delivery_status = 'Cancelled'
             order.save()
@@ -288,12 +288,17 @@ def success(request):
             payment.save()
             return HttpResponse("Payment Failed! Please try again or contact support.")
     else:
-        return render('order_history')
+        return HttpResponse("Invalid Request")
 
 def order_history(request):
     user_orders = Order.objects.filter(user=request.user).order_by('-order_date')
     context = {'user_orders': user_orders}
     return render(request, 'pay/order_history.html', context)
+
+def payment_history(request):
+    user = request.user
+    payments = Payment.objects.filter(user=user)
+    return render(request, 'pay/payment_history.html', {'payments': payments})
 
 def search_products(request):
     query = request.GET.get('query', None)
