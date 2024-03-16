@@ -76,7 +76,6 @@ class Payment(models.Model):
         return f'{self.user.username} - {self.order.id}'
 
 class Order(models.Model):
-    order_id = models.AutoField(primary_key=True)  # Remove the default=True argument
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     items = models.ManyToManyField(Cart)
     order_date = models.DateTimeField(default=timezone.now)
@@ -90,6 +89,7 @@ class Order(models.Model):
     ]
     delivery_status = models.CharField(max_length=20, choices=status_choices, default='Pending')
     payment_status = models.BooleanField(default=False)  # Indicates whether the order is paid or not
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def __str__(self):
         return f"Order {self.pk} by {self.user.email}"
