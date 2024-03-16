@@ -1,23 +1,79 @@
+{% load static %}
 
 {% block body %}
-<h2>Your Order History</h2>
+<style>
+    .order-history-table-container {
+        width: 50%;
+        overflow-x: auto;
+    }
 
-{% if user_orders %}
-    <ul>
-        {% for order in user_orders %}
-            <li>
-                <strong>Order ID:</strong> {{ order.order_id }}<br>
-                <strong>Transaction ID:</strong> {{ order.transaction_id }}<br>
-                <strong>Order Date:</strong> {{ order.order_date }}<br>
-                <strong>Delivery Status:</strong> {{ order.delivery_status }}<br>
-                <strong>Total Amount:</strong> {{ order.calculate_total_amount }}<br>
-                <!-- Add other order details as needed -->
-            </li>
-            <hr>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No orders found.</p>
-{% endif %}
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f1f5f8;
+    }
 
+    .container {
+        margin: 0 auto;
+        width: 100%; /* Adjust the width as needed */
+    }
+
+    h1 {
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+
+    table {
+        width: 100%; /* Adjust the width as needed */
+        border-collapse: collapse;
+        border: 1px solid #ddd;
+        float: right; /* Align the table to the right */
+    }
+
+    th,
+    td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #f2f2f2;
+    }
+</style>
+<h1>Order History</h1>
+<div class="order-history-table-container">
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Order Date</th>
+                <th>Product Name</th>
+                <th>Delivery Status</th>
+                <th>Payment Status</th>
+                <th>User Name</th>
+                <th>User Phone</th>
+                <th>User Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order, payment_status, product_name, user_name, user_phone, user_address in order_history %}
+            <tr>
+                <td>{{ order.order_id }}</td>
+                <td>{{ order.order_date }}</td>
+                <td>{{ product_name }}</td>
+                <td>{{ order.delivery_status }}</td>
+                <td>{{ payment_status }}</td>
+                <td>{{ user_name }}</td>
+                <td>{{ user_phone }}</td>
+                <td>{{ user_address }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

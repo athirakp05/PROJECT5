@@ -1,6 +1,6 @@
 # forms.py
 from django import forms
-from .models import Product,MilkCollection
+from .models import Order, Product,MilkCollection
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -31,5 +31,12 @@ class SampleTestReportForm(forms.ModelForm):
         model = SampleTestReport
         fields = ['category', 'density', 'bacterial_content', 'turbidity', 'somatic_cell_count',
                   'lactose_content', 'protein_content', 'fat_content', 'grade']
-class AddressForm(forms.Form):
-    address = forms.CharField(widget=forms.Textarea(attrs={'rows': 4, 'cols': 30}))
+
+class AddressConfirmationForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['house_name', 'city', 'pincode']
+
+    house_name = forms.CharField(label='House Name', max_length=100)
+    city = forms.CharField(label='City', max_length=50)
+    pincode = forms.CharField(label='Pincode', max_length=6)

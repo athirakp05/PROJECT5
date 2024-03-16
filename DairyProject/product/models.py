@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from farm.models import Seller,CustomUser
 from django.contrib.auth.models import AbstractUser
@@ -68,23 +69,27 @@ class Payment(models.Model):
     order = models.ForeignKey('Order', on_delete=models.CASCADE, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     timestamp = models.DateTimeField(auto_now_add=True)
-    transaction_id = models.CharField(max_length=100)
-    is_paid = models.BooleanField(default=False)
+    transaction_id = models.CharField(max_length=100, default=uuid.uuid4, unique=True)  # Generate a unique ID using uuid.uuid4
+    is_paid = models.BooleanField(default=True)
 
     def __str__(self):
         return f'{self.user.username} - {self.order.id}'
 
 class Order(models.Model):
-    order_id = models.AutoField(primary_key=True, unique=True,default=True)  # Add this field
+    order_id = models.AutoField(primary_key=True)  # Remove the default=True argument
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     items = models.ManyToManyField(Cart)
     order_date = models.DateTimeField(default=timezone.now)
+    house_name = models.CharField(max_length=100,blank=True)
+    city = models.CharField(max_length=50,blank=True)
+    pincode = models.CharField(max_length=6,blank=True) 
     status_choices = [
         ('Pending', 'Pending'),
         ('Delivered', 'Delivered'),
         ('Cancelled', 'Cancelled'),
     ]
     delivery_status = models.CharField(max_length=20, choices=status_choices, default='Pending')
+    payment_status = models.BooleanField(default=False)  # Indicates whether the order is paid or not
 
     def __str__(self):
         return f"Order {self.pk} by {self.user.email}"

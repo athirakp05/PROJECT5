@@ -1,0 +1,54 @@
+<!-- del_order_history.html -->
+{% load static %}
+  <!-- Include DataTables CSS -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+
+{% block body %}
+<h1>Todays Order</h1>
+<table id="order-table" class="display">
+  <thead>
+    <tr>
+      <th>Order ID</th>
+      <th>Delivery Status</th>
+      <th>Customer Name</th>
+      <th>Customer Phone</th>
+      <th>Address</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in orders %}
+    <tr>
+      <td>{{ order.pk }}</td> <!-- Change order.id to order.pk -->
+      <td>{{ order.delivery_status }}</td>
+      <td>{{ order.user.customereditprofile.first_name }} {{ order.user.customereditprofile.last_name }}</td>
+      <td>{{ order.user.customereditprofile.mobile }}</td>
+      <td>{{ order.house_name }}, {{ order.city }}, {{ order.pincode }}</td>
+      <td>
+        <form action="{% url 'update_delivery_status' order.pk %}" method="post">
+          {% csrf_token %}
+          <select name="delivery_status">
+            <option value="Pending" {% if order.delivery_status == "Pending" %} selected {% endif %}>Pending</option>
+            <option value="In Transit" {% if order.delivery_status == "In Transit" %} selected {% endif %}>In Transit</option>
+            <option value="Delivered" {% if order.delivery_status == "Delivered" %} selected {% endif %}>Delivered</option>
+          </select>
+          <button type="submit">Update Status</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+<script>
+$(document).ready(function() {
+  $('#order-table').DataTable({
+    "paging": true,
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    "order": [[ 0, "desc" ]] // Order by Order ID descending
+  });
+});
+</script>
+{% endblock %}

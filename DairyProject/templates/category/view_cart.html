@@ -132,9 +132,9 @@
   </div>
 </div>
 </div>
-</div><form method="post" action="{% url 'payment' %}">
+</div><form method="post" action="{% url 'address_confirmation' %}">
     {% csrf_token %}
-    <input type="submit" value="Continue with payment">
+    <input type="submit" value="Confirm Order">
 </form>
 
 {% endblock %}

@@ -13,7 +13,7 @@ urlpatterns = [
     path('remove_from_cart/<str:p_code>/', views.remove_from_cart, name='remove_from_cart'),
     path('update_quantity/', views.update_quantity, name='update_quantity'),
     path('payment/', views.payment, name='payment'),
-    path('confirm_order/', views.confirm_order, name='confirm_order'),
+    path('address_confirmation/', views.address_confirmation, name='address_confirmation'),
     path('add_milk_details/', views.add_milk_details, name='add_milk_details'),
     path('edit_milk_details/<int:pk>/', views.edit_milk_details, name='edit_milk_details'),
     path('all_milk_details/', views.all_milk_details, name='all_milk_details'),
@@ -27,6 +27,8 @@ urlpatterns = [
     path('milk_parameters/', milk_parameters, name='milk_parameters'),
     path('admin_cart/', views.admin_cart, name='admin_cart'),
     path('order_history/', views.order_history, name='order_history'),
-    path('payment-history/', views.payment_history, name='payment_history'),
+    path('payment_history/', views.payment_history, name='payment_history'),
+    path('del_order_history/', views.del_order_history, name='del_order_history'),
+    path('update_delivery_status/<int:order_id>/', views.update_delivery_status, name='update_delivery_status'),
 
 ]

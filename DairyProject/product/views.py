@@ -1,7 +1,8 @@
 # views.py
 import razorpay
+from requests import request
 from .models import Order, Payment, Product
-from .forms import AddressForm, ProductForm, SampleTestReportForm
+from .forms import AddressConfirmationForm, ProductForm, SampleTestReportForm
 from .models import MilkCollection,Cart
 from .forms import MilkCollectionForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -10,9 +11,9 @@ from django.shortcuts import render, redirect, get_object_or_404  # Import get_o
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q,Sum,F
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseNotFound, JsonResponse
 from django.views.decorators.http import require_POST
-from farm.models import CustomerEditProfile, Seller  # Import the Seller model
+from farm.models import CustomUser, CustomerEditProfile, Seller  # Import the Seller model
 from django.contrib import messages
 
 @login_required
@@ -233,66 +234,54 @@ def payment(request):
         return render(request, 'pay/payment.html', {'order': order, 'cart_items': cart_items})
     return render(request, 'pay/payment.html') 
 
-@login_required
-def confirm_order(request):
-    if request.method == 'POST':
-        form = AddressForm(request.POST)
-        if form.is_valid():
-            selected_address = form.cleaned_data['address']
-            cart_items = Cart.objects.filter(user=request.user)
-            total_price = sum(item.total_price for item in cart_items)
-            order_details = {
-                'total_amount': total_price,
-                'order_date': timezone.now(),
-                'products': [{'name': item.product.p_name, 'image': item.product.image.url} for item in cart_items],
-            }
-            order = Order.objects.create(user=request.user, total_price=total_price,
-                                         delivery_date=None, delivery_time=None,
-                                         delivery_address=selected_address, delivery_status='Pending')
-            order.items.set(cart_items)
-            order.delivery_date = timezone.now() + timezone.timedelta(minutes=30)
-            order.delivery_time = "30 minutes"
-            order.save()
-            cart_items.delete()
-            messages.success(request, 'Order confirmed successfully!')
-            return render(request, 'pay/confirm_order.html', {'form': form, 'order_details': order_details})
-
-    else:
-        form = AddressForm()
-        return render(request, 'pay/confirm_order.html', {'form': form})
-
 @csrf_exempt
 def success(request):
     if request.method == 'POST':
         order_id = request.POST.get('razorpay_order_id')
-        order = get_object_or_404(Order, order_id=order_id) 
+        try:
+            order_instance = Order.objects.get(order_id=order_id)
+        except Order.DoesNotExist:
+            return HttpResponseNotFound("Order not found")
+        
         payment_id = request.POST.get('razorpay_payment_id')
         client = razorpay.Client(auth=('rzp_test_VsNzgoQtqip5Wd', 'rcn7optyjJTyzOsFlhJQ6GYX'))
         payment_status = client.payment.fetch(payment_id)['status']
         if payment_status == 'captured':
-            order.delivery_status = 'Delivered'
-            order.transaction_id = payment_id  
-            order.save()
-            payment = Payment.objects.get(order=order)
+            order_instance.delivery_status = 'Delivered'
+            order_instance.transaction_id = payment_id  
+            order_instance.save()
+            payment, created = Payment.objects.get_or_create(order=order_instance)
             payment.transaction_id = payment_id
             payment.is_paid = True
             payment.save()
             Cart.objects.filter(user=request.user).delete()
-            return render(request, 'pay/payment_history.html')
+            return render(request, 'pay/success.html')
         else:
-            order.delivery_status = 'Cancelled'
-            order.save()
-            payment = Payment.objects.get(order=order)
+            payment, created = Payment.objects.get_or_create(order=order_instance)
             payment.transaction_id = payment_id
             payment.is_paid = False  
             payment.save()
             return HttpResponse("Payment Failed! Please try again or contact support.")
     else:
         return HttpResponse("Invalid Request")
-
 def order_history(request):
     user_orders = Order.objects.filter(user=request.user).order_by('-order_date')
-    context = {'user_orders': user_orders}
+    order_history = []
+    for order in user_orders:
+        payment = Payment.objects.filter(order=order).first()
+        payment_status = "Payment Pending"  # Default to "Payment Pending"
+        if payment and payment.order.order_id == order.order_id:
+            payment_status = "Payment Completed"
+        city = order.city
+        house_name = order.house_name
+        pincode = order.pincode
+        product_name = order.items.first().product.p_name if order.items.exists() else "N/A"
+        user_info = CustomerEditProfile.objects.filter(user_id=request.user.id).first()
+        user_name = user_info.first_name + " " + user_info.last_name if user_info else "N/A"
+        user_phone = user_info.mobile if user_info else "N/A"
+        user_address = f"{house_name}, {city}, {pincode}" if house_name and city and pincode else "N/A"
+        order_history.append((order, payment_status, product_name, user_name, user_phone, user_address))
+    context = {'order_history': order_history}
     return render(request, 'pay/order_history.html', context)
 
 def payment_history(request):
@@ -313,6 +302,37 @@ def search_products(request):
 def sample_report(request):
     return render(request, 'category/sample_report.html')
 
+
+def address_confirmation(request):
+    if request.method == 'POST':
+        form = AddressConfirmationForm(request.POST)
+        if form.is_valid():
+            address_confirmation = form.save(commit=False)
+            address_confirmation.user = request.user  
+            address_confirmation.save()
+            return redirect('payment')  
+    else:
+        form = AddressConfirmationForm()
+    return render(request, 'pay/address_confirmation.html', {'form': form})
+
+@login_required
+def del_order_history(request):
+    if not request.user.is_delivery_boy:
+        return HttpResponseForbidden("You are not authorized to view this page.")
+
+    orders = Order.objects.all().order_by('-order_date').select_related('user')
+    context = {'orders': orders}
+    return render(request, 'del/del_order_history.html', context)
+
+@require_POST
+def update_delivery_status(request, order_id):
+    if not request.user.is_delivery_boy:
+        return HttpResponseForbidden("You are not authorized to perform this action.")
+    order = Order.objects.get(order_id=order_id)
+    new_status = request.POST.get('delivery_status')
+    order.delivery_status = new_status
+    order.save()
+    return redirect('del_order_history')
 
 @login_required
 def addSample_test(request):

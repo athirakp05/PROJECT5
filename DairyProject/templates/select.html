@@ -7,7 +7,6 @@
 <head>
     <style>
         body {
-            background-image: url("{% static 'img/a1.jpg' %}");
             object-fit: cover; 
             height: 90vh;
             background-size: cover;
@@ -33,6 +32,17 @@
             text-transform: uppercase;
             transition: background-color 0.3s;
             text-decoration: none;
+            position: relative; /* Required for animation */
+            animation: moveImage 5s ease-in-out infinite alternate; /* Animation applied to all buttons */
+        }
+
+        @keyframes moveImage {
+            0% {
+                transform: translateX(0); /* Initial position */
+            }
+            100% {
+                transform: translateX(20px); /* Final position */
+            }
         }
 
         .btn:hover {
@@ -47,7 +57,7 @@
         <div class="row">
             <div class="col-md-4">
                 <a href="{% url 's_register' %}" class="btn">
-                    <img src="{% static 'img/farmer.jpg' %}" alt="Seller" width="150">
+                    <img src="{% static 'img/fa.jpg' %}" alt="Seller" width="150">
                     Seller
                 </a>
             </div>
@@ -61,7 +71,7 @@
         <div class="row">
             <div class="col-md-3 offset-md-3">
                 <a href="{% url 'c_register' %}" class="btn">
-                    <img src="{% static 'img/customer.jpg' %}" alt="Customer" width="150">
+                    <img src="{% static 'img/cu.jpg' %}" alt="Customer" width="150">
                     Customer
                 </a>
             </div>
