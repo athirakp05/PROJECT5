@@ -161,6 +161,8 @@ def add_to_cart(request, p_code):
             messages.success(request, 'Product quantity updated in the cart.')
     else:
         messages.success(request, 'Product added to cart.')
+        total_price = sum(item.total_price for item in Cart.objects.filter(user=request.user))
+        order_instance, _ = Order.objects.get_or_create(user=request.user, defaults={'amount': total_price})
         return redirect('view_cart')
     
 @login_required
@@ -168,7 +170,7 @@ def view_cart(request):
     cart_items = Cart.objects.filter(user=request.user)
     total_quantity = cart_items.aggregate(Sum('quantity'))['quantity__sum'] or 0
     total_price = cart_items.annotate(item_total=F('quantity') * F('product__price')).aggregate(Sum('item_total'))['item_total__sum'] or 0
-    total_price_in_paise = int(total_price * 100)
+    total_price_in_paise = int(total_price)
     data = {
         'cart_items': cart_items,
         'total_quantity': total_quantity,
@@ -237,7 +239,7 @@ def payment(request):
 def success(request):
     if request.method == 'POST':
         order_id = request.POST.get('razorpay_order_id')
-        order = get_object_or_404(Order, order_id=order_id) 
+        order = get_object_or_404(Order, pk=order_id)
         payment_id = request.POST.get('razorpay_payment_id')
         client = razorpay.Client(auth=('rzp_test_VsNzgoQtqip5Wd', 'rcn7optyjJTyzOsFlhJQ6GYX'))
         payment_status = client.payment.fetch(payment_id)['status']
@@ -296,11 +298,8 @@ def search_products(request):
     context = {'products': products}
     return render(request, 'category/product_detail.html', context)
 
-
 def sample_report(request):
     return render(request, 'category/sample_report.html')
-
-
 
 def address_confirmation(request):
     if request.method == 'POST':
@@ -318,7 +317,6 @@ def address_confirmation(request):
 def del_order_history(request):
     if not request.user.is_delivery_boy:
         return HttpResponseForbidden("You are not authorized to view this page.")
-
     orders = Order.objects.all().order_by('-order_date').select_related('user')
     context = {'orders': orders}
     return render(request, 'del/del_order_history.html', context)
@@ -327,7 +325,6 @@ def del_order_history(request):
 def update_delivery_status(request, order_id):
     if not request.user.is_delivery_boy:
         return HttpResponseForbidden("You are not authorized to perform this action.")
-
     order = Order.objects.get(order_id=order_id)
     new_status = request.POST.get('delivery_status')
     order.delivery_status = new_status
@@ -348,7 +345,6 @@ def addSample_test(request):
             messages.error(request, 'Error in the form submission. Please check the data.')
     else:
         form = SampleTestReportForm()
-
     context = {'form': form}
     return render(request, 'admin/addSample_test.html', context)
 

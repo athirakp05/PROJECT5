@@ -15,7 +15,6 @@
             height: 100vh;
             margin: 0;
         }
-
         .card {
             background-color: white;
             padding: 25px;
@@ -24,7 +23,6 @@
             box-shadow: 1px 1px 10px 0px rgb(0 0 0 / 25%);
             text-align: center;
         }
-
         .title {
             margin-bottom: 10px;
             font-size: 1.5em;
@@ -50,7 +48,6 @@
 <body>
     <form class="" action="{% url 'success' %}" method="POST">
         {% csrf_token %}
-
         <div class="card">
             <h1 class="title">Continue with Payment</h1>
             <div class="btn_container">
@@ -87,7 +84,6 @@
                 }
             }
         };
-    
         document.getElementById("pay-btn").onclick = function (e) {
             var rzp = new Razorpay(options);
             rzp.open();
