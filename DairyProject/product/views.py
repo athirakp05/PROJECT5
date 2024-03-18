@@ -209,13 +209,15 @@ def update_quantity(request, cart_item_id, action):
     return redirect('view_cart') 
 
 @login_required
-def payment(request):
+def payment(request,order_id):       
+    order = Order.objects.get(pk=order_id)
     if request.method == 'POST':
         cart_items = Cart.objects.filter(user=request.user)
         total_price = sum(item.total_price for item in cart_items)
+        total_price_in_paise = int(total_price * 100)
         client = razorpay.Client(auth=('rzp_test_VsNzgoQtqip5Wd', 'rcn7optyjJTyzOsFlhJQ6GYX'))
         order_params = {
-           'amount': int(total_price * 100),
+           'amount': total_price_in_paise,
             'currency': 'INR',
             'payment_capture': '1',
             'receipt': f'order_rcptid_{request.user.id}',  # Using user ID in the receipt for uniqueness
@@ -307,8 +309,11 @@ def address_confirmation(request):
         if form.is_valid():
             address_confirmation = form.save(commit=False)
             address_confirmation.user = request.user  # Assuming user is logged in
+            cart_items = Cart.objects.filter(user=request.user)
+            total_price = sum(item.total_price for item in cart_items)
+            address_confirmation.amount = total_price            
             address_confirmation.save()
-            return redirect('payment')  # Redirect to order confirmation page
+            return redirect('payment', order_id=address_confirmation.pk)
     else:
         form = AddressConfirmationForm()
     return render(request, 'pay/address_confirmation.html', {'form': form})
@@ -325,12 +330,15 @@ def del_order_history(request):
 def update_delivery_status(request, order_id):
     if not request.user.is_delivery_boy:
         return HttpResponseForbidden("You are not authorized to perform this action.")
-    order = Order.objects.get(order_id=order_id)
+    order = Order.objects.get(pk=order_id)
     new_status = request.POST.get('delivery_status')
     order.delivery_status = new_status
     order.save()
     return redirect('del_order_history')
 
+def all_orders(request):
+    orders = Order.objects.all()
+    return render(request, 'admin/all_orders.html', {'orders': orders})
 @login_required
 def addSample_test(request):
     if request.method == 'POST':

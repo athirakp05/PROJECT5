@@ -89,7 +89,7 @@ class Order(models.Model):
     ]
     delivery_status = models.CharField(max_length=20, choices=status_choices, default='Pending')
     payment_status = models.BooleanField(default=False)  # Indicates whether the order is paid or not
-    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    amount = models.DecimalField(max_digits=10, decimal_places=2,null=True)
 
     def __str__(self):
         return f"Order {self.pk} by {self.user.email}"

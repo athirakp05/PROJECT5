@@ -34,6 +34,40 @@
 
   <style>
     /* Add your styles here */
+
+    /* Container styling */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Cart product styling */
+    .cart-product {
+      display: flex;
+      margin-bottom: 20px;
+    }
+
+    .cart-product-img {
+      flex: 0 0 100px; /* Fixed width for the image */
+    }
+
+    .cart-product-info {
+      flex-grow: 1; /* Take remaining space */
+      margin-left: 20px;
+    }
+
+    /* Button styling */
+    #confirmOrderBtn {
+      background-color: #007bff;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+    }
+
+    #confirmOrderBtn:hover {
+      background-color: #0056b3;
+    }
   </style>
 
   <script>

@@ -60,12 +60,12 @@
     <script>
         var options = {
             key: "rzp_test_VsNzgoQtqip5Wd", // Enter your Razorpay Key ID
-            amount: "{{ order.amount|add:2000 }}",  // Use the amount received from Django context
+            amount: "{{ order.amount }}",  // Use the amount received from Django context
             currency: "INR", // Specify your currency here
             name: "DairySync", // Your/store name
             description: "Donation", // Payment description
-            order_id: "{{payment.id}}", // Pass the order ID received from your backend
-            image: " ", // URL of your logo
+            order_id: "{{ payment.id }}", // Pass the order ID received from your backend
+            image: "https://example.com/logo.png", // URL of your logo
             theme: {
                 color: "lightblue" // Specify your preferred color theme
             },
