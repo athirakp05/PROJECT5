@@ -5,7 +5,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Milky - Dairy Website Template</title>
+    <title>About Us - Milky</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -32,6 +32,18 @@
 
     <!-- Template Stylesheet -->
     <link href="{% static 'css/style1.css' %}" rel="stylesheet">
+    <style>       
+         .about-experience {
+        background-color: rgb(52, 159, 240); /* Change the background color to blue */
+        color: white; /* Change the text color to white */
+        padding: 20px; /* Add padding for better spacing */
+    }
+    .footer {
+        background-color: rgb(52, 159, 240); /* Change the background color to blue */
+    }
+    .footer .text-white {
+        color: yellow; /* Change the text color of the footer to yellow */
+    }</style>
 </head>
 
 <body>
@@ -47,11 +59,8 @@
         <div class="row g-0 d-none d-lg-flex">
             <div class="col-lg-6 ps-5 text-start">
                 <div class="h-100 d-inline-flex align-items-center text-light">
-                    <span>Follow Us:</span>
-                    <a class="btn btn-link text-light" href=""><i class="fab fa-facebook-f"></i></a>
-                    <a class="btn btn-link text-light" href=""><i class="fab fa-twitter"></i></a>
-                    <a class="btn btn-link text-light" href=""><i class="fab fa-linkedin-in"></i></a>
-                    <a class="btn btn-link text-light" href=""><i class="fab fa-instagram"></i></a>
+                    <span>Follow</span>
+                    <a class="btn btn-link text-light" href="">bhbh</a>
                 </div>
             </div>
             <div class="col-lg-6 text-end">
@@ -74,7 +83,7 @@
                 <div class="col-lg-6">
                     <div class="row g-2">
                         <div class="col-6 position-relative wow fadeIn" data-wow-delay="0.7s">
-                            <div class="about-experience bg-secondary rounded">
+                            <div class="about-experience rounded">
                                 <h1 class="display-1 mb-0">25</h1>
                                 <small class="fs-5 fw-bold">Years Experience</small>
                             </div>
@@ -90,20 +99,26 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
-                    <p class="section-title bg-white text-start text-primary pe-3">About Us</p>
-                    <h1 class="mb-4">Know About Our Dairy Farm & Our History</h1>
-                    <p class="mb-4">Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit, sed stet lorem sit clita duo justo magna dolore erat amet</p>
+                <div >
+                    <p>About Us</p>
+                    <h1 class="mb-4">Know About Our Dairy Society & Our History</h1>
+                    <p class="mb-4">
+                        Well-known by the popular sobriquet ‘milma’, Kerala Co-operative Milk Marketing Federation (KCMMF) was formed in 1980 as a state adjunct of the National Dairy Programme ‘Operation Flood’. It is a three-tiered organization. The farmer memberships that stood at 45000 during take over from the erstwhile KLD&MM Board during 1983 has grown to over 10.4 lakhs through 3076 milk Co-operatives by March 2022. These primary societies are grouped under three Regional Co-operative Milk Producers’ Unions viz TRCMPU for Thiruvananthapuram region, ERCMPU for Ernakulam region and MRCMPU for Malabar region. At the apex level KCMMF functions from the headquarters at Thiruvananthapuram. From the different units managed directly by KCMMF and the various units under regional unions MILMA produces and distributes pasteurized Vitamin – A enriched milk and various milk-based products as well as mango drink throughout the state. MILMA has been instrumental in achieving the national goal of self-sufficiency in milk production in the state.The goal of KCMMF is "The socio-economic progress of the dairy farmer through procuring, processing and marketing of milk". Still the goal is receding as Kerala enjoys one of the highest ranges of per capita milk consumption. KCMMF is totally content in the realization of this vision which was set before it. KCMMF has achieved the distinction in its performance by close association and bond with National Dairy Development Board, Animal Husbandry Department and Dairy Development Department of the State and Kerala Livestock Development Board.
+                    </p>
                     <div class="row g-5 pt-2 mb-5">
                         <div class="col-sm-6">
                             <img class="img-fluid mb-4" src="{% static 'img/service.png' %}" alt="">
                             <h5 class="mb-3">Dedicated Services</h5>
-                            <span>Clita erat ipsum et lorem et sit, sed stet lorem sit clita</span>
+                            <span>
+                                To constantly strive to provide valued consumers with the highest quality milk, milk products and other products with the best standards of service by our passionate and focused work forces using state of the art technology ensuring sustained growth and simultaneously ensuring dairy farmers' delight by better realization of milk price and offering needed service at his/her doorstep.
+                            </span>
                         </div>
                         <div class="col-sm-6">
                             <img class="img-fluid mb-4" src="{% static 'img/product.png' %}" alt="">
                             <h5 class="mb-3">Organic Products</h5>
-                            <span>Clita erat ipsum et lorem et sit, sed stet lorem sit clita</span>
+                            <span>
+                                We, at Milma are committed to produce and market quality milk, milk products and balance cattle feed at the lowest price possible to the satisfaction of customer in our fully automated Plants. To achieve this goal we plan and implement strict quality control management and continual improvement by use of good quality raw materials, strict manufacturing process, and by ensuring hygienic conditions to ensure our customers' satisfaction.
+                            </span>
                         </div>
                     </div>
                     <a class="btn btn-secondary rounded-pill py-3 px-5" href="">Explore More</a>
@@ -114,7 +129,7 @@
     <!-- About End -->
 
     <!-- Footer Start -->
-    <div class="container-fluid bg-dark footer mt-5 py-5 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container-fluid footer mt-5 py-5 wow fadeIn" data-wow-delay="0.1s">
         <div class="container py-5">
             <div class="row g-5">
                 <div class="col-lg-3 col-md-6">
@@ -160,7 +175,7 @@
     <!-- Footer End -->
 
     <!-- Copyright Start -->
-    <div class="container-fluid bg-secondary text-body copyright py-4">
+    <div class="container-fluid  text-body copyright py-4">
         <div class="container">
             <div class="row">
                 <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">

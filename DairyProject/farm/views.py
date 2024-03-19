@@ -608,7 +608,7 @@ def society_seller_count(request):
     except Exception as e:
         print("Error:", e)  # Print the exact error message for further debugging
         return HttpResponse("Error occurred during plotting.")
- 
+
 def contact(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)

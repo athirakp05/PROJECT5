@@ -41,6 +41,31 @@
     ],
     "meta-charset-utf-8": "off",
     "button-type": "off",
-    "disown-opener": "off"
-  }
+    "disown-opener": "off",
+    "compat-api/css": [
+      "default",
+      {
+        "ignore": [
+          "-webkit-text-size-adjust",
+          "-webkit-tap-highlight-color",
+          "text-decoration-skip-ink",
+          "text-align: -webkit-match-parent",
+          "user-select"
+        ]
+      }
+    ]
+  },
+  "browserslist": [
+    "defaults",
+    "not ie 11",
+    "not and_chr <= 121",
+    "not and_ff <= 122",
+    "not chrome <= 122",
+    "not edge <= 121",
+    "not firefox <= 123",
+    "not ios_saf <= 17.3",
+    "not opera <= 106",
+    "not safari <= 17.3",
+    "not samsung <= 23"
+  ]
 }

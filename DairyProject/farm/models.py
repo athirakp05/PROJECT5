@@ -242,10 +242,11 @@ class Vaccination(models.Model):
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
-    phone = models.CharField(max_length=20,default=True)
-    messagetype = models.CharField(max_length=20,default='')
-    society = models.ForeignKey(Society, on_delete=models.CASCADE,default=True)
+    phone = models.CharField(max_length=20, default=True)
+    messagetype = models.CharField(max_length=20, default='',blank=True)  # Here's the field definition
+    society = models.ForeignKey(Society, on_delete=models.CASCADE, default=True,blank=True)
     message = models.TextField()
+    subject = models.CharField(max_length=100)  # Add the 'subject' field
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
 

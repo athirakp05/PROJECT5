@@ -1,7 +1,7 @@
 from django.core.validators import RegexValidator
 from django import forms
 from django.forms.widgets import DateTimeInput
-from .models import Appointment, Cattle, CustomerEditProfile,Insurance,Vaccination,SellerEditProfile,Breed,CattleType,ContactMessage,VetEditProfile
+from .models import Appointment, Cattle, CustomerEditProfile,Insurance, Society,Vaccination,SellerEditProfile,Breed,CattleType,ContactMessage,VetEditProfile
 class CustomerRegistrationForm(forms.Form):
     first_name = forms.CharField(max_length=50)
     last_name = forms.CharField(max_length=50)
@@ -90,17 +90,15 @@ class InsuranceForm(forms.ModelForm):
             'end_date': forms.DateInput(attrs={'type': 'date'}),
         }
 
+
 class ContactForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(ContactForm, self).__init__(*args, **kwargs)
-        if self.instance.pk:  # Check if the instance (contact message) exists
-            # Exclude 'name' field from required fields for existing instances
-            self.fields['name'].required = False
-
     class Meta:
-        model = ContactMessage  # Replace ContactModel with your actual model name
-        fields = ['name', 'email', 'phone', 'messagetype', 'society', 'message']
-
+        model = ContactMessage
+        fields = ['name', 'email', 'phone', 'messagetype', 'society', 'subject', 'message']  # 'messagetype' specified here
+        widgets = {
+            'society': forms.Select(choices=[(society.pk, society.society_code) for society in Society.objects.all()]),
+        }
+        
 from django.contrib.auth.forms import PasswordChangeForm
 
 class SellerPasswordChangeForm(PasswordChangeForm):
