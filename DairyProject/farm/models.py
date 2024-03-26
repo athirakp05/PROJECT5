@@ -1,9 +1,10 @@
 # models.py
 
-from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
-from .custom_models import CustomGroup
+from .custom_models import CustomGroup  # Import your custom models from custom_models.py
+from django.core.validators import RegexValidator
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, role=None, mobile=None, **extra_fields):
@@ -30,32 +31,26 @@ class CustomUser(AbstractUser):
     CUSTOMER = 'Customer'
     SELLER = 'Seller'
     ADMIN = 'Admin'
-    VETERINARIAN='Veterinarian'
-    DELIVERY_BOY = 'Delivery Boy'
 
     ROLE_CHOICES = [
         (CUSTOMER, 'Customer'),
         (SELLER, 'Seller'),
         (ADMIN, 'Admin'),
-        (VETERINARIAN, 'Veterinarian'),
-        (DELIVERY_BOY , 'Delivery Boy'),
-
     ]
+    
     role = models.CharField(max_length=15, choices=ROLE_CHOICES)
     forget_password_token = models.UUIDField(null=True, blank=True)
     email = models.EmailField(unique=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['role']
+
     objects = CustomUserManager()
     username = None
     mobile = models.CharField(max_length=20, blank=True, null=True)
     is_customer = models.BooleanField(default=False)
     is_seller = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
-    is_veterinarian = models.BooleanField(default=False)
-    is_delivery_boy = models.BooleanField(default=False)
     groups = models.ManyToManyField(CustomGroup, blank=True, related_name='custom_user_groups')
-    is_active = models.BooleanField(default=True)
     user_permissions = models.ManyToManyField(Permission, blank=True, related_name='custom_user_permissions')
     def save(self, *args, **kwargs):
         # Set is_customer, is_seller, or is_admin based on the role
@@ -65,10 +60,6 @@ class CustomUser(AbstractUser):
             self.is_seller = True
         elif self.role == CustomUser.ADMIN:
             self.is_admin = True
-        elif self.role == CustomUser.VETERINARIAN:
-            self.is_veterinarian = True    
-        elif self.role == CustomUser.DELIVERY_BOY:
-            self.is_delivery_boy = True    
 
         super().save(*args, **kwargs)
     def __str__(self):
@@ -83,10 +74,10 @@ class Login_Details(models.Model):
         return self.email
 
 class Society(models.Model):
-    society_code = models.CharField(max_length=20, default='')
+    society_code = models.CharField(max_length=20, default='default_value_here')
     district = models.CharField(max_length=20,default='')
     subdistrict = models.CharField(max_length=50,default='')
-    pincode = models.IntegerField(null=True, blank=True, default=None)
+    location = models.CharField(max_length=50, default='default_location')
 
     def __str__(self):
         return self.society_code
@@ -126,7 +117,6 @@ class SellerEditProfile(models.Model):
     society = models.ForeignKey(Society, on_delete=models.CASCADE, related_name='farmers', null=True, blank=True)
     profile_photo = models.ImageField(upload_to='seller_profile_photos/', null=True, blank=True)
     farmer_license = models.CharField(max_length=50, unique=False)
-    is_active = models.BooleanField(default=True)  # Field to track account status
 
     def __str__(self):
         return self.first_name
@@ -239,113 +229,15 @@ class Vaccination(models.Model):
     def __str__(self):
         return self.vaccine_name
 
+
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
-    phone = models.CharField(max_length=20, default=True)
-    messagetype = models.CharField(max_length=20, default='',blank=True)  # Here's the field definition
-    society = models.ForeignKey(Society, on_delete=models.CASCADE, default=True,blank=True)
+    subject = models.CharField(max_length=200)
     message = models.TextField()
-    subject = models.CharField(max_length=100)  # Add the 'subject' field
     created_at = models.DateTimeField(auto_now_add=True)
-    is_read = models.BooleanField(default=False)
+    is_read = models.BooleanField(default=False)  # New field to mark message read or unread
 
     def __str__(self):
-        return self.name
-class Veterinarian(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True, default=True)
-    doctor_name = models.CharField(max_length=50, null=False)
-    mobile = models.IntegerField(null=False)
-    doctor_license = models.CharField(max_length=10, null=False, unique=True,default=True)  # Update this line
-    email = models.EmailField(null=False)
-    start_year = models.PositiveIntegerField(null=True, blank=True)
-    is_active = models.BooleanField(default=True)  # Field to track account status
-    specialization = models.CharField(
-        max_length=50,
-        choices=[
-            ('Bovine Practitioner', 'Bovine Practitioner'),
-            ('Reproductive Specialist', 'Reproductive Specialist'),
-            ('Herd Health Veterinarian', 'Herd Health Veterinarian'),
-            ('Cattle Surgery Specialist', 'Cattle Surgery Specialist'),
-            ('Food Animal Veterinarian', 'Food Animal Veterinarian'),
-            ('Veterinary Epidemiologist', 'Veterinary Epidemiologist'),
-            ('Dairy Cattle Veterinarian', 'Dairy Cattle Veterinarian'),
-        ],
-        null=False,default=True
-    )
-
-    def __str__(self):
-        return f"Dr. {self.doctor_name} - {self.specialization}"
-
-class VetEditProfile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
-    veterinarian = models.OneToOneField(Veterinarian, on_delete=models.CASCADE)
-    house_name = models.CharField(max_length=200)
-    city = models.CharField(max_length=50)
-    pin_code = models.IntegerField(null=True, blank=True, default=None)
-    start_year = models.PositiveIntegerField(null=True, blank=True)
-    gender = models.CharField(max_length=10)
-    age = models.IntegerField(null=True, blank=True, default=None)
-    email = models.EmailField(null=True)
-    mobile = models.CharField(max_length=20, blank=True, null=True)
-    profile_photo = models.ImageField(upload_to='vet_profile_photos/', null=True, blank=True)
-    doctor_name = models.CharField(max_length=50, null=True)  # Add this line
-    doctor_license = models.CharField(max_length=10, null=True)  # Add this line
-    specialization = models.CharField(max_length=50, null=True)  # Add this line
-
-    def __str__(self):
-        return f"Dr. {self.veterinarian.doctor_name} - {self.veterinarian.specialization}"
-
-# models.py
-
-class Appointment(models.Model):
-    STATUS_CHOICES = (
-        ('Pending', 'Pending'),
-        ('Accepted', 'Accepted'),
-        ('Rejected', 'Rejected'),
-    )
-    date = models.DateField()
-    description = models.TextField(default=True)
-    seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
-    veterinarian = models.ForeignKey(Veterinarian, on_delete=models.CASCADE)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        return f"Appointment {self.id} for {self.seller.email} with Dr. {self.veterinarian.doctor_name} on {self.date}"
-
-class DeliveryBoy(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    mobile = models.CharField(max_length=20, blank=True, null=True)
-    driving_license = models.ImageField(upload_to='driving_license/', null=True, blank=True)
-    status_choices = [
-        ('Pending', 'Pending'),
-        ('Approved', 'Approved'),
-        ('Rejected', 'Rejected'),
-    ]
-    status = models.CharField(max_length=10, choices=status_choices, default='Pending')
-    is_active = models.BooleanField(default=True)  # Field to track account status
-    is_approved = models.BooleanField(default=False)  # Added field for approval status
-
-    def __str__(self):
-        return self.first_name
+        return self.subject
     
-class DeliveryBoyEditProfile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
-    delivery_boy = models.OneToOneField(DeliveryBoy, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    house_name = models.CharField(max_length=200)
-    city = models.CharField(max_length=50)
-    pin_code = models.IntegerField(null=True, blank=True, default=None)
-    driving_license = models.CharField(max_length=50, unique=False)
-    email = models.EmailField(null=True)
-    mobile = models.CharField(max_length=20, blank=True, null=True)
-    profile_photo = models.ImageField(upload_to='delivery_boy_profile_photos/', null=True, blank=True)
-    is_active = models.BooleanField(default=True)  # Field to track account status
-
-    def __str__(self):
-        return self.first_name

@@ -1,5 +1,5 @@
+{% extends "layout/main.html" %}
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,6 +20,44 @@ body {
     padding: 0;
     background-color: #f4f4f4;
 }
+
+/* Navbar styling */
+.navbar {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 20px;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.navbar-brand img {
+    max-width: 100px;
+    height: auto;
+}
+
+.navbar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #555;
+    margin: 0 10px;
+}
+
+.nav-link:hover {
+    color: #007bff;
+}
+
 /* Sidebar styling */
 .sidebar {
     position: fixed;
@@ -78,24 +116,48 @@ body {
 }
 
 </style>
-{% include 'inc/selnav.html' %}
 
 <body>
+<!-- Navbar section with profile photo and dropdown -->
+<nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+    <!-- ... (other navbar content) -->
+    <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <ul class="navbar-nav navbar-nav-right">
+            <li class="nav-item nav-profile dropdown">
+                <a class="nav-link dropdown-toggle" href="{% url 'seller_profile' %}" data-toggle="dropdown" id="profileDropdown">
+                    {% if seller_profile.profile_photo %}
+                    <img src="{{ seller_profile.profile_photo.url }}" alt="Profile Photo" height="100" width="100">  {{ seller_profile.first_name }} {{ seller_profile.last_name }}
+               {% else %}
+                        <i class="ti-user"></i> <!-- Display an icon if no profile photo available -->
+                    {% endif %}
+                </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                    <a class="dropdown-item" href="{% url 'seller_password_change' %}" data-url="{% url 'seller_password_change' %}">
+                        <i class="fas fa-key"></i> Change Password
+                    </a>
+                    <a class="dropdown-item" href="{% url 'logout' %}">
+                        <i class="ti-power-off text-primary"></i>
+                        Logout
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+<!-- Rest of your HTML content -->
 
 <!-- Sidebar -->
-<div>
+<!-- Sidebar -->
+<div>{{ seller_profile.first_name }}</div>
 <div class="sidebar">
-    <div>{{ seller_profile.email }}</div>
-
     <div class="user-name"></div>
     <a href="{% url 'complete_s_profile' %}" data-url="{% url 'complete_s_profile' %}"><i class="fas fa-user-edit"></i> Edit Details</a>
     <a href="{% url 'seller_profile' %}" data-url="{% url 'seller_profile' %}"><i class="fas fa-user-edit"></i> Profile</a>
     <a href="{% url 'own_milk_details' %}" data-url="{% url 'own_milk_details' %}"><i class="fas fa-hand-holding"></i> Todays Collection</a>
     <a href="{% url 'prod_view' %}" data-url="{% url 'prod_view' %}"><i class="fas fa-shopping-cart"></i> Product</a>
     <a href="{% url 'view_cattle' %}" data-url="{% url 'view_cattle' %}"><i class="fas fa-horse"></i> Cattle</a>
-    <!-- <a href="{% url 'prod_view' %}" data-url="{% url 'prod_view' %}"><i class="fas fa-horse"></i> Schedule Appointment</a> -->
 </div>
-</div>
+
 
 <!-- Main Content -->
 <div class="content">

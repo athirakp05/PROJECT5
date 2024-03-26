@@ -1,11 +1,8 @@
 <!-- view_carts.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Carts</title>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -47,48 +44,33 @@
             margin: auto;
         }
     </style>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.js"></script>
 </head>
 <body>
-    <h1>View Carts</h1>
-    <table id="cartsTable">
+    <table>
         <thead>
             <tr>
                 <th>Cart ID</th>
                 <th>Product Name</th>
                 <th>Product Image</th>
                 <th>User Name</th>
-                <th>Quantity</th>
-                <th>Total Amount</th>
-                <th>Created At</th>
             </tr>
         </thead>
         <tbody>
-            {% for cart in cart_items %}
+            {% for cart in carts %}
                 <tr>
                     <td>{{ cart.id }}</td>
-                    <td>{{ cart.product_name }}</td>
+                    <td>{{ cart.product.p_name }}</td>
                     <td>
-                        {% if cart.product_image %}
-                            <img src="{{ cart.product_image }}" alt="Product Image" height="100" width="100">
+                        {% if cart.product.image %}
+                            <img src="{{ cart.product.image.url }}" alt="Product Image" height="100" width="100">
                         {% else %}
                             Image not available
                         {% endif %}
                     </td>
-                    <td>{{ cart.user_name }}</td>
-                    <td>{{ cart.quantity }}</td>
-                    <td>{{ cart.total_amount }}</td>
-                    <td>{{ cart.created_at }}</td>
+                    <td>{{ cart.user.email }}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    <script>
-        $(document).ready(function() {
-            $('#cartsTable').DataTable();
-        });
-    </script>
 </body>
 </html>

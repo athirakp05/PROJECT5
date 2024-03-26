@@ -35,9 +35,8 @@
                                     </div>
                                 </div>
                                 <div class="text-center p-4">
-                                    <a class="d-block h5" href="#">{{ product.p_name }}</a>
-                                    <span class="text-primary me-1">₹{{ product.price }}</span><br>
-                                    <span class="text-primary me-1">{{ product.quantity }} left</span>
+                                    <a class="d-block h5" href="#">{{ product.name }}</a>
+                                    <span class="text-primary me-1">₹{{ product.price }}</span>
                                 </div>
                             </div>
                         </div>
@@ -50,7 +49,6 @@
                                     </div>
                                     <div class="modal-body">
                                         <img class="img-fluid" src="{{ product.image.url }}" alt="{{ product.name }}">
-                                        <p>{{ product.p_name }}</p>
                                         <p>{{ product.description }}</p>
                                         <p>Price: ₹{{ product.price }}</p>
                                     </div>
@@ -58,11 +56,12 @@
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                         <form method="post" id="wishlistForm">{% csrf_token %}</form>
                                         <button type="button" class="btn btn-primary" onclick="addToCart('{{ product.p_code }}')">Add to Cart</button>
-                                        <button type="button" class="btn btn-success" onclick="redirectToPayment('{{ product.p_code }}', '{{ product.p_name }}', '{{ product.price }}')">Buy</button>
+                                        <button type="button" class="btn btn-success">Buy</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <!-- End Product Modal -->
                         {% endfor %}
                     </div>
                 </div>
@@ -77,7 +76,7 @@
 <script>
     function addToCart(p_code) {
         $.ajax({
-            url: '/add_to_cart/' + p_code + '/',  // Assuming the view requires the product code in the URL
+            url: '/add_to_cart/', 
             method: 'POST',
             data: {
                 'p_code': p_code,
@@ -88,19 +87,14 @@
                     alert('Product added to cart!');
                     window.location.href = '/view_cart/';  // Redirect to payment page
                 } else {
-                    alert('product added to cart.');
+                    alert('Failed to add product to cart.');
                 }
             },
             error: function() {
-                alert('Quantity Updated.');
+                alert('Error occurred while adding the product to cart.');
             }
         });
     }
-    function redirectToPayment(p_code, p_name, price) {
-        // Redirect to the payment page with product details
-        window.location.href = `/payment/?p_code=${p_code}&p_name=${encodeURIComponent(p_name)}&price=${price}`;
-    }
-    
 </script>
 
 {% endblock %}

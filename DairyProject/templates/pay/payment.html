@@ -15,6 +15,7 @@
             height: 100vh;
             margin: 0;
         }
+
         .card {
             background-color: white;
             padding: 25px;
@@ -23,6 +24,7 @@
             box-shadow: 1px 1px 10px 0px rgb(0 0 0 / 25%);
             text-align: center;
         }
+
         .title {
             margin-bottom: 10px;
             font-size: 1.5em;
@@ -48,6 +50,7 @@
 <body>
     <form class="" action="{% url 'success' %}" method="POST">
         {% csrf_token %}
+
         <div class="card">
             <h1 class="title">Continue with Payment</h1>
             <div class="btn_container">
@@ -60,12 +63,12 @@
     <script>
         var options = {
             key: "rzp_test_VsNzgoQtqip5Wd", // Enter your Razorpay Key ID
-            amount: "{{ order.amount }}",  // Use the amount received from Django context
+            amount: "50000", // Amount is in currency subunits, i.e., 100 paise = ₹1
             currency: "INR", // Specify your currency here
             name: "DairySync", // Your/store name
             description: "Donation", // Payment description
-            order_id: "{{ payment.id }}", // Pass the order ID received from your backend
-            image: "https://example.com/logo.png", // URL of your logo
+            order_id: "{{payment.id}}", // Pass the order ID received from your backend
+            image: " ", // URL of your logo
             theme: {
                 color: "lightblue" // Specify your preferred color theme
             },
@@ -84,6 +87,7 @@
                 }
             }
         };
+    
         document.getElementById("pay-btn").onclick = function (e) {
             var rzp = new Razorpay(options);
             rzp.open();

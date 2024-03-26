@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <title>User Count</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.11.0/chart.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <style>
         /* Add styling for card bodies */
         .card-body {
@@ -15,52 +12,37 @@
             text-align: center;
         }
 
+        /* Add different background colors for different card classes */
         .card-light-blue {
             background-color: #a8d0e6; /* Light Blue */
             border: 1px solid #4682b4;
-            width: 120px;
-            height: 70px;
-            margin: 20px;
+            width: 100px; /* Adjusted width */
+            height: 70px; /* Adjusted height */
+            margin: 20px; /* Add margin for spacing */
         }
 
-        .card-light-purple {
-            background-color: #c3a1e6; /* Light Purple */
-            border: 1px solid #8661a8;
-            width: 120px;
-            height: 70px;
-            margin: 20px;
+        .card-light-danger {
+            background-color: #ff9999; /* Light Red */
+            border: 1px solid #ff0000;
+            width: 100px; /* Adjusted width */
+            height: 70px; /* Adjusted height */
+            margin: 20px; /* Add margin for spacing */
         }
 
         .card-light-green {
             background-color: #a2e8a2; /* Light Green */
             border: 1px solid #4caf50;
-            width: 120px;
-            height: 70px;
-            margin: 20px;
+            width: 100px; /* Adjusted width */
+            height: 70px; /* Adjusted height */
+            margin: 20px; /* Add margin for spacing */
         }
 
         .card-light-yellow {
             background-color: #fff2a8; /* Light Yellow */
             border: 1px solid #ffd700;
-            width: 120px;
-            height: 70px;
-            margin: 20px;
-        }
-
-        .card-light-yellow {
-            background-color: #d4e67d; /* Light Purple */
-            border: 1px solid #b6db66;
-            width: 125px;
-            height: 70px;
-            margin: 20px;
-        }
-
-        .card-light-orange {
-            background-color: #ffc79e; /* Light Orange */
-            border: 1px solid #ff8c00;
-            width: 150px;
-            height: 70px;
-            margin: 20px;
+            width: 100px; /* Adjusted width */
+            height: 70px; /* Adjusted height */
+            margin: 20px; /* Add margin for spacing */
         }
 
         /* Add text color for card titles */
@@ -76,21 +58,12 @@
         /* Add custom flexbox styles */
         .row-md-12 {
             display: flex;
-            flex-wrap: nowrap;
-            overflow-x: auto;
+            flex-wrap: nowrap; /* Prevent cards from wrapping to a new line */
+            overflow-x: auto; /* Enable horizontal scrolling */
         }
 
         .card {
-            flex: 0 0 auto;
-        }
-
-        canvas {
-            max-width: 500px;
-            margin: 20px auto;
-        }
-        .chart-container {
-            max-width: 500px;
-            margin: 20px auto;
+            flex: 0 0 auto; /* Prevent cards from stretching */
         }
     </style>
 </head>
@@ -105,7 +78,7 @@
                         <p class="fs-24 mb-2" id="totalCustomers">{{ customer_count}}</p>
                     </div>
                 </div>
-                <div class="card card-light-purple">
+                <div class="card card-light-danger">
                     <div class="card-body">
                         <p class="mb-2">Sellers</p>
                         <p class="fs-24 mb-2" id="totalSellers">{{ seller_count }}</p>
@@ -119,19 +92,10 @@
                 </div>
                 <div class="card card-light-yellow">
                     <div class="card-body">
-                        <p class="mb-2">Veterinarians</p>
-                        <p class="fs-24 mb-2" id="totalVeterinarians">{{ veterinarian_count }}</p>
+                        <p class="mb-2">Orders</p>
+                        <p class="fs-24 mb-2" id="totalOrders">{{ order_count }}</p>
                     </div>
                 </div>
-    
-                <!-- Card for Delivery Boys -->
-                <div class="card card-light-orange">
-                    <div class="card-body">
-                        <p class="mb-2">Delivery Boys</p>
-                        <p class="fs-24 mb-2" id="totalDeliveryBoys">{{ delivery_boy_count }}</p>
-                    </div>
-                </div>
-                <canvas id="userDistributionChart"></canvas>
             </div>
         </div>
     </div>
@@ -145,73 +109,31 @@
                 success: function(data) {
                     // Update customer count in the respective card
                     $('#totalCustomers').text(data.customer_count);
-    
+
                     // Update seller count in the respective card
                     $('#totalSellers').text(data.seller_count);
-    
+
                     // Update product count in the respective card
                     $('#totalProducts').text(data.product_count);
-    
+
                     // Update order count in the respective card
                     $('#totalOrders').text(data.order_count);
-    
-                    // Update veterinarian count in the respective card
-                    $('#totalVeterinarians').text(data.veterinarian_count);
-    
-                    // Update delivery boy count in the respective card
-                    $('#totalDeliveryBoys').text(data.delivery_boy_count);
-                    updateChart(data);
                 },
                 error: function(error) {
                     console.log("Error fetching user counts:", error);
                 }
             });
         }
-    
-        function updateChart(data) {
-            var ctx = document.getElementById('userDistributionChart').getContext('2d');
-            var userDistributionChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Customer', 'Seller', 'Veterinarian', 'DeliveryBoy'],
-                    datasets: [{
-                        data: [data.customer_count, data.seller_count, data.veterinarian_count, data.delivery_boy_count],
-                        backgroundColor: [
-                            'rgba(75, 192, 192, 0.7)',
-                            'rgba(255, 99, 132, 0.7)',
-                            'rgba(255, 206, 86, 0.7)',
-                            'rgba(54, 162, 235, 0.7)',
-                        ],
-                        borderColor: [
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(54, 162, 235, 1)',
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    title: {
-                        display: true,
-                        text: 'User Distribution'
-                    }
-                }
-            });
-        }
-    
+
         // Automatically update counts initially and every few seconds
         $(document).ready(function() {
             updateUserCounts(); // Update counts initially
-    
+
             // Refresh counts every 10 seconds (adjust as needed)
             setInterval(function() {
                 updateUserCounts();
             }, 10000); // 10 seconds
         });
     </script>
-    
 </body>
 </html>

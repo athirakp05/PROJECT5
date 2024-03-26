@@ -1,3 +1,6 @@
+from collections import OrderedDict
+from django.contrib import admin
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
@@ -5,23 +8,20 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect,HttpResponse
 from product.models import Product
-from .models import  CustomUser, Customer, DeliveryBoy, DeliveryBoyEditProfile, Seller,CattleType
+from .models import CustomUser, Customer, Seller,CattleType
 from django.http import JsonResponse
 from django.urls import reverse
-from django.db.models import Q  
-from django.core.paginator import Paginator
+from django.db.models import Q  # Import the Q object
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
-from .forms import  CustomerEditProfileForm, SellerEditProfileForm, SellerPasswordChangeForm
-from .models import Cattle,Login_Details,SellerEditProfile,Breed,Insurance,Vaccination,ContactMessage,CustomerEditProfile,VetEditProfile,Veterinarian
-from .forms import CattleForm, VaccinationForm, InsuranceForm,SellerProfileForm,BreedForm,ContactForm,VetEditProfileForm
-from django.shortcuts import render, redirect, get_object_or_404  
+from django.contrib.auth.models import Permission
+from .forms import CustomerEditProfileForm, SellerEditProfileForm, SellerPasswordChangeForm
+from .models import Cattle,Login_Details,SellerEditProfile,Breed,Insurance,Vaccination,ContactMessage,CustomerEditProfile
+from .forms import CattleForm, VaccinationForm, InsuranceForm,SellerProfileForm,BreedForm,ContactForm
+from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
 import matplotlib
 matplotlib.use('Agg')  # Set the backend to 'Agg'
 import matplotlib.pyplot as plt
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.views import PasswordChangeView
-from django.urls import reverse_lazy
-from .forms import SellerPasswordChangeForm
 
 def index(request):
     return render(request, 'index.html')
@@ -54,23 +54,6 @@ def loginn(request):
                     else:
                         messages.warning(request, "Your account has been disabled. Please contact the administrator.")
                         return render(request, 'login.html')  # Render login page with a message
-                    
-                elif user.role == 'Veterinarian':
-                    if user.veterinarian.is_active:
-                        messages.success(request, "Login successful!")
-                        return redirect("v_dashboard") 
-                    else:
-                        messages.warning(request, "Your account has been disabled. Please contact the administrator.")
-                        return render(request, 'login.html')  # Render login page with a message
-                    
-                elif user.role == 'Delivery Boy':
-                    if user.deliveryboy.is_active:
-                        messages.success(request, "Login successful!")
-                        return redirect("delivery_dashboard") 
-                    else:
-                        messages.warning(request, "Your account has been disabled. Please contact the administrator.")
-                        return render(request, 'login.html')
-                    
                 else:
                     # Handle unknown or unsupported roles here
                     messages.error(request, "Unknown user role or unsupported role.")
@@ -85,12 +68,14 @@ def loginn(request):
 def pending_sellers(request):
     pending_sellers = Seller.objects.filter(is_approved=False)
     return render(request, 'admin/pending_sellers.html', {'pending_sellers': pending_sellers})
+
 @login_required
 def approve_seller(request, email):
     user = get_object_or_404(CustomUser, email=email)
     seller = Seller.objects.get(user=user)
     seller.is_approved = True
     seller.save()
+    # Redirect to a success page or a relevant view
     return redirect('pending_sellers')
 @login_required
 def reject_seller(request, email):
@@ -220,70 +205,6 @@ def seller_profile(request):
 def customer_profile(request):
     customer_profile = CustomerEditProfile.objects.get(user=request.user.customer.user)
     return render(request, 'profile_edit/customer_profile.html', {'customer_profile': customer_profile})
-def v_register(request):
-    if request.method == "POST":
-        doctor_name = request.POST.get('doctor_name')
-        doctor_license = request.POST.get('doctor_license')
-        email = request.POST.get('email')
-        mobile = request.POST.get('mobile')
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirmpassword')
-        start_year = request.POST.get('start_year')
-        specialization = request.POST.get('specialization')  # Add this line
-
-        if CustomUser.objects.filter(email=email).exists():
-            messages.error(request, "Email already exists")
-        elif Veterinarian.objects.filter(doctor_license=doctor_license).exists():  # Update this line
-            messages.error(request, "Veterinarian with this license already exists. Please use a different license.")
-            return redirect("v_register")
-
-        elif password != confirm_password:
-            messages.error(request, "Passwords do not match")
-        else:
-            user = CustomUser.objects.create_user(email=email, password=password, role='Veterinarian')
-            veterinarian = Veterinarian(user=user,doctor_name=doctor_name,doctor_license=doctor_license,email=email,mobile=mobile,start_year=start_year, specialization=specialization)
-            veterinarian.save()
-            vet_edit_profile = VetEditProfile(user=user, veterinarian=veterinarian,doctor_name=doctor_name,doctor_license=doctor_license,email=email,mobile=mobile,start_year=start_year, specialization=specialization)
-            vet_edit_profile.save()
-            login_details = Login_Details(email=email, password=password, role='Veterinarian')
-            login_details.save()
-            messages.success(request, "Registered successfully. Pending approval.")
-            return redirect("login")
-
-    return render(request, 'v_register.html')
-
-
-@login_required
-def vet_profile(request):
-    user = request.user
-    if user.is_veterinarian:
-        vet_profile = VetEditProfile.objects.get(user=request.user)
-        return render(request, 'view/vet_profile.html', {'vet_profile': vet_profile})
-    else:
-        return redirect('v_dashboard')
-
-@login_required
-def complete_v_profile(request):
-    user = request.user
-    veterinarian = Veterinarian.objects.get(user=request.user)
-    vet_profile, created = VetEditProfile.objects.get_or_create(user=user.veterinarian.user)
-
-    # Fetch the start year from the Veterinarian table
-    start_year = veterinarian.start_year
-
-    # Pass the start_year as initial data to the form
-    form = VetEditProfileForm(initial={'start_year': start_year})
-
-    if request.method == 'POST':
-        form = VetEditProfileForm(request.POST, request.FILES, instance=vet_profile)
-        if form.is_valid():
-            form.save()
-            return redirect('vet_profile')
-    else:
-        form = VetEditProfileForm(instance=vet_profile)
-
-    return render(request, 'profile_edit/complete_v_profile.html', {'form': form})
-
 
 def logout_user(request):
     auth_logout(request)
@@ -296,13 +217,6 @@ def admindash(request):
         return response
     else:
         return redirect('home')
-def v_dashboard(request):
-    if 'email' in request.session:
-        response = render(request, 'dash/v_dashboard.html')
-        response['Cache-Control'] = 'no-store, must-revalidate'
-        return response
-    else:
-        return redirect('home')
 
 def c_dashboard(request):
     if 'email' in request.session:
@@ -311,7 +225,6 @@ def c_dashboard(request):
         return response
     else:
         return redirect('home')
-    
 def s_dashboard(request):
     if 'email' in request.session:
         user = request.user
@@ -336,17 +249,18 @@ def s_dashboard(request):
         return response
     else:
         return redirect('home')
-    
-def delivery_dashboard(request):
-    if 'email' in request.session:
-        response = render(request, 'dash/delivery_dashboard.html')
-        response['Cache-Control'] = 'no-store, must-revalidate'
-        return response
-    else:
-        return redirect('home')
-    
+# def s_dashboard(request):
+#     if 'email' in request.session:
+#         response = render(request, 'dash/s_dashboard.html')
+#         response['Cache-Control'] = 'no-store, must-revalidate'
+#         return response
+#     else:
+#         return redirect('home')
 
 
+# views.py
+
+# Other views
 def s_view(request):
     sellers_list = SellerEditProfile.objects.all()
     paginator = Paginator(sellers_list, 10)  # Show 10 sellers per page
@@ -397,6 +311,8 @@ def contact(request):
         form = ContactForm(initial=initial_data)
 
     return render(request, 'contact.html', {'form': form})
+
+
 
 def about(request):
     # Add your view logic here
@@ -483,7 +399,6 @@ def delete_cattle(request, cattle_id):
         cattle.delete()
         return redirect('view_cattle')
     return render(request, 'cattle/delete_cattle.html', {'cattle': cattle})
-
 @login_required
 def vaccination(request, cattle_id):
     cattle = get_object_or_404(Cattle, pk=cattle_id)
@@ -497,12 +412,12 @@ def vaccination(request, cattle_id):
             return redirect('add_cattle')  # Redirect to success page after successful submission
     else:
         vaccination_form = VaccinationForm()
+
     context = {
         'vaccination_form': vaccination_form,
         'cattle_id': cattle_id,
     }
     return render(request, 'cattle/vaccination.html', context)
-
 @login_required
 def insurance(request, cattle_id):
     cattle = get_object_or_404(Cattle, pk=cattle_id)
@@ -516,12 +431,12 @@ def insurance(request, cattle_id):
             return redirect('add_cattle')  # Redirect to success page after successful submission
     else:
         insurance_form = InsuranceForm()
+
     context = {
         'insurance_form': insurance_form,
         'cattle_id': cattle_id,
     }
     return render(request, 'cattle/insurance.html', context)
-
 @login_required
 def vac_details(request, cattle_id):
     cattle = get_object_or_404(Cattle, pk=cattle_id)
@@ -533,7 +448,6 @@ def ins_details(request, cattle_id):
     cattle = get_object_or_404(Cattle, pk=cattle_id)
     insurance = Insurance.objects.filter(cattle=cattle).first()  # Fetch the insurance entry for the cattle if it exists
     return render(request, 'cattle/ins_details.html', {'cattle': cattle, 'insurance': insurance})
-
 @login_required
 def add_breed(request):
     if request.method == 'POST':
@@ -543,18 +457,19 @@ def add_breed(request):
             return redirect('view_breed')  # Redirect to view breed page
     else:
         form = BreedForm()
+    
     return render(request, 'cattle/add_breed.html', {'form': form})
-
 def view_breed(request):
     breeds = Breed.objects.all()
     return render(request, 'cattle/view_breed.html', {'breeds': breeds})
 
 def delete_breed(request, breed_id):
-    breed = get_object_or_404(Breed, id=breed_id)
+    breed = get_object_or_404(Breed, pk=breed_id)
     if request.method == 'POST':
         breed.delete()
         return redirect('view_breed')  # Redirect to view breed page
     
+    return render(request, 'cattle/delete_breed.html', {'breed': breed})
 def fetch_breeds(request):
     cattle_type = request.GET.get('cattleType')
     breeds = Breed.objects.filter(cattle_type=cattle_type).values_list('name', flat=True)
@@ -564,16 +479,15 @@ def usercount(request):
     customer_count = Customer.objects.count()
     seller_count = Seller.objects.count()
     product_count = Product.objects.count()
-    veterinarian_count = Veterinarian.objects.count()
-    delivery_boy_count = DeliveryBoy.objects.count()
+    #order_count = OrderedDict.objects.count()
 
     data = {
         'customer_count': customer_count,
         'seller_count': seller_count,
         'product_count': product_count,
-        'veterinarian_count': veterinarian_count,
-        'delivery_boy_count': delivery_boy_count,
+      #  'order_count': order_count,
     }
+
     return render(request, 'view/usercount.html', data)
 
 def team(request):
@@ -590,8 +504,10 @@ def society_seller_count(request):
         else:
             society_count[society] = 1
 
+    # Prepare data for plotting
     societies = list(society_count.keys())
     seller_counts = list(society_count.values())
+    # Check data types and contents
     print("Societies:", societies)
     print("Seller Counts:", seller_counts)
     try:
@@ -602,13 +518,16 @@ def society_seller_count(request):
         plt.title('Number of Sellers in Each Society')
         plt.xticks(rotation=45)
         plt.tight_layout()
+
+        # Save the plot to a file
         plot_path = 'path/to/save/plot.png'
         plt.savefig(plot_path)
         return render(request, 'other/society_seller_count.html', {'plot_path': plot_path})
     except Exception as e:
         print("Error:", e)  # Print the exact error message for further debugging
-        return HttpResponse("Error occurred during plotting.")
 
+        # Handle the exception appropriately or return an error response
+        return HttpResponse("Error occurred during plotting.")
 def contact(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
@@ -616,35 +535,50 @@ def contact(request):
             form.save()
             return JsonResponse({'success': True})
         else:
+            # Print form errors for debugging
+            print(form.errors)
             return JsonResponse({'success': False, 'errors': form.errors})
     else:
         form = ContactForm()
     return render(request, 'contact.html', {'form': form})
 
+
+# from django.contrib.admin.views.decorators import staff_member_required
 def message(request):
     messages = ContactMessage.objects.all().order_by('-created_at')
     return render(request, 'admin/message.html', {'messages': messages})
 
 def get_new_messages(request):
-    new_messages = ContactMessage.objects.filter(is_read=False)
+    # Fetch new messages (logic to determine new messages goes here)
+    new_messages = ContactMessage.objects.filter(is_read=False)  # Adjust this filter based on your logic
+
+    # Serialize new messages data
     serialized_messages = [
         {
             'name': message.name,
             'email': message.email,
-            'phone': message.phone,
-            'messagetype': message.messagetype,
+            'subject': message.subject,
             'message': message.message,
             'created_at': message.created_at.strftime('%Y-%m-%d %H:%M:%S')
         }
         for message in new_messages
     ]
-    new_messages.update(is_read=True)
+
+    # Return new messages as JSON response
     return JsonResponse({'messages': serialized_messages})
 
-class s_change_password(PasswordChangeView):
+
+# views.py
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.views import PasswordChangeView
+from django.urls import reverse_lazy
+from .forms import SellerPasswordChangeForm
+
+class SellerPasswordChangeView(PasswordChangeView):
     form_class = SellerPasswordChangeForm
     template_name = 'profile_edit/s_change_password.html'  # Path to your change password template
     success_url = reverse_lazy('login')  # Replace with your success URL
+
     def form_valid(self, form):
         seller_profile = form.save()
         login_details = seller_profile.login_details
@@ -654,42 +588,7 @@ class s_change_password(PasswordChangeView):
         seller.password = seller_profile.password
         seller.save()
         update_session_auth_hash(self.request, seller_profile)
+        
+        # Add success message
         messages.success(self.request, 'Password changed successfully.')
         return super().form_valid(form)
-    
-def veterinarians(request):
-    veterinarians = Veterinarian.objects.all()
-    paginator = Paginator(veterinarians, 10)  # Show 10 veterinarians per page
-    page_number = request.GET.get('page')
-    veterinarians = paginator.get_page(page_number)
-    return render(request, 'admin/veterinarians.html', {'veterinarians': veterinarians})
-
-
-
-def delivery_register(request):
-    if request.method == "POST":
-        firstname = request.POST.get('firstname')
-        lastname = request.POST.get('lastname')
-        driving_license = request.POST.get('driving_license')
-        email = request.POST.get('email')
-        mobile = request.POST.get('mobile')
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirmpassword')
-        if DeliveryBoy.objects.filter(driving_license=driving_license).exists():
-            messages.error(request, "Deliver Boy with this  license already exists. Please use a different license.")
-            return redirect("delivery_register")
-        if CustomUser.objects.filter(email=email).exists():
-            messages.error(request, "Email already exists")
-        elif password != confirm_password:
-            messages.error(request, "Passwords do not match")
-        else:
-            user = CustomUser.objects.create_user(email=email, password=password,role='Delivery Boy')
-            delivery_boy = DeliveryBoy(user=user, first_name=firstname, last_name=lastname,driving_license=driving_license,  mobile=mobile)
-            delivery_boy.save()
-            delivery_edit_profile = DeliveryBoyEditProfile(user=user, delivery_boy=delivery_boy, first_name=firstname, last_name=lastname, mobile=mobile, email=email, driving_license=driving_license)
-            delivery_edit_profile.save()
-            login = Login_Details(email=email, password=password, role='Delivery Boy')
-            login.save()
-            messages.success(request, "Registered pending approval")
-            return redirect("login") 
-    return render(request, 'delivery_register.html')

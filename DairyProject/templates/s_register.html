@@ -175,20 +175,7 @@
                 passwordToggle.classList.remove('fa-eye-slash');
             }
         }
-        function validateForm() {
-            const farmerLicenseInput = document.querySelector('input[name="farmer_license"]');
-            const farmerLicenseValue = farmerLicenseInput.value;
-            const farmerLicenseError = document.querySelector('#farmerLicenseError');
-            const farmerLicensePattern = /^F-\d{5}$/; // Pattern: F- followed by exactly 5 digits
-    
-            if (!farmerLicensePattern.test(farmerLicenseValue)) {
-                farmerLicenseError.textContent = 'Farmer License format should be F- followed by exactly 5 digits';
-                return false; // Prevent form submission if validation fails
-            } else {
-                farmerLicenseError.textContent = '';
-                return true; // Allow form submission if validation passes
-            }
-        }
+        
     </script>
    
     
@@ -208,11 +195,10 @@
                     <input type="text" name="lastname" id="lastname" placeholder="Last Name" oninput="capitalizeFirstLetter('lastname')">
                     <div class="error-message" id="lastnameError"></div>
                 </div>
-    <div class="form-group">
-        <label for="farmer_license"></label>
-        <input type="text" name="farmer_license" id="farmer_license" placeholder="Farmer ID" required>
-        <div class="error-message" id="farmerLicenseError"></div>
-    </div>
+                <div class="form-group">
+                    <label for="farmer_license"></label>
+                    <input type="text" name="farmer_license" id="farmer_license" placeholder="Farmer ID" required>
+                </div>
                 
                 <div class="form-group">
                     <label for="email"></label>

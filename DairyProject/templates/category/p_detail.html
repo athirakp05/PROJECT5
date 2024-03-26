@@ -1,161 +1,42 @@
 <!-- p_detail.html -->
+
+{% extends "layout/main.html" %}
 {% load static %}
 {% block body %}
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
-<style>
-    /* Add custom styles for the product_detail page */
-
-    .container {
-        margin-top: 50px;
-    }
-
-    h2 {
-        color: #007bff; /* Bootstrap primary color */
-    }
-
-    /* Style the filtering form */
-    form {
-        margin-bottom: 20px;
-    }
-
-    label {
-        margin-right: 10px;
-    }
-
-    input, select {
-        margin-right: 10px;
-    }
-
-    button {
-        background-color: #28a745; /* Bootstrap success color */
-        color: #fff;
-        border: none;
-        padding: 8px 12px;
-        cursor: pointer;
-    }
-
-    /* Style the product table */
-    .table {
-        margin-top: 20px;
-    }
-
-    .table th, .table td {
-        text-align: center;
-    }
-
-    .table th {
-        background-color: #007bff; /* Bootstrap primary color */
-        color: #fff;
-    }
-
-    .table tbody tr:hover {
-        background-color: #f8f9fa; /* Bootstrap table hover color */
-    }
-
-    /* Style the pagination */
-    .pagination {
-        margin-top: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .pagination a {
-        color: #007bff; /* Bootstrap primary color */
-        margin: 0 8px;
-        text-decoration: none;
-    }
-
-    .pagination .current {
-        font-weight: bold;
-        margin: 0 8px;
-    }
-</style>
 <div class="container mt-5">
-    <h2>Product Details</h2>
+    <h2>{{ product.name }}</h2>
+    <p>Price: ₹{{ product.price }}</p>
+    <p>Manufactured on: {{ product.upload_datetime|date:"F j, Y, g:i a" }}</p>
+    <p>{{ product.description }}</p>
 
-    <!-- Filtering options -->
-    <form method="get" action="{% url 'p_detail' %}">
-        <label>Date:
-            <input type="date" name="date_filter" value="{{ request.GET.date_filter }}">
-        </label>
+    {% if product.discounted_price %}
+        <p>Discounted Price: ₹{{ product.discounted_price }}</p>
+    {% endif %}
 
-        <label>Seller:
-            <select name="seller_filter">
-                <option value="">All</option>
-                <!-- Assuming Seller model has a name field -->
-                {% for seller in sellers %}
-                    <option value="{{ seller.name }}" {% if request.GET.seller_filter == seller.name %}selected{% endif %}>
-                        {{ seller.name }}
-                    </option>
-                {% endfor %}
-            </select>
-        </label>
-
-        <label>Product Name:
-            <input type="text" name="product_name_filter" value="{{ request.GET.product_name_filter }}">
-        </label>
-
-        <button type="submit">Apply Filters</button>
-    </form>
-
-    <!-- Product table -->
-    <!-- Product table -->
-<table class="table">
-    <thead>
-        <tr>
-            <th>Product Code</th>
-            <th>Name</th>
-            <th>Manufactured Date</th>
-            <th>Expiry Date</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Description</th>
-            <th>Seller</th>
-            <th>Upload Date Time</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for product in products %}
-            <tr>
-                <td>{{ product.p_code }}</td>
-                <td>{{ product.p_name }}</td>
-                <td>{{ product.mfg_date }}</td>
-                <td>{{ product.expiry_date }}</td>
-                <td>{{ product.quantity }}</td>
-                <td>{{ product.price }}</td>
-                <td>{{ product.description }}</td>
-                <td>{{ product.seller.name }}</td>
-                <td>{{ product.upload_datetime|date:"F j, Y, g:i a" }}</td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="9">No data available for the selected filters.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-
-    <!-- Pagination -->
-    <div class="pagination">
-        <span class="step-links">
-            {% if products.has_previous %}
-                <a href="?page=1">&laquo; first</a>
-                <a href="?page={{ products.previous_page_number }}">previous</a>
-            {% endif %}
-
-            <span class="current">
-                Page {{ products.number }} of {{ products.paginator.num_pages }}.
-            </span>
-
-            {% if products.has_next %}
-                <a href="?page={{ products.next_page_number }}">next</a>
-                <a href="?page={{ products.paginator.num_pages }}">last &raquo;</a>
-            {% endif %}
-        </span>
-    </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function addToWishlist(productId) {
+        // Placeholder: Implement logic to add the product to the wishlist (AJAX request)
+        console.log("Adding to Wishlist: " + productId);
+    }
+
+    function placeOrder(productId) {
+        // Placeholder: Implement logic to place an order for the product (AJAX request)
+        console.log("Placing Order: " + productId);
+    }
+
+    function removeFromWishlist(productId) {
+        // Placeholder: Implement logic to remove the product from the wishlist (AJAX request)
+        console.log("Removing from Wishlist: " + productId);
+    }
+
+    function cancelOrder(productId) {
+        // Placeholder: Implement logic to cancel the order for the product (AJAX request)
+        console.log("Canceling Order: " + productId);
+    }
+</script>
 
 {% endblock %}

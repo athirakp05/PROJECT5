@@ -1,5 +1,3 @@
-{% load static%}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -128,14 +126,8 @@
                 <td>{{ cattle.Colour }}</td>
                 <td>{{ cattle.feed }}</td>
                 <td>{{ cattle.milk_obtained }}</td>
-                <td>
-                    {% if cattle.photo %}
-                        <img src="{{ cattle.photo.url }}" alt="Cattle Photo" style="width: 100px; height: auto;">
-                    {% else %}
-                        No Photo
-                    {% endif %}
-                </td>
-                                <!-- <td>{% if cattle.vaccination %} Vaccinated {% else %} Not Vaccinated {% endif %}</td> -->
+                <td><img src="{{ cattle.photo.url }}" alt="Cattle Photo" style="width: 100px; height: auto;"></td>
+                <!-- <td>{% if cattle.vaccination %} Vaccinated {% else %} Not Vaccinated {% endif %}</td> -->
                 <td>
                     {% if cattle.vaccination %}
                         <a href="{% url 'vac_details' cattle.id %}">View Vaccination</a>

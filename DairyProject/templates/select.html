@@ -3,91 +3,69 @@
 
 <!DOCTYPE html>
 <html>
-{% block body %}     
-<head>
-    <style>
-        body {
-            object-fit: cover; 
-            height: 90vh;
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }
-
-        .button-container {
-            text-align: center;
-            padding-top: 100px;
-        }
-
-        /* Style for the buttons */
-        .btn {
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-color: transparent;
-            color: #fff;
-            padding: 30px 50px;
-            border-radius: 50%;
-            margin: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
-            transition: background-color 0.3s;
-            text-decoration: none;
-            position: relative; /* Required for animation */
-            animation: moveImage 5s ease-in-out infinite alternate; /* Animation applied to all buttons */
-        }
-
-        @keyframes moveImage {
-            0% {
-                transform: translateX(0); /* Initial position */
+    {% block body %}     
+    <head>
+        <style>
+            body {
+                background-image: url("{% static 'img/7.jpg' %}");
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
             }
-            100% {
-                transform: translateX(20px); /* Final position */
+
+            .button-container {
+                text-align: center;
+                padding-top: 100px;
             }
-        }
 
-        .btn:hover {
-            background-color: whitesmoke;
-        }
-    </style>
-</head>
-<body>
-    <center><h1>What's your role?</h1></center>
+            /* Style for the Seller button */
+            .seller-btn {
+                background-image: url("{% static 'img/farmer.jpg' %}");
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-color: transparent;
+                color: #fff;
+                padding: 100px 100px;
+                border-radius: 50px;
+                margin: 10px;
+                font-weight: bold;
+                text-transform: uppercase;
+                transition: background-color 0.3s;
+                text-decoration: none;
+            }
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <a href="{% url 's_register' %}" class="btn">
-                    <img src="{% static 'img/fa.jpg' %}" alt="Seller" width="150">
-                    Seller
-                </a>
-            </div>
-            <div class="col-md-4 offset-md-4">
-                <a href="{% url 'delivery_register' %}" class="btn">
-                    <img src="{% static 'img/delivery.png' %}" alt="Delivery Boy" width="150">
-                    Delivery Boy
-                </a>
-            </div>
+            .seller-btn:hover {
+                background-color: #0056b3;
+            }
+
+            /* Style for the Customer button */
+            .customer-btn {
+                background-image: url("{% static 'img/customer.jpg' %}");
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-color: transparent;
+                color: #fff;
+                padding: 100px 100px;
+                border-radius: 50px;
+                margin: 10px;
+                font-weight: bold;
+                text-transform: uppercase;
+                transition: background-color 0.3s;
+                text-decoration: none;
+            }
+
+            .customer-btn:hover {
+                background-color: #0056b3;
+            }
+        </style>
+    </head>
+    <body>
+        <center><h1>What's your role?</h1></center>
+
+        <div class="button-container">
+            <a href="{% url 's_register' %}" class="seller-btn">Seller</a>
+            <a href="{% url 'c_register' %}" class="customer-btn">Customer</a>
         </div>
-        <div class="row">
-            <div class="col-md-3 offset-md-3">
-                <a href="{% url 'c_register' %}" class="btn">
-                    <img src="{% static 'img/cu.jpg' %}" alt="Customer" width="150">
-                    Customer
-                </a>
-            </div>
-            <div class="col-md-3 offset-md-3">
-                <a href="{% url 'v_register' %}" class="btn">
-                    <img src="{% static 'img/vet.jpg' %}" alt="Veterinarian" width="150">
-                    Veterinarian
-                </a>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6 offset-md-3">
-                <!-- You can leave this column empty or add content as needed -->
-            </div>
-        </div>
-    </div>
-</body>
+        {% endblock %}
+    </body>
 </html>
-{% endblock %}

@@ -1,6 +1,6 @@
 # forms.py
 from django import forms
-from .models import Order, Product,MilkCollection
+from .models import Product,MilkCollection
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -20,23 +20,3 @@ class MilkCollectionForm(forms.ModelForm):
         }
 class ProductSearchForm(forms.Form):
     query = forms.CharField(label='Search', max_length=100)
-
-from .models import SampleTestReport
-# in forms.py
-from django import forms
-from .models import SampleTestReport
-
-class SampleTestReportForm(forms.ModelForm):
-    class Meta:
-        model = SampleTestReport
-        fields = ['category', 'density', 'bacterial_content', 'turbidity', 'somatic_cell_count',
-                  'lactose_content', 'protein_content', 'fat_content', 'grade']
-
-class AddressConfirmationForm(forms.ModelForm):
-    class Meta:
-        model = Order
-        fields = ['house_name', 'city', 'pincode']
-
-    house_name = forms.CharField(label='House Name', max_length=100)
-    city = forms.CharField(label='City', max_length=50)
-    pincode = forms.CharField(label='Pincode', max_length=6)

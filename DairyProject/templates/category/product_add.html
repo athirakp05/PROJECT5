@@ -52,6 +52,7 @@
         background-color: #0056b3;
     }
     
+    /* Add more styles as needed */
     </style>
     <div class="container mt-5">
         <h2 class="mb-4">Add Product</h2>
@@ -59,36 +60,43 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
+            <!-- Product Name -->
+                        <!-- Seller -->
 <div class="mb-3" style="display: none;">
     <label for="{{ form.seller.id_for_label }}">Seller:</label>
     {{ form.seller }}
 </div>
 
 <p>Seller: {{ form.initial.seller }}</p>
+   <!-- Categories -->
    <div class="mb-3">
     <label for="{{ form.categories.id_for_label }}">Categories:</label>
     {{ form.categories }}
 </div>
+         
             <div class="mb-3">
                 <label for="{{ form.p_name.id_for_label }}">Product Name:</label>
                 {{ form.p_name }}
             </div>
 
+            <!-- Manufacturing Date -->
             <div class="mb-3">
                 <label for="{{ form.mfg_date.id_for_label }}">Manufacturing Date:</label>
                 {{ form.mfg_date }}
             </div>
 
+            <!-- Expiry Date -->
             <div class="mb-3">
                 <label for="{{ form.expiry_date.id_for_label }}">Expiry Date:</label>
                 {{ form.expiry_date }}
             </div>
-
+            <!-- Quantity -->
             <div class="mb-3">
                 <label for="{{ form.quantity.id_for_label }}">Quantity:</label>
                 {{ form.quantity }}
             </div>
 
+            <!-- Price -->
             <div class="mb-3">
                 <label for="{{ form.price.id_for_label }}">Price:</label>
                 {{ form.price }}
@@ -99,7 +107,7 @@
                 <label for="{{ form.description.id_for_label }}">Description:</label>
                 {{ form.description }}
             </div>
-
+            <!-- Image -->
             <div class="mb-3">
                 <label for="{{ form.image.id_for_label }}">Image:</label>
                 {{ form.image }}

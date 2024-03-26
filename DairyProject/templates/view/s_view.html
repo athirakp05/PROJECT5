@@ -1,81 +1,51 @@
-<!-- s_view.html -->
+{%load static%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sellers View</title>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <!-- Add your meta tags, title, stylesheets, and scripts here -->
     <style>
+        /* Add styling for the table */
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
         }
-
+        
         h1 {
             text-align: center;
             font-size: 24px;
             margin-bottom: 20px;
         }
-
+    
         table {
             width: 100%;
             border-collapse: collapse;
             border: 1px solid #ddd;
             margin-left: 250px; /* Adjust this value to move the table */
         }
-
+    
         th, td {
             border: 1px solid #ddd;
             padding: 4px;
             text-align: left;
         }
-
+    
         th {
             background-color: #f2f2f2;
         }
-
+    
         td img {
             max-width: 100px;
             height: auto;
         }
-
+    
         td p {
             margin: 0;
         }
-
-        .pagination {
-            margin-left: 50px;
-        }
-
-        .pagination a {
-            text-decoration: none;
-            color: #007bff; /* Bootstrap primary color */
-            margin: 0 8px;
-        }
-
-        .pagination .current {
-            font-weight: bold;
-            margin: 0 8px;
-        }
     </style>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('#sellersTable').DataTable({
-                paging: true,
-                searching: true,
-                lengthChange: false,
-                pageLength: 10, // Show 10 sellers per page
-                order: [[1, 'asc']], // Sort by seller name initially
-            });
-        });
-    </script>
+    
 </head>
 <body>
-    <h1>Sellers View</h1>
-    <table id="sellersTable">
+    <table>
         <thead>
             <tr>
                 <th>Profile Photo</th>
@@ -88,59 +58,53 @@
                 <th>Society</th>
                 <th>Address</th>
                 <th>Contact Information</th>
-                <th>Action</th>
             </tr>
         </thead>
         <tbody>
             {% for seller in sellers %}
-                <tr>
-                    <td>
-                        {% if seller.profile_photo %}
-                            <img src="{{ seller.profile_photo.url }}" alt="Profile Photo">
-                        {% else %}
-                            <p>No Profile Photo Available</p>
-                        {% endif %}
-                    </td>
-                    <td>{{ seller.first_name }} {{ seller.last_name }}</td>
-                    <td>{{ seller.occupation }}</td>
-                    <td>{{ seller.gender }}</td>
-                    <td>{{ seller.dob }}</td>
-                    <td>{{ seller.rationcard_no }}</td>
-                    <td>{{ seller.acc_no }}</td>
-                    <td>{{ seller.society }}</td>
-                    <td>
-                        {{ seller.house_name }} <br>
-                        {{ seller.city }} <br>
-                        {{ seller.pin_code }}
-                    </td>
-                    <td>
-                        {{ seller.email }} <br>
-                        {{ seller.mobile }}
-                    </td>
-                    <td>
-                        <a href="{% url 'activate_s' email=seller.user.email %}">Activate</a>
-                        <a href="{% url 'deactivate_s' email=seller.user.email %}">Deactivate</a>
-                    </td>
-                </tr>
+            <tr>
+                <td>
+                    {% if seller.profile_photo %}
+                        <img src="{{ seller.profile_photo.url }}" alt="Profile Photo">
+                    {% else %}
+                        <p>No Profile Photo Available</p>
+                    {% endif %}
+                </td>
+                <td>{{ seller.first_name }} {{ seller.last_name }}</td>
+                <td>{{ seller.occupation }}</td>
+                <td>{{ seller.gender }}</td>
+                <td>{{ seller.dob }}</td>
+                <td>{{ seller.rationcard_no }}</td>
+                <td>{{ seller.acc_no }}</td>
+                <td>{{ seller.society }}</td>
+                <td>
+                    {{ seller.house_name }} <br>
+                    {{ seller.city }} <br>
+                    {{ seller.pin_code }}
+                </td>
+                <td>
+                    {{ seller.email }} <br>
+                  {{ seller.mobile }}
+                </td>
+                <td>
+                    <a href="{% url 'activate_s' email=seller.user.email %}">Activate</a>
+                </td>
+                <td>
+                    <a href="{% url 'deactivate_s' email=seller.user.email %}">Deactivate</a>
+                </td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
-    <div class="pagination">
-        <span class="step-links">
-            {% if sellers.has_previous %}
-                <a href="?page=1">First</a>
-                <a href="?page={{ sellers.previous_page_number }}">Previous</a>
-            {% endif %}
-
-            <span class="current">
-                Page {{ sellers.number }} of {{ sellers.paginator.num_pages }}.
-            </span>
-
-            {% if sellers.has_next %}
-                <a href="?page={{ sellers.next_page_number }}">Next</a>
-                <a href="?page={{ sellers.paginator.num_pages }}">Last</a>
-            {% endif %}
-        </span>
-    </div>
-</body>
+    <div style="margin-left: 50px;"> <!-- Adjust the margin-left value to align with your table -->
+        <span>Page {{ sellers.number }} of {{ sellers.paginator.num_pages }}</span>
+        {% if sellers.has_previous %}
+            <a href="?page=1">First</a>
+            <a href="?page={{ sellers.previous_page_number }}">Previous</a>
+        {% endif %}
+        {% if sellers.has_next %}
+            <a href="?page={{ sellers.next_page_number }}">Next</a>
+            <a href="?page={{ sellers.paginator.num_pages }}">Last</a>
+        {% endif %}
+    </div></body>
 </html>

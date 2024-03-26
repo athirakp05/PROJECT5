@@ -1,9 +1,7 @@
 from django.urls import path
 from . import views  
 from django.contrib.auth.views import PasswordResetView,PasswordResetDoneView,PasswordResetConfirmView,PasswordResetCompleteView
-from django.contrib.auth.views import PasswordChangeView
-from .views import    s_change_password, complete_c_profile, complete_v_profile, s_profile, complete_s_profile,  v_register, veterinarians
-from farm.forms import SellerPasswordChangeForm
+from .views import SellerPasswordChangeView, complete_c_profile, s_profile, complete_s_profile
 
 urlpatterns = [
     path('',views.index,name='home'),
@@ -14,8 +12,6 @@ urlpatterns = [
     path('logout/', views.logout_user, name='logout'),
     path('c_dashboard', views.c_dashboard, name='c_dashboard'),
     path('s_dashboard', views.s_dashboard, name='s_dashboard'),
-    path('v_dashboard', views.v_dashboard, name='v_dashboard'),
-    path('delivery_dashboard', views.delivery_dashboard, name='delivery_dashboard'),
     path('admindash/', views.admindash, name='admindash'),
     path('add_cattle', views.add_cattle, name='add_cattle'),
     path('fetch_breeds/', views.fetch_breeds, name='fetch_breeds'),
@@ -36,11 +32,9 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('s_profile/', s_profile, name='s_profile'),
     path('seller_profile/', views.seller_profile, name='seller_profile'),
-    path('vet_profile/', views.vet_profile, name='vet_profile'),
     path('customer_profile/', views.customer_profile, name='customer_profile'),
     path('complete_s_profile/', complete_s_profile, name='complete_s_profile'),
     path('complete_c_profile/', complete_c_profile, name='complete_c_profile'),
-    path('complete_v_profile/', complete_v_profile, name='complete_v_profile'),
     path('vaccination/<int:cattle_id>/', views.vac_details, name='vac_details'),
     path('insurance/<int:cattle_id>/', views.ins_details, name='ins_details'),
     path('usercount/', views.usercount, name='usercount'),
@@ -55,12 +49,7 @@ urlpatterns = [
     path('deactivate-customer/<str:email>/', views.deactivate_customer, name='deactivate_c'),
     path('activate-seller/<str:email>/', views.activate_seller, name='activate_s'),
     path('deactivate-seller/<str:email>/', views.deactivate_seller, name='deactivate_s'),        
-    path('s_change_password/', s_change_password.as_view(), name='s_change_password'),
+    path('seller/password_change/', SellerPasswordChangeView.as_view(), name='seller_password_change'),
     path('admin_view_cattle/', views.admin_view_cattle, name='admin_view_cattle'),
     path('search-sellers/', views.search_sellers, name='search_sellers'),
-    path('v_register/', v_register, name='v_register'),
-    path('veterinarians/', veterinarians, name='veterinarians'),
-    path('delivery_register/', views.delivery_register, name='delivery_register'),
-    # path('delboy_verify/', views.delboy_verify, name='delboy_verify'),
-
 ]
