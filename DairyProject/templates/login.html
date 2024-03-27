@@ -156,11 +156,13 @@
                 <div class="forget-pass">
                     <a href="{% url 'password_reset' %}">Forgot Password ?</a>
                 </div>
+                <div><button type="submit" class="google-login" onclick="startGoogleSignIn()">
+                    <img src="{% static 'img/google.jpeg' %}" height="20" width="20" class="google-icon">
+                    <a href="http://127.0.0.1:8000/accounts/google/login/?process=login"></a>Sign in with Google
+                </button></div>
             </form>
-            <button class="google-login">
-                <img src="{% static 'img/google.jpeg' %}"  height="20" width="20" class="google-icon" >
-                Sign in with Google
-            </button>
+            
+            
         </div>
         <div id="alert" style="display: none;">
             {% if messages %}
@@ -170,17 +172,9 @@
                     {% endfor %}
                 </ul>
             {% endif %}
-            <!-- Include your login form here -->
-
-{% if messages %}
-<ul class="messages">
-  {% for message in messages %}
-    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-  {% endfor %}
-</ul>
-{% endif %}
-
+         
         </div>
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
         <script>  
             function togglePasswordVisibility(inputId) {
                 const passwordInput = document.querySelector(`input[name="${inputId}"]`);
@@ -195,7 +189,24 @@
                     passwordToggle.classList.remove('fa-eye-slash');
                 }
             }
+        
+            function startGoogleSignIn() {
+                gapi.load('auth2', function() {
+                    gapi.auth2.init({
+                        client_id: '1017058331297-mn892hkgmii6556k15j7jocrjvpfsubv.apps.googleusercontent.com',
+                    }).then(function(auth2) {
+                        auth2.signIn().then(function(googleUser) {
+                            // Redirect to the specified URL after successful sign-in
+                            window.location.href = 'http://127.0.0.1:8000/accounts/google/login/?process=login';
+                        }).catch(function(error) {
+                            // Handle sign-in errors
+                            console.error('Error signing in with Google:', error);
+                        });
+                    });
+                });
+            }
         </script>
+        
     {% endblock %}
     </body>
 </html>

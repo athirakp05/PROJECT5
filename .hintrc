@@ -53,6 +53,12 @@
           "user-select"
         ]
       }
+    ],
+    "axe/keyboard": [
+      "default",
+      {
+        "nested-interactive": "off"
+      }
     ]
   },
   "browserslist": [

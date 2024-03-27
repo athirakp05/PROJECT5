@@ -1,6 +1,5 @@
 {% extends 'layout/main.html' %}
 {% load static %}
-
 {% block body %}
 <style>
     /* CSS for registration form */
@@ -102,9 +101,10 @@
         text-align: center;
         margin-top: 20px;
     }
-    </style>
-
+    
+        </style>
     <script>
+        // Function to capitalize the first letter of the input field
         function capitalizeFirstLetter(inputId) {
             const input = document.querySelector(`input[name="${inputId}"]`);
             let inputValue = input.value.trim(); // Trim whitespace
@@ -119,59 +119,77 @@
                 input.value = '';
             }
         }
-
-        function validateEmail() {
-            const emailInput = document.querySelector('input[name="email"]');
-            const emailValue = emailInput.value;
-            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-            const emailError = document.querySelector('#emailError');
-
-            if (!emailPattern.test(emailValue)) {
-                emailError.textContent = 'Invalid email format';
+    
+        // Function to validate the doctor license format
+        function validateDoctorLicense() {
+            const doctorLicenseInput = document.querySelector('input[name="doctor_license"]');
+            const doctorLicenseValue = doctorLicenseInput.value;
+            const doctorLicensePattern = /^D-\d{5}$/; // Assuming the pattern is D- followed by exactly 5 digits
+            const doctorLicenseError = document.querySelector('#doctorLicenseError');
+    
+            if (!doctorLicensePattern.test(doctorLicenseValue)) {
+                doctorLicenseError.textContent = 'Doctor License format should be D- followed by exactly 5 digits';
             } else {
-                emailError.textContent = '';
+                doctorLicenseError.textContent = '';
             }
         }
-
+    
+        // Function to validate the mobile number
         function validatemobileNumber() {
             const mobileInput = document.querySelector('input[name="mobile"]');
             const mobileValue = mobileInput.value;
             const mobilePattern = /^(9|8|7|6)[0-9]{9}$/; // Assuming Indian standard format
             const mobileError = document.querySelector('#mobileError');
-
+    
             if (!mobilePattern.test(mobileValue)) {
                 mobileError.textContent = 'Invalid mobile number format';
             } else {
                 mobileError.textContent = '';
             }
         }
-
+    
+        // Function to validate the email format
+        function validateEmail() {
+            const emailInput = document.querySelector('input[name="email"]');
+            const emailValue = emailInput.value;
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+            const emailError = document.querySelector('#emailError');
+    
+            if (!emailPattern.test(emailValue)) {
+                emailError.textContent = 'Invalid email format';
+            } else {
+                emailError.textContent = '';
+            }
+        }
+    
+        // Function to validate the password format
         function validatePassword() {
             const passwordInput = document.querySelector('input[name="password"]');
             const passwordValue = passwordInput.value;
             const passwordPattern = /^(?=.*[0-9])(?=.*[!@#$%^&*])([a-zA-Z0-9!@#$%^&*]+){6,}$/;
             const passwordError = document.querySelector('#passwordError');
-
+    
             if (!passwordPattern.test(passwordValue)) {
                 passwordError.innerHTML = "Password must be:<br>6 characters!<br>at least one number!<br>at least one special symbol!";
-
             } else {
                 passwordError.textContent = '';
             }
         }
-
+    
+        // Function to validate the confirm password
         function validateConfirmPassword() {
             const passwordInput = document.querySelector('input[name="password"]');
             const confirmPasswordInput = document.querySelector('input[name="confirmpassword"]');
             const confirmPasswordError = document.querySelector('#confirmpasswordError');
-
+    
             if (passwordInput.value !== confirmPasswordInput.value) {
                 confirmPasswordError.textContent = 'Passwords do not match';
             } else {
                 confirmPasswordError.textContent = '';
             }
         }
-
+    
+        // Function to toggle password visibility
         function togglePasswordVisibility(inputId) {
             const passwordInput = document.querySelector(`input[name="${inputId}"]`);
             const passwordToggle = document.querySelector(`#${inputId}Toggle`);
@@ -185,57 +203,81 @@
                 passwordToggle.classList.remove('fa-eye-slash');
             }
         }
-        function showAlert(message, isError = false) {
-            const alert = document.getElementById('alert');
-            alert.textContent = message;
-            alert.style.display = 'block';
-            alert.style.color = isError ? 'red' : 'green';
-            
-            if (!isError) {
-                // If it's a success message, hide it after 3 seconds
-                setTimeout(function() {
-                    alert.style.display = 'none';
-                }, 3000);
+        function validateCustomYear() {
+            const customYearInput = document.querySelector('input[name="custom_year"]');
+            const customYearValue = customYearInput.value;
+            const customYearError = document.querySelector('#customYearError');
+            const currentYear = new Date().getFullYear(); // Get the current year
+    
+            if (customYearValue.length === 0) {
+                customYearError.textContent = ''; // No error message if the input is empty
+            } else if (
+                customYearValue.length !== 4 ||
+                isNaN(customYearValue) ||
+                parseInt(customYearValue) < 1974 ||
+                parseInt(customYearValue) > currentYear || // Ensure the year is less than or equal to the current year
+                !/^[1-2]\d{3}$/.test(customYearValue) // Ensure the input starts with 1 or 2 and is followed by 3 digits
+            ) {
+                customYearError.textContent = 'Invalid custom year.';
+            } else {
+                customYearError.textContent = '';
             }
         }
+    
+        // Function to validate the entire form
+        function validateForm() {
+            // Add additional validations if needed
+            validateDoctorLicense();
+            validateEmail();
+            validatemobileNumber();
+            validatePassword();
+            validateConfirmPassword();
+            validateCustomYear();
+            
+            // Example: Check if any error messages are present
+            const errorMessages = document.querySelectorAll('.error-message');
+            for (const errorMessage of errorMessages) {
+                if (errorMessage.textContent !== '') {
+                    return false; // Prevent form submission if there are errors
+                }
+            }
+    
+            return true; // Allow form submission if no errors
+        }
     </script>
-
+    
     <body>
         <div class="registration-container">
-            <h1>Customer </h1>
-            <h5>Register Here </h5>
-            <form method="POST" action="{% url 'c_register' %}" onsubmit="return validateForm()">
+            <h4>Veterinarian Registration</h4>
+            <form method="POST" action="{% url 'v_register' %}" onsubmit="return validateForm()">
                 {% csrf_token %}
                 <div class="form-group">
-                    <label for="firstname"></label>
-                    <input type="text" name="firstname" id="firstname"placeholder="First Name" required oninput="capitalizeFirstLetter('firstname')">
-                    <div class="error-message" id="firstnameError"></div>
-                </div>
-                <div class="form-group">
-                    <label for="lastname"></label>
-                    <input type="text" name="lastname" id="lastname" placeholder="Last Name"oninput="capitalizeFirstLetter('lastname')">
-                    <div class= "error-message" id="lastnameError"></div>
+                    <label for="doctor_name"></label>
+                    <input type="text" name="doctor_name" id="doctor_name" placeholder="Doctor Name" required oninput="capitalizeFirstLetter('doctor_name')">
+                    <div class="error-message" id="doctorNameError"></div>
                 </div>
                 <div class="form-group">
                     <label for="email"></label>
-                    <input type="email" name="email" id="email"placeholder="Email" required oninput="validateEmail()">
+                    <input type="email" name="email" id="email" placeholder="Email" required oninput="validateEmail()">
                     <div class="error-message" id="emailError"></div>
                 </div>
                 <div class="form-group">
                     <label for="mobile"></label>
                     <div class="mobile-input-container">
-                        <select name="country_code" id="country_code">
-                            <option value="+91">+91 (India)</option>
-                            <!-- Add more options for other countries -->
-                        </select>
-                        <input type="text" name="mobile" id="mobile"placeholder="Mobile" required oninput="validatemobileNumber()">
+                        <input type="text" name="mobile" id="mobile" placeholder="Mobile" required oninput="validatemobileNumber()">
                     </div>
                     <div class="error-message" id="mobileError"></div>
                 </div>
                 <div class="form-group">
+                    <label for="doctor_license"></label>
+                    <input type="file" name="doctor_license" id="doctor_license" accept="image/*" required>
+                    <div class="error-message" id="doctorLicenseError"></div>
+                </div>
+
+                <div class="form-group">
                     <label for="password"></label>
                     <div class="password-input-container">
-                        <input type="password" name="password" id="password"placeholder="Password" required oninput="validatePassword()">
+                        <input type="password" name="password" id="password" placeholder="Password" required oninput="validatePassword()">
                         <i class="fa fa-eye" id="passwordToggle" onclick="togglePasswordVisibility('password')"></i>
                     </div>
                     <div class="error-message" id="passwordError"></div>
@@ -243,19 +285,44 @@
                 <div class="form-group">
                     <label for="confirmpassword"></label>
                     <div class="password-input-container">
-                        <input type="password" name="confirmpassword" id="confirmpassword"placeholder="Confirm Password" required oninput="validateConfirmPassword()">
+                        <input type="password" name="confirmpassword" id="confirmpassword" placeholder="Confirm Password" required oninput="validateConfirmPassword()">
                         <i class="fa fa-eye" id="confirmpasswordToggle" onclick="togglePasswordVisibility('confirmpassword')"></i>
                     </div>
                     <div class="error-message" id="confirmpasswordError"></div>
                 </div>
                 <div class="form-group">
-                    <button type="submit",id="submit">Register</button>
+                    <label for="custom_year">Start Year:</label>
+                    <input type="text" name="custom_year" id="custom_year" placeholder="Enter Year" maxlength="4" pattern="[0-9]{4}" required>
+                    <div class="error-message" id="customYearError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="specialization">Specialization:</label>
+                    <select name="specialization" id="specialization">
+                        <option value="Bovine Practitioner">Bovine Practitioner</option>
+                        <option value="Reproductive Specialist">Reproductive Specialist</option>
+                        <option value="Herd Health Veterinarian">Herd Health Veterinarian</option>
+                        <option value="Cattle Surgery Specialist">Cattle Surgery Specialist</option>
+                        <option value="Food Animal Veterinarian">Food Animal Veterinarian</option>
+                        <option value="Veterinary Epidemiologist">Veterinary Epidemiologist</option>
+                        <option value="Dairy Cattle Veterinarian">Dairy Cattle Veterinarian</option>
+                    </select>
+                    <div class="error-message" id="specializationError"></div>
+                </div>
+                <div class="form-group">
+                    <button type="submit">SignUp</button>
                 </div>
             </form>
+            <div id="alert" style="display: none;"></div>
             <a href="{% url 'login' %}">Already have an account? Login</a>
+            <div id="alert">
+                {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                            <li class="{{ message.tags }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
         </div>
     </body>
-{% for message in messages %}
-    <h3>{{ message }}</h3>
-{% endfor %}
 {% endblock body %}

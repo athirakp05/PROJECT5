@@ -592,3 +592,12 @@ class SellerPasswordChangeView(PasswordChangeView):
         # Add success message
         messages.success(self.request, 'Password changed successfully.')
         return super().form_valid(form)
+    
+
+    
+def delivery_register(request):
+    return render(request, 'delivery_register.html')
+
+    
+def v_register(request):
+    return render(request, 'v_register.html')
