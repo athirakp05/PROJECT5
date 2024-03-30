@@ -1,0 +1,205 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+
+<link rel="stylesheet" href="{% static 'assets/css/vertical-layout-light/style.css' %}">
+<link rel="stylesheet" href="{% static 'assets/vendors/feather/feather.css' %}">
+<link rel="stylesheet" href="{% static 'assets/vendors/ti-icons/css/themify-icons.css' %}">
+<link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- CSS styles -->
+<style>
+
+/* General styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    padding-top: 60px; /* Adding top padding to body for the fixed navbar */
+}
+
+/* Navbar styling */
+.navbar {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0; /* Fixed position to top */
+    width: 100%;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.navbar-brand img {
+    max-width: 100px;
+    height: auto;
+}
+
+.navbar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #555;
+    margin: 0 10px;
+}
+
+.nav-link:hover {
+    color: #007bff;
+}
+
+/* Sidebar styling */
+.sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    bottom: 0;
+    width: 240px; /* Adjusted width for better visibility */
+    background-color: #fff;
+    color: #333;
+    padding-top: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    overflow-y: auto; /* Enable scrollbar if needed */
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.user-profile img {
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.user-profile .user-info p {
+    margin: 0;
+    font-weight: bold;
+}
+
+.user-profile .user-info a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 10px;
+}
+
+.sidebar-menu li a {
+    color: #333;
+    text-decoration: none;
+    display: block;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+}
+
+.sidebar-menu li a:hover {
+    background-color: #f0f0f0;
+    border-left: 3px solid #007bff;
+    padding-left: 17px;
+}
+
+    .content {
+        margin-left: 100px;
+    }
+
+
+</style>
+{% include 'inc/custnav.html' %}
+
+<body>
+
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="user-profile">
+        <div class="user-info">
+            <p> {{ customer_profile.first_name }} {{ customer_profile.last_name }}</p>
+        </div>
+    </div>
+    <ul class="sidebar-menu">
+        <li><a href="{% url 'complete_c_profile' %}" data-url="{% url 'complete_c_profile' %}"><i class="fas fa-user"></i>Edit Profile</a></li>
+
+    </ul>
+</div>
+
+<!-- Main Content -->
+<div class="content">
+    <header>
+        <h1>Customer Dashboard</h1>
+    </header>
+    <center>{% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% endif %}</center>
+    <main>
+        <div id="dashboard-content"></div>
+    </main>
+</div>
+
+<!-- Bootstrap JS and jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+        const dashboardContent = document.getElementById('dashboard-content');
+    
+        sidebarLinks.forEach(function(link) {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const url = link.getAttribute('data-url');
+                if (url) {
+                    loadContent(url);
+                }
+            });
+        });
+        loadContent("{% url 'customer_profile' %}");
+        function loadContent(url) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        dashboardContent.innerHTML = xhr.responseText;
+                    } else {
+                        console.error('Error loading content:', xhr.status);
+                    }
+                }
+            };
+            xhr.open('GET', url, true);
+            xhr.send();
+        }
+    });
+    
+</script>
+
+
+</body>
+</html>

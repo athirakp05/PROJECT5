@@ -1,0 +1,53 @@
+<!-- deliveryboy_approval.html -->
+{% load static %}
+{% block content %}
+  <h2>Delivery Boy Approval Requests</h2>
+
+  {% if approval_requests %}
+    <form method="post" action="{% url 'deliveryboy_approval' %}">
+      {% csrf_token %}
+      <table>
+        <thead>
+          <tr>
+            <th>Delivery Boy</th>
+            <th>Name</th>
+            <th>Mobile</th>
+            <th>Email</th>
+            <th>Driving License</th>
+            <th>Created At</th>
+            <th>Approve</th>
+            <th>Registration Approved</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          {% for request in approval_requests %}
+            <tr>
+              <td>{{ request.delivery_boy.name }}</td>
+              <td>{{ request.delivery_boy.name }}</td>
+              <td>{{ request.delivery_boy.mobile }}</td>
+              <td>{{ request.delivery_boy.email }}</td>
+              <td>{{ request.delivery_boy.is_approved }}</td>
+
+              <td>
+                {% if request.delivery_boy.driving_license %}
+                  <a href="{{ request.delivery_boy.driving_license.url }}" target="_blank">View License</a>
+                {% else %}
+                  N/A
+                {% endif %}
+              </td>
+              <td>{{ request.created_at }}</td>
+              <td>
+                <input type="checkbox" name="approval_request_id" value="{{ request.id }}" id="id_approval_request_{{ forloop.counter }}">
+                <label for="id_approval_request_{{ forloop.counter }}">Approve</label>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <button type="submit">Submit</button>
+    </form>
+  {% else %}
+    <p>No approval requests at the moment.</p>
+  {% endif %}
+{% endblock %}

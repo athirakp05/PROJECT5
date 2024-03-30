@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Delivery View</title>
+</head>
+<body>
+    <h1>Delivery Boy Register Details</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Driving License</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for delivery_boy in delivery_boys %}
+            <tr>
+                <td>{{ delivery_boy.first_name }}</td>
+                <td>{{ delivery_boy.last_name }}</td>
+                <td>{{ delivery_boy.driving_license }}</td>
+                <td>{{ delivery_boy.user.email }}</td>
+                <td>{{ delivery_boy.mobile }}</td>
+                <td>{% if delivery_boy.is_approved %}Approved{% else %}Pending{% endif %}</td>
+                <td>
+                    <form action="{% url 'admin_approve_delivery' delivery_boy.pk %}" method="POST">
+                        {% csrf_token %}
+                        <select name="action">
+                            <option value="approve">Approve</option>
+                            <option value="reject">Reject</option>
+                        </select>
+                        <button type="submit">Submit</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

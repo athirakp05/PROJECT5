@@ -1,0 +1,62 @@
+
+{%load static%}
+<!-- admin_profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin's Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset some default browser styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+        }
+
+        /* Content container styles */
+        .content {
+            padding: 20px;
+        }
+
+        header {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* Add styles for the image */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main content area for Admin's Profile -->
+    <div class="content">
+        <header>
+            <p>Welcome, Admin!</p>
+
+        </header>
+        <!-- Your profile content goes here -->
+    
+        <!-- Include admin profile information dynamically -->
+        <div id="admin-profile-content">
+            <!-- Admin's profile information will be loaded here -->
+            <h5>Details of the monthly collections are indicated by the graph !</h5>
+
+            <!-- Example of an image field -->
+            <img src="{% static 'img/analytic.jpg' %}" height="2000" width="1000" alt="Admin's Profile Image">
+        </div>
+    </div>
+</body>
+</html>

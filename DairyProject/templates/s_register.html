@@ -1,0 +1,172 @@
+{% extends 'layout/main.html' %}
+{% load static %}
+
+{% block body %}
+l<link rel="stylesheet" href="{% static 'css/signup.css' %}">
+
+    <script>
+        function capitalizeFirstLetter(inputId) {
+            const input = document.querySelector(`input[name="${inputId}"]`);
+            const inputValue = input.value;
+            if (inputValue.length > 0) {
+                input.value = inputValue.charAt(0).toUpperCase() + inputValue.slice(1);
+            }
+        }
+
+        function validateEmail() {
+            const emailInput = document.querySelector('input[name="email"]');
+            const emailValue = emailInput.value;
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+            const emailError = document.querySelector('#emailError');
+
+            if (!emailPattern.test(emailValue)) {
+                emailError.textContent = 'Invalid email format';
+            } else {
+                emailError.textContent = '';
+            }
+        }
+
+        function validatemobileNumber() {
+            const mobileInput = document.querySelector('input[name="mobile"]');
+            const mobileValue = mobileInput.value;
+            const mobilePattern = /^(9|8|7|6)[0-9]{9}$/; // Assuming Indian standard format
+            const mobileError = document.querySelector('#mobileError');
+
+            if (!mobilePattern.test(mobileValue)) {
+                mobileError.textContent = 'Invalid mobile number format';
+            } else {
+                mobileError.textContent = '';
+            }
+        }
+
+        function validatePassword() {
+            const passwordInput = document.querySelector('input[name="password"]');
+            const passwordValue = passwordInput.value;
+            const passwordPattern = /^(?=.*[0-9])(?=.*[!@#$%^&*])([a-zA-Z0-9!@#$%^&*]+){6,}$/;
+            const passwordError = document.querySelector('#passwordError');
+
+            if (!passwordPattern.test(passwordValue)) {
+                passwordError.innerHTML = "Password must be:<br>6 characters!<br>at least one number!<br>at least one special symbol!";
+            } else {
+                passwordError.textContent = '';
+            }
+        }
+
+        function validateConfirmPassword() {
+            const passwordInput = document.querySelector('input[name="password"]');
+            const confirmPasswordInput = document.querySelector('input[name="confirmpassword"]');
+            const confirmPasswordError = document.querySelector('#confirmpasswordError');
+
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                confirmPasswordError.textContent = 'Passwords do not match';
+            } else {
+                confirmPasswordError.textContent = '';
+            }
+        }
+
+        function togglePasswordVisibility(inputId) {
+            const passwordInput = document.querySelector(`input[name="${inputId}"]`);
+            const passwordToggle = document.querySelector(`#${inputId}Toggle`);
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordToggle.classList.add('fa-eye-slash');
+                passwordToggle.classList.remove('fa-eye');
+            } else {
+                passwordInput.type = 'password';
+                passwordToggle.classList.add('fa-eye');
+                passwordToggle.classList.remove('fa-eye-slash');
+            }
+        }
+        function validateForm() {
+            const farmerLicenseInput = document.querySelector('input[name="farmer_license"]');
+            const farmerLicenseValue = farmerLicenseInput.value;
+            const farmerLicenseError = document.querySelector('#farmerLicenseError');
+            const farmerLicensePattern = /^F-\d{5}$/; // Pattern: F- followed by exactly 5 digits
+    
+            if (!farmerLicensePattern.test(farmerLicenseValue)) {
+                farmerLicenseError.textContent = 'Farmer License format should be F- followed by exactly 5 digits';
+                return false; // Prevent form submission if validation fails
+            } else {
+                farmerLicenseError.textContent = '';
+                return true; // Allow form submission if validation passes
+            }
+        }
+    </script>
+   
+    
+
+    <body>
+        <div class="registration-container">
+            <h1>Seller Registration</h1>
+            <form method="POST" action="{% url 's_register' %}" onsubmit="return validateForm()">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="firstname"></label>
+                    <input type="text" name="firstname" id="firstname" placeholder="First Name" required oninput="capitalizeFirstLetter('firstname')">
+                    <div class="error-message" id="firstnameError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="lastname"></label>
+                    <input type="text" name="lastname" id="lastname" placeholder="Last Name" oninput="capitalizeFirstLetter('lastname')">
+                    <div class="error-message" id="lastnameError"></div>
+                </div>
+    <div class="form-group">
+        <label for="farmer_license"></label>
+        <input type="text" name="farmer_license" id="farmer_license" placeholder="Farmer ID" required>
+        <div class="error-message" id="farmerLicenseError"></div>
+    </div>
+                
+                <div class="form-group">
+                    <label for="email"></label>
+                    <input type="email" name="email" id="email" placeholder="Email" required oninput="validateEmail()">
+                    <div class="error-message" id="emailError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="mobile"></label>
+                    <div class="mobile-input-container">
+                        <select name="country_code" id="country_code">
+                            <option value="+91">+91 (India)</option>
+                            <!-- Add more options for other countries -->
+                        </select>
+                        <input type="text" name="mobile" id="mobile" placeholder="Mobile" required oninput="validatemobileNumber()">
+                    </div>
+                    <div class="error-message" id="mobileError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="password"></label>
+                    <div class="password-input-container">
+                        <input type="password" name="password" id="password" placeholder="Password" required oninput="validatePassword()">
+                        <i class="fa fa-eye" id="passwordToggle" onclick="togglePasswordVisibility('password')"></i>
+                    </div>
+                    <div class="error-message" id="passwordError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmpassword"></label>
+                    <div class="password-input-container">
+                        <input type="password" name="confirmpassword" id="confirmpassword" placeholder="Confirm Password" required oninput="validateConfirmPassword()">
+                        <i class="fa fa-eye" id="confirmpasswordToggle" onclick="togglePasswordVisibility('confirmpassword')"></i>
+                    </div>
+                    <div class="error-message" id="confirmpasswordError"></div>
+                </div>
+                <div class="form-group">
+                    <button type="submit">SignUp</button>
+                </div>
+            </form>
+            <div id="alert" style="display: none;">
+            </div>
+            <a href="{% url 'login' %}">Already have an account? Login</a>
+            <div id="alert">
+                <div id="alert">
+                    {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                                <li class="{{ message.tags }}">{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                
+        
+        
+    </body>
+{% endblock body %}

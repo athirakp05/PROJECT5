@@ -1,0 +1,166 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* Reset default margin and padding */
+        body, h1, h2, p, ul, li {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Set a background color for the entire page */
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Style for the header */
+        header {
+            color: #fff;
+            text-align: center;
+            font-size: 20px;
+            padding: 1px 0;
+        }
+
+        /* Center the header text */
+        header h2 {
+            margin: 0;
+        }
+
+        /* Style for the table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+        }
+
+        /* Style for table headings */
+        th {
+            background-color: #0074b4;
+            color: #fff;
+            text-align: left;
+            padding: 10px;
+        }
+
+        /* Style for table cells */
+        td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        /* Style for product images */
+        img {
+            max-width: 100px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* Style for pagination */
+        .pagination {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .page-item {
+            margin: 0 5px;
+        }
+
+        .page-link {
+            text-decoration: none;
+            background-color: #0074b4;
+            color: #fff;
+            padding: 6px 12px;
+            border: 1px solid #0056b3;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .page-link:hover {
+            background-color: #0056b3;
+        }
+
+        /* Style for buttons */
+        .btn {
+            display: inline-block;
+            background-color: #0074b4;
+            color: #fff;
+            padding: 0px 1px;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>Products</h2>
+    </header>
+    <table>
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Product Image</th>
+                <th>Product Name</th>
+                <th>Manufacturing Date</th>
+                <th>Expiry Date</th>
+                <th>Quantity (ltrs/kgms)</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>
+                    <img src="{{ product.image.url }}" alt="{{ product.p_name }}">
+                </td>
+                <td>{{ product.categories }}</td>
+                <td>{{ product.p_name }}</td>
+                <td>{{ product.mfg_date }}</td>
+                <td>{{ product.expiry_date }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.description }}</td>
+                <td>
+                    <a href="#" class="btn">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation example">
+        <div class="pagination">
+            <span class="step-links">
+                {% if products.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ products.previous_page_number }}">previous</a>
+                {% endif %}
+        
+                <span class="current">
+                    Page {{ products.number }} of {{ products.paginator.num_pages }}.
+                </span>
+    
+                {% if products.has_next %}
+                    <a href="?page={{ products.next_page_number }}">next</a>
+                    <a href="?page={{ products.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    </nav>
+    <a href="{% url 'product_add' %}" class="btn">Add Product</a>
+</body>
+</html>

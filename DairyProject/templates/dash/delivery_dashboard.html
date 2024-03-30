@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Dashboard</title>
+    <link rel="stylesheet" href="{% static 'assets/css/vertical-layout-light/style1.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendors/feather/feather.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendors/ti-icons/css/themify-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        /* General styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            position: fixed;
+            top: 60px; /* Adjust this value based on your navbar height */
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            background-color: rgb(44, 151, 193);
+            color: #fff;
+            padding-top: 50px;
+        }
+
+        .user-info {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .user-avatar img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-name {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+        }
+
+        .sidebar a:hover {
+            background-color: rgb(44, 151, 193);
+        }
+
+        /* Content area */
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            padding-top: 80px; /* Adjust this value based on your navbar height */
+        }
+
+        /* Media queries for responsiveness */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100px;
+            }
+            .content {
+                margin-left: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+{% block body %}
+    {% include 'inc/delnav.html' %}
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Delivery Dashboard</h2>
+        <div class="user-info">
+            <div class="user-avatar">
+                <!-- Place your user avatar here -->
+            </div>
+            <div class="user-name">{{ delivery_boy.first_name }}</div>
+        </div>
+        <ul>
+            <li><a href="#" class="dashboard-link" data-url="{% url 'delivery_profile' %}">Todays Orders</a></li>
+            <li><a href="#" class="dashboard-link" data-url="{% url 'del_edit_profile' %}">Edit Profile</a></li>
+            <li><a href="#" class="dashboard-link" data-url="{% url 'delivery_profile' %}">My Profile</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content" id="main-content">
+        <header>
+            <h1>Delivery Dashboard</h1>
+        </header>
+        <main>
+            <div id="dashboard-content"></div>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS and jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // JavaScript to handle sidebar link clicks
+        document.querySelectorAll('.dashboard-link').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const url = this.getAttribute('data-url');
+                fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('dashboard-content').innerHTML = data;
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    </script>
+{% endblock body %}
+
+</body>
+</html>

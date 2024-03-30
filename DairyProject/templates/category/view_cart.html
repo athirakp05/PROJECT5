@@ -1,0 +1,161 @@
+<!-- category/view_cart.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cart</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 0;
+            }
+        
+            .container {
+                max-width: 800px;
+                margin: 20px auto;
+                padding: 0 20px;
+            }
+        
+            h1 {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+        
+            .cart-item {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border-bottom: 1px solid #ddd;
+                padding: 10px 0;
+                margin-bottom: 10px;
+            }
+        
+            .cart-item:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+            }
+        
+            .product-details {
+                display: flex;
+                align-items: center;
+            }
+        
+            .product-details img {
+                max-width: 80px;
+                height: auto;
+                margin-right: 10px;
+            }
+        
+            .quantity {
+                display: flex;
+                align-items: center;
+            }
+        
+            .quantity input {
+                width: 40px;
+                text-align: center;
+                margin: 0 5px;
+            }
+        
+            .actions button {
+                margin-left: 10px;
+            }
+        
+            #make-payment {
+                display: block;
+                margin: 20px auto;
+            }
+        </style>
+        
+</head>
+
+<body>
+
+    <div class="container">
+        {% for item in cart_items %}
+        <div class="cart-item">
+            <div class="product-details">
+                <img src="{{ item.product.image.url }}" alt="Product Image">
+                <div>
+                    <p class="product-name">{{ item.product.p_name }}</p>
+                    <p>Price: {{ item.product.price }}</p>
+                </div>
+            </div>
+            <div class="quantity">
+                <button class="btn btn-sm btn-primary plus-cart" data-id="{{ item.id }}">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <input type="text" id="quantity-{{ item.id }}" value="{{ item.quantity }}" readonly>
+                <button class="btn btn-sm btn-danger minus-cart" data-id="{{ item.id }}">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+            <div class="total-amount" id="total-{{ item.id }}">{{ item.total_price }}</div>
+            <div class="actions">
+                <form action="{% url 'remove_from_cart' cart_id=item.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Remove</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+        {% if cart_items %}
+        <button class="btn btn-success" id="make-payment">Make Payment</button>
+    {% endif %}    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('.plus-cart').click(function() {
+                var id = $(this).attr('data-id');
+                var quantity = parseInt($('#quantity-' + id).val()) + 1;
+                $('#quantity-' + id).val(quantity);
+                updateQuantity(id, quantity, 'increment');  // Pass 'increment' as the action
+            });
+    
+            $('.minus-cart').click(function() {
+                var id = $(this).attr('data-id');
+                var quantity = parseInt($('#quantity-' + id).val());
+                if (quantity > 1) {
+                    quantity -= 1;
+                    $('#quantity-' + id).val(quantity);
+                    updateQuantity(id, quantity, 'decrement');  // Pass 'decrement' as the action
+                }
+            });
+    
+            function updateQuantity(id, quantity, action) {
+                $.ajax({
+                    url: '/update_quantity/',
+                    method: 'POST',
+                    data: {
+                        'cart_id': id,
+                        'quantity': quantity,
+                        'action': action,  // Pass the action parameter
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(data) {
+                        // Update the total amount in the table
+                        $('#total-' + id).text(data.total_amount);
+                    },
+                    error: function(error) {
+                        console.log('Error occurred: ', error);
+                    }
+                });
+            }
+            $('#make-payment').click(function() {
+                // Redirect to the payment page or perform any necessary actions
+                window.location.href = '{% url "payment" %}';
+            });
+        });
+    </script>
+</body>
+
+</html>

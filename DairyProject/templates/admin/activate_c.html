@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Activation/Deactivation</title>
+</head>
+<body>
+    <h1>Customer Activation/Deactivation</h1>
+    {% for customer in customers %}
+        <div>
+            <p>Customer ID: {{ customer.id }}</p>
+            <p>Name: {{ customer.first_name }} {{ customer.last_name }}</p>
+            <p>Email: {{ customer.user.email }}</p>
+            <p>Mobile: {{ customer.mobile }}</p>
+            {% if customer.is_active %}
+                <a href="{% url 'deactivate_c' customer.id %}">Deactivate</a>
+            {% else %}
+                <a href="{% url 'activate_c' customer.id %}">Activate</a>
+            {% endif %}
+            <hr>
+        </div>
+    {% endfor %}
+</body>
+</html>

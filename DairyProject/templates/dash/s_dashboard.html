@@ -1,0 +1,144 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+{% block body %}
+
+<link rel="stylesheet" href="{% static 'assets/css/vertical-layout-light/style.css' %}">
+<link rel="stylesheet" href="{% static 'assets/vendors/feather/feather.css' %}">
+<link rel="stylesheet" href="{% static 'assets/vendors/ti-icons/css/themify-icons.css' %}">
+<link rel="stylesheet" href="{% static 'assets/vendors/css/vendor.bundle.base.css' %}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<style>
+    /* General styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+/* Sidebar styling */
+.sidebar {
+    position: fixed;
+    top: 60px; /* Adjust this value based on your navbar height */
+    left: 0;
+    bottom: 0;
+    width: 250px;
+    background-color:rgb(44, 151, 193);
+    color: #fff;
+    padding-top: 50px;
+}
+
+.user-info {
+    padding: 20px;
+    text-align: center;
+}
+
+.user-avatar img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-name {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.sidebar a {
+    display: block;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 20px;
+}
+
+.sidebar a:hover {
+    background-color:rgb(44, 151, 193);
+}
+
+/* Content area */
+.content {
+    margin-left: 250px;
+    padding: 20px;
+    padding-top: 80px; /* Adjust this value based on your navbar height */
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100px;
+    }
+    .content {
+        margin-left: 100px;
+    }
+}
+
+</style>
+{% include 'inc/selnav.html' %}
+
+<body>
+
+<!-- Sidebar -->
+<div>
+<div class="sidebar">
+    <div>{{ seller_profile.email }}</div>
+
+    <div class="user-name"></div>
+    <a href="{% url 'complete_s_profile' %}" data-url="{% url 'complete_s_profile' %}"><i class="fas fa-user-edit"></i> Edit Details</a>
+    <a href="{% url 'seller_profile' %}" data-url="{% url 'seller_profile' %}"><i class="fas fa-user-edit"></i> Profile</a>
+    <a href="{% url 'own_milk_details' %}" data-url="{% url 'own_milk_details' %}"><i class="fas fa-hand-holding"></i> Todays Collection</a>
+    <a href="{% url 'prod_view' %}" data-url="{% url 'prod_view' %}"><i class="fas fa-shopping-cart"></i> Product</a>
+    <a href="{% url 'view_cattle' %}" data-url="{% url 'view_cattle' %}"><i class="fas fa-horse"></i> Cattle</a>
+    <!-- <a href="{% url 'prod_view' %}" data-url="{% url 'prod_view' %}"><i class="fas fa-horse"></i> Schedule Appointment</a> -->
+</div>
+</div>
+
+<!-- Main Content -->
+<div class="content">
+    <header>
+        <h1> </h1>
+    </header>
+    <main>
+        <div id="dashboard-content"></div>
+    </main>
+</div>
+
+<!-- Bootstrap JS and jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+        const dashboardContent = document.getElementById('dashboard-content');
+
+        sidebarLinks.forEach(function(link) {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const url = link.getAttribute('data-url');
+                if (url) {
+                    loadContent(url);
+                }
+            });
+        });
+        loadContent("{% url 'seller_profile' %}");
+        function loadContent(url) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    dashboardContent.innerHTML = xhr.responseText;
+                }
+            };
+            xhr.open('GET', url, true);
+            xhr.send();
+        }
+    });
+</script>
+
+</body>
+{% endblock %}
+</html>

@@ -1,0 +1,5 @@
+{% for delivery_boy in delivery_boys %}
+    <div>{{ delivery_boy.name }} - {{ delivery_boy.mobile }}</div>
+{% endfor %}
+<a href="{% url 'deliveryboy_approval' %}" data-url="{% url 'deliveryboy_approval' %}"><i class="fas fa-shopping-cart"></i> 
+    <button>New Registration</button></a>

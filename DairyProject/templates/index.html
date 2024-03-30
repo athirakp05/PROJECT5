@@ -1,0 +1,10 @@
+{% extends 'layout/main.html' %}
+{% load static %}
+
+{% block main %}
+<div class="container">
+    <h1>Welcome to Our Dairy Farm</h1>
+    <p>We offer a wide range of dairy products for you to enjoy. Explore our selection of fresh milk, creamy curd, rich ghee, and more.</p>
+    <a href="{% url 'products' %}" class="btn btn-primary">View Products</a>
+</div>
+{% endblock main %}

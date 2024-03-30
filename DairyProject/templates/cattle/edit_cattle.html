@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Cattle</title>
+</head>
+<body>
+    <h1>Edit Cattle</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ cattle_form.as_p }}
+
+        <input type="checkbox" id="vaccination_checkbox" name="vaccination_checkbox">
+        <label for="vaccination_checkbox">Vaccination</label><br>
+
+        <input type="checkbox" id="insurance_checkbox" name="insurance_checkbox">
+        <label for="insurance_checkbox">Insurance</label><br>
+
+        <button type="submit">Update</button>
+    </form>
+
+    {% if 'vaccination_checkbox' in request.POST %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ vaccination_form.as_p }}
+        <button type="submit">Save Vaccination</button>
+    </form>
+    {% endif %}
+
+    {% if 'insurance_checkbox' in request.POST %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ insurance_form.as_p }}
+        <button type="submit">Save Insurance</button>
+    </form>
+    {% endif %}
+</body>
+</html>

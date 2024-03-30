@@ -1,0 +1,180 @@
+{% load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> Cattle</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+        margin-top: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+        color: #333;
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    img {
+        max-width: 100px;
+        height: auto;
+    }
+
+    td a {
+        color: #007bff;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+
+    td a:hover {
+        text-decoration: underline;
+    }
+
+    .pagination {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .pagination a {
+        color: #007bff;
+        text-decoration: none;
+        padding: 8px 16px;
+        transition: background-color 0.3s;
+    }
+
+    .pagination a:hover {
+        background-color: #f2f2f2;
+    }
+
+    .pagination span {
+        padding: 8px 16px;
+        background-color: #f2f2f2;
+    }
+
+    .pagination a.disabled {
+        pointer-events: none;
+        color: #ccc;
+    }
+
+    .add-cattle-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #007bff;
+    }
+
+    .add-cattle-link:hover {
+        text-decoration: underline;
+    }
+</style>
+<body>
+    <h1>Cattle</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Cattle License</th>
+                <th>Ear Tag ID</th>
+                <th>Cattle Type</th>
+                <th>Breed Name</th>
+                <th>Weight</th>
+                <th>Height</th>
+                <th>Age</th>
+                <th>Colour</th>
+                <th>Feed</th>
+                <th>Milk Obtained</th>
+                <th>Photo</th>
+                <th>Vaccination Status</th>
+                <th>Insurance Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cattle in user_cattle %}
+            <tr>
+                <td>{{ cattle.cattle_license }}</td>
+                <td>{{ cattle.EarTagID }}</td>
+                <td>{{ cattle.CattleType.name }}</td>
+                <td>{{ cattle.BreedName.name }}</td>
+                <td>{{ cattle.weight }}</td>
+                <td>{{ cattle.height }}</td>
+                <td>{{ cattle.Age }}</td>
+                <td>{{ cattle.Colour }}</td>
+                <td>{{ cattle.feed }}</td>
+                <td>{{ cattle.milk_obtained }}</td>
+                <td>
+                    {% if cattle.photo %}
+                        <img src="{{ cattle.photo.url }}" alt="Cattle Photo" style="width: 100px; height: auto;">
+                    {% else %}
+                        No Photo
+                    {% endif %}
+                </td>
+                                <!-- <td>{% if cattle.vaccination %} Vaccinated {% else %} Not Vaccinated {% endif %}</td> -->
+                <td>
+                    {% if cattle.vaccination %}
+                        <a href="{% url 'vac_details' cattle.id %}">View Vaccination</a>
+                    {% else %}
+                        Not Vaccinated
+                    {% endif %}
+                </td>
+                <!-- <td>{% if cattle.insurance %} Insured {% else %} Not Insured {% endif %}</td> -->
+                <td>
+                    {% if cattle.insurance %}
+                        <a href="{% url 'ins_details' cattle.id %}">View Insurance</a>
+                    {% else %}
+                        Not Insured
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'edit_cattle' cattle.id %}">Edit</a>
+                    <a href="{% url 'delete_cattle' cattle.id %}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div>
+        {% if user_cattle.has_previous %}
+        <a href="{% url 'view_cattle' %}?page=1">First</a>
+        <a href="{% url 'view_cattle' %}?page={{ user_cattle.previous_page_number }}">Previous</a>
+        {% endif %}
+    
+        <span>Page {{ user_cattle.number }} of {{ user_cattle.paginator.num_pages }}.</span>
+    
+        {% if user_cattle.has_next %}
+        <a href="{% url 'view_cattle' %}?page={{ user_cattle.next_page_number }}">Next</a>
+        <a href="{% url 'view_cattle' %}?page={{ user_cattle.paginator.num_pages }}">Last</a>
+        {% endif %}
+    </div>
+
+    <!-- Link to add a new cattle entry -->
+    <a href="{% url 'add_cattle' %}">Add Cattle</a>
+</body>
+</html>

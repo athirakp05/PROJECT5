@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pending Seller Approval</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        a {
+            text-decoration: none;
+            padding: 5px 10px;
+            margin-right: 5px;
+            border-radius: 4px;
+        }
+
+        a[href^='http'] {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        a[href^='http']:hover {
+            background-color: #2980b9;
+        }
+
+        a[href^='mailto'] {
+            background-color: #e74c3c;
+            color: #fff;
+        }
+
+        a[href^='mailto']:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <table title="Pending Sellers">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Farmer License</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for seller in pending_sellers %}
+            <tr>
+                <td>{{ seller.first_name }} {{ seller.last_name }}</td>
+                <td>{{ seller.user.email }}</td>
+                <td>{{ seller.farmer_license }}</td>
+                <td>
+                    <a href="{% url 'approve_seller' seller.user.email %}">Approve</a>
+                    <a href="{% url 'reject_seller' seller.user.email %}">Reject</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <hr>
+    <ul>
+       
+    </ul>
+</body>
+</html>

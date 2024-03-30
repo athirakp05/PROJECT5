@@ -1,0 +1,201 @@
+{% extends 'layout/main.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> </title>
+    {% block body %}     
+        <style>
+            /* Container for login form */
+            .login-container {
+                width: 400px;
+                margin: 10px auto;
+                padding: 10px;
+                border: 2px solid whitesmoke;
+                border-radius: 1px;
+                box-shadow: 0 0 10px rgb(110, 105, 105);
+                background-color: whitesmoke;
+            }
+
+            /* Form elements */
+            .form-group {
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+
+            input[type="text"],
+            input[type="password"] {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 3px;
+                font-size: 16px;
+            }
+            #submit-button {
+                background-color: #2480e3; /* Set your desired background color */
+                color: #fff; /* Set the text color */
+                border: none;
+                border-radius: 10px;
+                padding: 5px 100px; /* Adjust padding as needed */
+                font-size: 18px;
+                cursor: pointer;
+            }
+        
+            /* Show Password checkbox */
+            #show-password {
+                margin-left: 5px;
+                cursor: pointer;
+            }
+
+            /* Submit button */
+           
+
+            /* Forgot password link */
+            .forget-pass a {
+                text-decoration: none;
+                color: #007bff;
+                font-size: 14px;
+            }
+
+            /* Alert messages */
+            .alert {
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 10px 20px;
+                border-radius: 5px;
+                font-size: 16px;
+                z-index: 9999;
+            }
+
+            .alert-danger {
+                background-color: #f44336;
+                color: #fff;
+            }
+
+            .alert-warning {
+                background-color: #ff9800;
+                color: #fff;
+            }
+
+            .alert-top {
+                top: 0;
+            }
+            
+            /* Site Status */
+            .site-status {
+                background-color: #55bcf4cd;
+                color: #fff;
+                text-align: center;
+                padding: 3px;
+            }
+            .password-input-container {
+                display: flex;
+                align-items: center;
+            }
+
+            .password-input-container .fa-eye, .password-input-container .fa-eye-slash {
+                cursor: pointer;
+                font-size: 10px;
+                margin-left: -30px;
+                z-index: 1;
+            }
+
+            .fixed-logo {
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 100; /* You can adjust the z-index value as needed */
+            }
+            
+            /* Google Login Button */
+            .google-login {
+                background-color: whitesmoke;
+                color: #121212;
+                border: none;
+                border-radius: 5px;
+                padding: 5px 20px;
+                font-size: 16px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+            }
+
+            .google-login .google-icon {
+                margin-right: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="site-status">
+            <h2>Login here !</h2>
+            Not a Member?  <a href="{% url 'select' %}">Register</a>
+
+        </div>
+        <br><br>
+        <div class="login-container">
+            <a href="{% url 'home' %}">
+                <img class="img-fluid" src="{% static '/img/logo.jpeg' %}" height="100" width="100" alt="Logo" id="fixed-logo">
+            </a>
+            <form method="POST" id="login-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" id="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <div class="password-input-container">
+                        <input type="password" name="password" id="password" placeholder="Password" required oninput="validatePassword()">
+                        <i class="fa fa-eye" id="passwordToggle" onclick="togglePasswordVisibility('password')"></i>
+                    </div>
+                    <div class="error-message" id="passwordError"></div>
+                </div>
+                <button type="submit" id="submit-button">Sign In</button>
+                <div class="forget-pass">
+                    <a href="{% url 'password_reset' %}">Forgot Password ?</a>
+                </div>
+            </form>
+            <!-- <button class="google-login">
+                <img src="{% static 'img/google.jpeg' %}"  height="20" width="20" class="google-icon" >
+                Sign in with Google
+            </button> -->
+        </div>
+        <div id="alert" style="display: none;">
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li>{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <!-- Include your login form here -->
+
+{% if messages %}
+<ul class="messages">
+  {% for message in messages %}
+    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+        </div>
+        <script>  
+            function togglePasswordVisibility(inputId) {
+                const passwordInput = document.querySelector(`input[name="${inputId}"]`);
+                const passwordToggle = document.querySelector(`#${inputId}Toggle`);
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    passwordToggle.classList.add('fa-eye-slash');
+                    passwordToggle.classList.remove('fa-eye');
+                } else {
+                    passwordInput.type = 'password';
+                    passwordToggle.classList.add('fa-eye');
+                    passwordToggle.classList.remove('fa-eye-slash');
+                }
+            }
+        </script>
+    {% endblock %}
+    </body>
+</html>

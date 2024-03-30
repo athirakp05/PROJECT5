@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5">
+    <a href="{% url 'home' %}" class="navbar-brand d-flex align-items-center">
+        <img class="img-fluid" src="{% static '/img/logo.jpeg' %}" height="200" width="100" alt="Logo">
+    </a>
+    <button type="button" class="navbar-toggler me-0" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav ms-auto p-4 p-lg-0">
+            <li class="nav-item nav-profile dropdown">
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                    {% if user.is_authenticated %}
+                        {% if delivery_boy.deliveryboyeditprofile.profile_photo %}
+                            <img src="{{ delivery_boy.deliveryboyeditprofile.profile_photo.url }}" alt="Profile Photo" height="40" width="40" class="rounded-circle me-2">
+                        {% else %}
+                            <i class="fas fa-user-circle fa-lg"></i>
+                        {% endif %}
+                    {% endif %}
+                </a>
+                <div class="dropdown-menu bg-light rounded-0 m-0">
+                    <a href="{% url 's_change_password' %}" class="dropdown-item"><i class="fas fa-key me-2"></i>Change Password</a>
+                    <a href="{% url 'logout' %}" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+                </div>
+            </li>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

@@ -1,0 +1,163 @@
+{% extends "layout/main.html" %} <!-- Use your base or layout HTML file -->
+{% load static %}
+{% block body %}
+<style>
+/* Add this CSS to your existing styles or create a new CSS file */
+
+/* General styling */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+form {
+  margin: 20px auto;
+  padding: 20px;
+  width: 50%;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="submit"] {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+input[type="submit"] {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+/* Checkbox styling */
+input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+#vaccination_form,
+#insurance_form {
+  margin-top: 10px;
+  margin-left: 25px;
+  display: none;
+}
+
+/* Adjustments for smaller screens */
+@media (max-width: 768px) {
+  form {
+      width: 80%;
+  }
+}
+
+  </style>
+  <h3>Add Cattle</h1>
+
+  <form method="POST" enctype="multipart/form-data" id="cattleForm">
+    {% csrf_token %}
+  
+    <label for="id_cattle_license">Cattle license:</label><br>
+    <input type="text" id="id_cattle_license" name="cattle_license" pattern="C-\d{4}" title="Format: C-XXXX (4 digits after hyphen)" required><br><br>
+  
+    <label for="id_EarTagID">EarTagID:</label><br>
+    <input type="text" id="id_EarTagID" name="EarTagID" pattern="\d{5}" title="Should be 5 digits" required><br><br>
+  
+    <label for="id_CattleType">CattleType:</label><br>
+    {{ cattle_form.CattleType }}<br><br>
+  
+    <label for="id_BreedName">BreedName:</label><br>
+    {{ cattle_form.BreedName }}<br><br>
+  
+    <label for="id_weight">Weight:</label><br>
+    {{ cattle_form.weight }}<br><br>
+  
+    <label for="id_height">Height:</label><br>
+    {{ cattle_form.height }}<br><br>
+  
+    <label for="id_Age">Age:</label><br>
+    {{ cattle_form.Age }}<br><br>
+  
+    <label for="id_Colour">Colour:</label><br>
+    {{ cattle_form.Colour }}<br><br>
+  
+    <label for="id_feed">Feed:</label><br>
+    {{ cattle_form.feed }}<br><br>
+  
+    <label for="id_milk_obtained">Milk obtained/day:</label><br>
+    {{ cattle_form.milk_obtained }}<br><br>
+  
+    <label for="id_photo">Photo:</label><br>
+    {{ cattle_form.photo }}<br><br>
+    <input type="checkbox" id="vaccination_checkbox" name="vaccination_checkbox">
+    <label for="vaccination_checkbox">Vaccination</label>
+    <div id="vaccination_form" style="display: none;">
+      {{ vaccination_form.as_p }}
+    </div>
+    <input type="checkbox" id="insurance_checkbox" name="insurance_checkbox">
+    <label for="insurance_checkbox">Insurance</label><br>
+    <div id="insurance_form" style="display: none;">
+      {{ insurance_form.as_p }}
+    </div>
+  <input type="submit" value="Save">
+</form>
+<!-- Add this script tag to include jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+document.getElementById('vaccination_checkbox').addEventListener('change', function() {
+  var vaccinationForm = document.getElementById('vaccination_form');
+  if (this.checked) {
+    vaccinationForm.style.display = 'block';
+  } else {
+    vaccinationForm.style.display = 'none';
+  }
+});
+
+document.getElementById('insurance_checkbox').addEventListener('change', function() {
+  var insuranceForm = document.getElementById('insurance_form');
+  if (this.checked) {
+    insuranceForm.style.display = 'block';
+  } else {
+    insuranceForm.style.display = 'none';
+  }
+});
+
+$(document).ready(function() {
+  // Fetch breeds based on selected cattle type
+  $('#id_CattleType').change(function() {
+    var cattleType = $(this).val();
+    $.ajax({
+      url: '/fetch_breeds/',  // URL to fetch breeds based on cattle type
+      type: 'GET',
+      data: {
+        'cattleType': cattleType
+      },
+      dataType: 'json',
+      success: function(data) {
+        var breedsSelect = $('#id_BreedName');
+        breedsSelect.empty();
+        $.each(data.breeds, function(key, value) {
+          breedsSelect.append($('<option></option>').attr('value', value).text(value));
+        });
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

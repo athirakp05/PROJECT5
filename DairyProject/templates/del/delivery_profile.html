@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <style>
+        /* Resetting default browser styles */
+        html, body, h1, p {
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f7f7f7;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        p {
+            margin-bottom: 10px;
+        }
+        
+        strong {
+            font-weight: bold;
+        }
+        
+        img.profile-photo {
+            max-width: 100px;
+            height: auto;
+            margin-top: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>My Profile</h1>
+    <p><strong>First Name:</strong> {{ delivery_boy.first_name }}</p>
+    <p><strong>Last Name:</strong> {{ delivery_boy.last_name }}</p>
+    <p><strong>Mobile:</strong> {{ delivery_boy.mobile }}</p>
+    <p><strong>Driving License:</strong> <img src="{{ delivery_boy.driving_license.url }}" alt="Driving License"></p>
+    <p><strong>Email:</strong> {{ delivery_boy.user.email }}</p>
+    <p><strong>House Name:</strong> {{ delivery_boy.deliveryboyeditprofile.house_name }}</p>
+    <p><strong>City:</strong> {{ delivery_boy.deliveryboyeditprofile.city }}</p>
+    <p><strong>Pin Code:</strong> {{ delivery_boy.deliveryboyeditprofile.pin_code }}</p>
+    {% if delivery_boy.deliveryboyeditprofile.profile_photo %}
+    <p><strong>Profile Photo:</strong><br>
+    <img class="profile-photo" src="{{ delivery_boy.deliveryboyeditprofile.profile_photo.url }}" alt="Profile Photo"></p>
+    {% endif %}
+</body>
+</html>
