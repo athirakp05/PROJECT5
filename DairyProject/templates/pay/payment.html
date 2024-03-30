@@ -48,9 +48,10 @@
     </style>
 </head>
 <body>
-    <form class="" action="{% url 'success' %}" method="POST">
+    <form class="" action="{% url 'payment' order.id %}" method="POST">
         {% csrf_token %}
-
+        <input type="hidden" name="order_id" value="{{ order.id }}">
+    
         <div class="card">
             <h1 class="title">Continue with Payment</h1>
             <div class="btn_container">
@@ -63,11 +64,11 @@
     <script>
         var options = {
             key: "rzp_test_VsNzgoQtqip5Wd", // Enter your Razorpay Key ID
-            amount: "50000", // Amount is in currency subunits, i.e., 100 paise = ₹1
+            amount: "{{ order.total_price }}00", // Pass the total amount dynamically from the order object
             currency: "INR", // Specify your currency here
             name: "DairySync", // Your/store name
-            description: "Donation", // Payment description
-            order_id: "{{payment.id}}", // Pass the order ID received from your backend
+            description: "Order Payment", // Payment description
+            order_id: "{{ order.id }}", // Pass the order ID received from your backend
             image: " ", // URL of your logo
             theme: {
                 color: "lightblue" // Specify your preferred color theme
@@ -80,20 +81,15 @@
                 // Handle payment response here
                 if (response.razorpay_payment_id) {
                     // Payment successful, redirect to success page
-                    window.location.href = "/success";
+                    window.location.href = "/success/{{ order.id }}";
                 } else {
                     // Payment failed or incomplete
                     alert("Payment failed. Please try again.");
                 }
             }
         };
-    
-        document.getElementById("pay-btn").onclick = function (e) {
-            var rzp = new Razorpay(options);
-            rzp.open();
-            e.preventDefault();
-        };
     </script>
+    
 </form>
 </body>
 </html>

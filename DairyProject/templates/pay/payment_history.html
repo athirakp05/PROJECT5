@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment History</title>
+</head>
+<style>body {
+    font-family: Arial, sans-serif;
+    background-color: #f1f5f8;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #dddddd;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+ul li {
+    list-style-type: none;
+}
+
+td ul li {
+    margin-bottom: 5px;
+}
+</style>
+<body>
+    <h1>Payment History</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Payment ID</th>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for payment_item in payment_history %}
+            <tr>
+                <td>{{ payment_item.order.id }}</td>
+                <td>{{ payment_item.payment.id }}</td>
+                <td>
+                    <ul>
+                        {% for product in payment_item.products %}
+                        <li>{{ product.product }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>{{ payment_item.payment.amount }}</td>
+                <td>
+                    <ul>
+                        {% for product in payment_item.products %}
+                        <li>{{ product.quantity }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

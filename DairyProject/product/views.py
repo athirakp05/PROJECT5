@@ -1,6 +1,6 @@
 # views.py
 import razorpay
-from .models import Product
+from .models import Order, Payment, Product
 from .forms import ProductForm, SampleTestReportForm
 from .models import MilkCollection,Cart
 from .forms import MilkCollectionForm
@@ -14,6 +14,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbid
 from django.views.decorators.http import require_POST
 from farm.models import CustomerEditProfile, Seller  # Import the Seller model
 from django.contrib import messages
+from django.db import transaction
 
 @login_required
 def product_add(request):
@@ -169,53 +170,50 @@ def own_milk_details(request):
 
 @login_required
 def add_to_cart(request):
-    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+    if request.method == 'POST':
         p_code = request.POST.get('p_code')
-        user = request.user
-        # Check if the product is already in the cart for the user
-        existing_product = Cart.objects.filter(user=user, product__p_code=p_code).exists()
-        if existing_product:
-            existing_product.quantity += 1
-            existing_product.save()
-        else:           
-            product = get_object_or_404(Product, p_code=p_code)
-            cart_item = Cart.objects.create(
-                user=user,
-                product=product,
-                quantity=1  # You can adjust the quantity as needed
-            )
-            cart_item.save()
-        return JsonResponse({'success': True})
-    return JsonResponse({'success': False})
+        product = get_object_or_404(Product, p_code=p_code)
+        if product.quantity > 0:  # Check if the product is available
+            user = request.user
+            cart, created = Cart.objects.get_or_create(user=user, product=product)
+            cart.quantity += 1
+            cart.total_price = cart.quantity * product.price  # Update total price based on quantity and product price
+            cart.save()
+            product.quantity -= 1
+            product.save()
+
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'message': 'Product out of stock.'})
+    return JsonResponse({'success': False, 'message': 'Invalid request.'})
+
+
+@login_required
+@require_POST
+def update_quantity(request, cart_item_id, action):
+    cart_item = get_object_or_404(Cart, pk=cart_item_id, user=request.user)
+    if action == 'increase':
+        if cart_item.product.quantity > cart_item.quantity:
+            cart_item.quantity += 1
+    elif action == 'decrease':
+        if cart_item.quantity > 1:
+            cart_item.quantity -= 1
+        else:
+            cart_item.delete()  # Remove the item if the quantity becomes zero
+    cart_item.total_price = cart_item.quantity * cart_item.product.price  # Update total price based on quantity and product price
+    cart_item.save()    
+    return redirect('view_cart')  # Redirect to the cart page
 
 @login_required
 def view_cart(request):
-    # Get all cart items for the current user
     cart_items = Cart.objects.filter(user=request.user)  # Change 'customer' to 'user'
-
-    # Calculate total quantity by summing up quantities of all items
     total_quantity = cart_items.aggregate(Sum('quantity'))['quantity__sum'] or 0
-
-    # Calculate total price by summing up the product of quantity and price for each item
     total_price = cart_items.annotate(item_total=F('quantity') * F('product__price')).aggregate(Sum('item_total'))['item_total__sum'] or 0
-    total_price_in_paise = int(total_price * 100)
-
-    # Prepare data dictionary
     data = {
         'cart_items': cart_items,
         'total_quantity': total_quantity,
         'total_price': total_price,
-        'sum': total_price_in_paise
     }
-
-    if request.method == 'POST':
-        client = razorpay.Client(auth=("rzp_test_VsNzgoQtqip5Wd", "rcn7optyjJTyzOsFlhJQ6GYX"))
-        data = {
-            "amount": total_price_in_paise,
-            "currency": "INR",
-            "receipt": "order_rcptid_11"
-        }
-        payment = client.order.create(data)
     return render(request, 'category/view_cart.html', data)
 
 @login_required
@@ -225,23 +223,6 @@ def remove_from_cart(request, cart_id):
     messages.success(request, 'Product removed from cart.')
     return redirect('view_cart')
 
-@login_required
-@require_POST
-def update_quantity(request, cart_item_id, action):
-    cart_item = get_object_or_404(Cart, pk=cart_item_id, customer=request.user)
-
-    if action == 'increase':
-        cart_item.quantity += 1
-    elif action == 'decrease':
-        if cart_item.quantity > 1:
-            cart_item.quantity -= 1
-        else:
-            cart_item.delete()  # Remove the item if the quantity becomes zero
-
-    cart_item.save()
-
-    return redirect('view_cart')  # Redirect to the cart page
-
 def search_products(request):
     query = request.GET.get('query', None)
     if query:
@@ -250,54 +231,112 @@ def search_products(request):
         products = Product.objects.all()
     context = {'products': products}
     return render(request, 'category/product_detail.html', context)
-
-def payment(request):
+def checkout(request):
     if request.method == 'POST':
-        amount = 50000  # Set your amount dynamically or as required
-        order_currency = 'INR'
-        client = razorpay.Client(auth=('rzp_test_VsNzgoQtqip5Wd', 'rcn7optyjJTyzOsFlhJQ6GYX'))
-        payment = client.order.create({'amount': amount, 'currency': order_currency, 'payment_capture': '1'})
-        # Handle payment response
-        return render(request, 'pay/payment.html', {'payment': payment})  # Render the payment HTML page with payment details
-    return render(request, 'pay/payment.html')  
-
-
-def success(request):
-    return render(request, 'pay/success.html')
-
-def process_payment(request):
-    if request.method == 'POST':
-        card_number = request.POST.get('card_number')
-        expiry_date = request.POST.get('expiry_date')
-        cvv = request.POST.get('cvv')
-        return HttpResponse("Payment processed successfully!") 
+        house_name = request.POST.get('house_name')
+        city = request.POST.get('city')
+        pin_code = request.POST.get('pin_code')
+        phone_number = request.POST.get('phone_number')
+        if not (house_name and city and pin_code and phone_number):
+            messages.error(request, 'Please fill in all the required fields.')
+            return redirect('checkout')
+        cart_items = Cart.objects.filter(user=request.user)
+        total_price = cart_items.aggregate(Sum('total_price'))['total_price__sum'] or 0
+        with transaction.atomic():
+            order = Order.objects.create(user=request.user, house_name=house_name, city=city, pin_code=pin_code,
+                                         phone_number=phone_number, total_price=total_price)
+            for cart_item in cart_items:
+                order.cart.add(cart_item)
+        return render(request, 'pay/payment.html', {'order': order})
     else:
-        return HttpResponse("Invalid request method")
-    
+        order = None  # Initialize order variable if it's a GET request
+        return render(request, 'pay/checkout.html', {'order': order})
 
-def payment(request):
+def payment(request, order_id):
+    order = Order.objects.get(id=order_id)
     if request.method == 'POST':
-        amount = 50000  # Set your amount dynamically or as required
-        order_currency = 'INR'
-        client = razorpay.Client(auth=('rzp_test_VsNzgoQtqip5Wd', 'rcn7optyjJTyzOsFlhJQ6GYX'))
-        payment = client.order.create({'amount': amount, 'currency': order_currency, 'payment_capture': '1'})
-        # Handle payment response
-        # Redirect to success page on successful payment
-        return render(request, 'pay/payment.html', {'payment': payment})
-    return render(request, 'pay/payment.html')
-
-def success(request):
-    return render(request, 'pay/success.html')
-
-def process_payment(request):
-    if request.method == 'POST':
-        card_number = request.POST.get('card_number')
-        expiry_date = request.POST.get('expiry_date')
-        cvv = request.POST.get('cvv')
-        return redirect('success')  # Redirect to success page on successful payment
+        client = razorpay.Client(auth=("rzp_test_VsNzgoQtqip5Wd", "rcn7optyjJTyzOsFlhJQ6GYX"))
+        total_price = int(order.total_price * 100)  # Convert total price to integer in paise
+        data = {
+            "amount": total_price,
+            "currency": "INR",
+            "receipt": f"order_rcptid_{order.id}"
+        }
+        payment = client.order.create(data)
+        with transaction.atomic():
+            payment_obj = Payment.objects.create(
+                order=order,
+                amount=order.total_price / 100,  # Convert back to rupees
+                razorpay_order_id=payment['id'],
+                transaction_id=payment['id'],  # Assuming transaction ID is same as razorpay order ID
+                is_successful=True  # Assuming payment is always successful if reached this point
+            )
+            order.is_paid = True  # Mark the order as paid
+            order.payment = payment_obj  # Associate payment with the order
+            order.save()
+            payment_obj.save()
+            return redirect('success', order_id=order.id)
     else:
-        return HttpResponse("Invalid request method")
+        return render(request, 'pay/payment.html', {'order': order})
+
+def success(request, order_id):
+    order = Order.objects.get(id=order_id)
+    payments = order.payments.all()  # Retrieve all payments associated with the order
+    return render(request, 'pay/success.html', {'order': order, 'payments': payments})
+
+def payment_history(request):
+    # Get orders placed by the current user
+    orders = Order.objects.filter(user=request.user)
     
+    # Collect payment history data
+    payment_history = []
+    for order in orders:
+        for payment in order.payments.all():
+            payment_history.append({
+                'order': order,
+                'payment': payment,
+                'products': order.cart.all()  # Retrieve products associated with the order
+            })
+
+    return render(request, 'pay/payment_history.html', {'payment_history': payment_history})
+
+def order_history(request):
+    today = datetime.today().date()
+    pin_code = request.GET.get('pin_code')
+    customer_name = request.GET.get('customer_name')
+    date_filter = request.GET.get('date')
+
+    orders = Order.objects.all()  # Fetch all orders initially
+
+    if date_filter:
+        orders = orders.filter(created_at__date=date_filter)
+    else:
+        orders = orders.filter(created_at__date=today)
+
+    if pin_code:
+        orders = orders.filter(pin_code=pin_code)
+    if customer_name:
+        orders = orders.filter(user__username__icontains=customer_name)
+    orders = orders.order_by('-id')
+    paginator = Paginator(orders, 10)  # Display 10 orders per page
+    page_number = request.GET.get('page')
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        page_obj = paginator.page(paginator.num_pages)
+
+    context = {
+        'page_obj': page_obj,
+        'pin_code': pin_code,
+        'customer_name': customer_name,
+        'date_filter': date_filter,
+    }
+    return render(request, 'del/order_history.html', context)
+
 def sample_report(request):
     return render(request, 'category/sample_report.html')
 

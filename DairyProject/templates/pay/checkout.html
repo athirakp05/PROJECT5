@@ -1,0 +1,12 @@
+<form action="{% if order %}{% url 'payment' order.id %}{% endif %}" method="POST">
+    {% csrf_token %}
+    <label for="pin_code">Pin Code:</label>
+    <input type="text" id="pin_code" name="pin_code" required><br>
+    <label for="house_name">House Name:</label>
+    <input type="text" id="house_name" name="house_name" required><br>
+    <label for="city">City:</label>
+    <input type="text" id="city" name="city" required><br>
+    <label for="phone_number">Phone Number:</label>
+    <input type="text" id="phone_number" name="phone_number" required><br>
+    <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
+</form>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+</head>
+<body>
+    <h1>Order History</h1>
+    <form method="get">
+        <label for="pin_code">Pin Code:</label>
+        <input type="text" id="pin_code" name="pin_code" value="{{ pin_code }}">
+        <label for="customer_name">Customer Name:</label>
+        <input type="text" id="customer_name" name="customer_name" value="{{ customer_name }}">
+        <label for="date_filter">Date:</label>
+        <input type="date" id="date_filter" name="date" value="{{ date_filter }}">
+        <button type="submit">Filter</button>
+    </form>
+    <table id="order-table" border="1">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer Name</th>
+                <th>Pin Code</th>
+                <th>Total Price</th>
+                <th>Created At</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Contact</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in page_obj %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.user }}</td>
+                <td>{{ order.pin_code }}</td>
+                <td>{{ order.total_price }}</td>
+                <td>{{ order.created_at }}</td>
+                <td>
+                    <ul>
+                        {% for item in order.cart.all %}
+                            <li>{{ item.product.p_name }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        {% for item in order.cart.all %}
+                            <li>{{ item.quantity }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>{{ order.phone_number }}</td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div id="pagination" class="dataTables_paginate paging_simple_numbers">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+                <li class="paginate_button page-item previous">
+                    <a href="?page={{ page_obj.previous_page_number }}" class="page-link">Previous</a>
+                </li>
+            {% endif %}
+            {% for page in page_obj.paginator.page_range %}
+                <li class="paginate_button page-item{% if page == page_obj.number %} active{% endif %}">
+                    <a href="?page={{ page }}" class="page-link">{{ page }}</a>
+                </li>
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <li class="paginate_button page-item next">
+                    <a href="?page={{ page_obj.next_page_number }}" class="page-link">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#order-table').DataTable();
+        });
+    </script>
+</body>
+</html>

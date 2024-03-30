@@ -62,22 +62,33 @@ class Cart(models.Model):
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     created_at = models.DateTimeField(default=timezone.now)
 
-    def total_amount(self):
-        if isinstance(self.quantity, (int, float)) and isinstance(self.price, (int, float)):
-            return self.quantity * self.price
-        return 0
+    def save(self, *args, **kwargs):
+        self.total_price = self.quantity * self.product.price
+        super().save(*args, **kwargs)
     
 
-class Payment(models.Model):
+class Order(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    pin_code = models.CharField(max_length=6,null=True)
+    house_name = models.CharField(max_length=100,null=True)
+    city = models.CharField(max_length=100,null=True)
+    phone_number = models.CharField(max_length=10,null=True)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # Add this field
+    is_paid = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    cart = models.ManyToManyField(Cart)  # Add this field
+
+
+class Payment(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='payments')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateTimeField(auto_now_add=True)
-    payment_method = models.CharField(max_length=50)
     transaction_id = models.CharField(max_length=100)
     is_successful = models.BooleanField(default=False)
+    razorpay_order_id = models.CharField(max_length=100)  # Add this field
 
     def __str__(self):
-        return f"Payment of {self.amount} by {self.user.username} on {self.payment_date}"
+        return f"Payment of {self.amount} by {self.order.user.username} on {self.payment_date}"
 
 class SampleTestReport(models.Model):
     CATEGORY_CHOICES = [

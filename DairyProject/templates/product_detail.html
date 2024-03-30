@@ -1,0 +1,102 @@
+{% extends "layout/main.html" %}
+{% load static %}
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-1">
+            <div class="list-group">
+                <a href="?category=Milk" class="list-group-item">Milk</a>
+                <a href="?category=Curd" class="list-group-item">Curd</a>
+                <a href="?category=Paneer" class="list-group-item">Paneer</a>
+                <a href="?category=Ghee" class="list-group-item">Ghee</a>
+                <a href="?category=Butter" class="list-group-item">Butter</a>
+            </div>
+        </div>
+
+        <!-- Product Content -->
+        <div class="col-md-9">
+            <div class="container-xxl py-5">
+                <form action="{% url 'search_products' %}" method="GET" id="productSearchForm">
+                    <input type="text" name="query" id="searchQuery" placeholder="Search products...">
+                    <button type="submit" id="'submit">Search</button>
+                </form>
+                <div class="container">
+                    <div class="row gx-4">
+                        {% for product in products %}
+                        <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="{{ forloop.counter }}">
+                            <div class="product-item">
+                                <div class="position-relative">
+                                    <img class="img-fluid" src="{{ product.image.url }}" alt="{{ product.name }}" style="height: 200px; width: 200px;">
+                                    <div class="product-overlay">
+                                        <a class="btn btn-square btn-secondary rounded-circle m-1" href="#" data-bs-toggle="modal" data-bs-target="#productModal{{ product.p_code }}">
+                                            <i id="heart-{{ product.p_code }}" class="bi bi-heart" style="color: black;"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="text-center p-4">
+                                    <a class="d-block h5" href="#">{{ product.p_name }}</a>
+                                    <span class="text-primary me-1">₹{{ product.price }}</span><br>
+                                    <span class="text-primary me-1">{{ product.quantity }} left</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="productModal{{ product.p_code }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">{{ product.name }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <img class="img-fluid" src="{{ product.image.url }}" alt="{{ product.name }}">
+                                        <p>{{ product. }}</p>
+                                        <p>{{ product.description }}</p>
+                                        <p>Price: ₹{{ product.price }}</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <form method="post" id="wishlistForm">{% csrf_token %}</form>
+                                        <button type="button" class="btn btn-primary" onclick="addToCart('{{ product.p_code }}')">Add to Cart</button>
+                                        <button type="button" class="btn btn-success">Buy</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Product Modal -->
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ...Existing code for product display -->
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function addToCart(p_code) {
+        $.ajax({
+            url: '/add_to_cart/', 
+            method: 'POST',
+            data: {
+                'p_code': p_code,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('Product added to cart!');
+                    window.location.href = '/view_cart/';  // Redirect to payment page
+                } else {
+                    alert('Failed to add product to cart.');
+                }
+            },
+            error: function() {
+                alert('Error occurred while adding the product to cart.');
+            }
+        });
+    }
+</script>
+
+{% endblock %}

@@ -19,15 +19,19 @@
     "axe/structure": [
       "default",
       {
-        "listitem": "off"
+        "listitem": "off",
+        "list": "off"
       }
     ],
     "axe/name-role-value": [
       "default",
       {
-        "button-name": "off"
+        "button-name": "off",
+        "link-name": "off"
       }
     ],
-    "meta-charset-utf-8": "off"
+    "meta-charset-utf-8": "off",
+    "no-inline-styles": "off",
+    "button-type": "off"
   }
 }
