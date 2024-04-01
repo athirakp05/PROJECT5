@@ -243,8 +243,7 @@ def checkout(request):
         cart_items = Cart.objects.filter(user=request.user)
         total_price = cart_items.aggregate(Sum('total_price'))['total_price__sum'] or 0
         with transaction.atomic():
-            order = Order.objects.create(user=request.user, house_name=house_name, city=city, pin_code=pin_code,
-                                         phone_number=phone_number, total_price=total_price)
+            order = Order.objects.create(user=request.user, house_name=house_name, city=city, pin_code=pin_code,phone_number=phone_number, total_price=total_price,delivery_status='Pending')           
             for cart_item in cart_items:
                 order.cart.add(cart_item)
         return render(request, 'pay/payment.html', {'order': order})

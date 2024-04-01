@@ -75,6 +75,12 @@ class Order(models.Model):
     phone_number = models.CharField(max_length=10,null=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # Add this field
     is_paid = models.BooleanField(default=False)
+    status_choices = [
+        ('Pending', 'Pending'),
+        ('Delivered', 'Delivered'),
+        ('Cancelled', 'Cancelled'),
+    ]
+    delivery_status = models.CharField(max_length=20, choices=status_choices, default='Pending')
     created_at = models.DateTimeField(default=timezone.now)
     cart = models.ManyToManyField(Cart)  # Add this field
 
