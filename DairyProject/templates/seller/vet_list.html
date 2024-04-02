@@ -78,6 +78,8 @@
 <body>
     <h1>Veterinarians List</h1>
     <ul>
+        <a href="{% url 'request_appointment' %}"><button>Request Appointment</button></a>
+
 {% for veterinarian in veterinarians %}
         <li>
                 {% if veterinarian.veteditprofile.profile_photo %}
@@ -86,7 +88,6 @@
                 <h2>{{ veterinarian.doctor_name }}</h2>
                 <p>Specialization: {{ veterinarian.get_specialization_display }}</p>
                 <p>Contact: {{ veterinarian.email }}, {{ veterinarian.mobile }}</p>
-                <a href="{% url 'request_appointment' %}">Request Appointment</a>
             </li>
         {% endfor %}
     </ul>

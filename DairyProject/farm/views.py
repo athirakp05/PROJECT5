@@ -743,26 +743,35 @@ def vet_list(request):
     veterinarians = Veterinarian.objects.all()
     context = {'veterinarians': veterinarians}
     return render(request, 'seller/vet_list.html', context)
+from django.core.exceptions import ObjectDoesNotExist
 
+@login_required
 def request_appointment(request):
     if request.method == 'POST':
         form = AppointmentForm(request.POST)
         if form.is_valid():
             appointment = form.save(commit=False)
             appointment.seller = request.user.seller
+            veterinarian_id = request.POST.get('veterinarian')
+            veterinarian = get_object_or_404(Veterinarian, pk=veterinarian_id)
+            appointment.veterinarian = veterinarian
             appointment.save()
             messages.success(request, 'Appointment request submitted successfully!')
-            return redirect('appointment_list')  # Redirect to the list of appointments
+            return redirect('appointment_list')
+        else:
+            messages.error(request, 'Invalid form submission. Please try again.')
     else:
         form = AppointmentForm()
     return render(request, 'seller/request_appointment.html', {'form': form})
 
+@login_required
 def appointment_list(request):
     appointments = Appointment.objects.filter(seller=request.user.seller)
     return render(request, 'vet/appointment_list.html', {'appointments': appointments})
 
+@login_required
 def update_appointment_status(request, appointment_id):
-    appointment = Appointment.objects.get(id=appointment_id)
+    appointment = get_object_or_404(Appointment, id=appointment_id)
     if request.method == 'POST':
         appointment.status = request.POST.get('status')
         appointment.save()

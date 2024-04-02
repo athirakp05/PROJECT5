@@ -3,54 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Appointment Management</title>
-    <style>
-        /* Add your CSS styles here */
-    </style>
+    <title>Appointment List</title>
 </head>
 <body>
-    <h1>Appointment Management</h1>
-
-    <!-- Appointment List Section -->
-    <div id="appointment-list-section">
-        <h2>Appointment List</h2>
-        <ul>
-            {% for appointment in appointments %}
-                <li>{{ appointment.date }} - {{ appointment.description }} - {{ appointment.status }}</li>
-            {% endfor %}
-        </ul>
-        <button onclick="toggleSections()">Update Appointment Status</button>
-    </div>
-
-    <!-- Update Appointment Status Section -->
-    <div id="update-appointment-status-section" style="display: none;">
-        <h2>Update Appointment Status</h2>
-        <form id="update-appointment-form" method="POST">
-            {% csrf_token %}
-            <label for="status">Status:</label>
-            <select name="status" id="status">
-                <option value="Pending">Pending</option>
-                <option value="Accepted">Accepted</option>
-                <option value="Rejected">Rejected</option>
-            </select>
-            <button type="submit">Submit</button>
-            <button type="button" onclick="toggleSections()">Back to Appointment List</button>
-        </form>
-    </div>
-
-    <script>
-        function toggleSections() {
-            var appointmentListSection = document.getElementById('appointment-list-section');
-            var updateAppointmentStatusSection = document.getElementById('update-appointment-status-section');
-
-            if (appointmentListSection.style.display === 'none') {
-                appointmentListSection.style.display = 'block';
-                updateAppointmentStatusSection.style.display = 'none';
-            } else {
-                appointmentListSection.style.display = 'none';
-                updateAppointmentStatusSection.style.display = 'block';
-            }
-        }
-    </script>
+    <h1>Appointment List</h1>
+    <ul>
+        {% for appointment in appointments %}
+            <li>{{ appointment.date }} - {{ appointment.description }} - {{ appointment.status }}</li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
