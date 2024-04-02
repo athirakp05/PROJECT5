@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veterinarians List</title>
+    <style>
+        /* Reset default browser styles */
+        body, ul, li, h1, h2, p {
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Basic layout styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        ul {
+            list-style: none;
+        }
+        
+        li {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative; /* Position relative for absolute positioning */
+        }
+        
+        img {
+            width: 150px; /* Set fixed width */
+            height: 150px; /* Set fixed height */
+            object-fit: cover; /* Ensure the entire image is visible */
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        
+        p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        /* Button styles */
+        .schedule-btn {
+            position: absolute;
+            top: 20px; /* Adjust as needed */
+            right: 20px; /* Adjust as needed */
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Veterinarians List</h1>
+    <ul>
+{% for veterinarian in veterinarians %}
+        <li>
+                {% if veterinarian.veteditprofile.profile_photo %}
+                    <img src="{{ veterinarian.veteditprofile.profile_photo.url }}" alt="Profile Photo">
+                {% endif %}
+                <h2>{{ veterinarian.doctor_name }}</h2>
+                <p>Specialization: {{ veterinarian.get_specialization_display }}</p>
+                <p>Contact: {{ veterinarian.email }}, {{ veterinarian.mobile }}</p>
+                <a href="{% url 'request_appointment' %}">Request Appointment</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

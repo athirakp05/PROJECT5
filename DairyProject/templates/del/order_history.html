@@ -5,19 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order History</title>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .pagination ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        .pagination li {
+            display: inline;
+            margin-right: 5px;
+        }
+        .pagination li a {
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid #dddddd;
+            background-color: #ffffff;
+            color: #333333;
+        }
+        .pagination li.active {
+            background-color: #007bff;
+        }
+        .pagination li.active a {
+            color: #ffffff;
+        }
+    </style>
 </head>
 <body>
     <h1>Order History</h1>
-    <form method="get">
-        <label for="pin_code">Pin Code:</label>
-        <input type="text" id="pin_code" name="pin_code" value="{{ pin_code }}">
-        <label for="customer_name">Customer Name:</label>
-        <input type="text" id="customer_name" name="customer_name" value="{{ customer_name }}">
+    <form method="get" action="{% url 'order_history' %}">
+        {% csrf_token %}
         <label for="date_filter">Date:</label>
         <input type="date" id="date_filter" name="date" value="{{ date_filter }}">
         <button type="submit">Filter</button>
     </form>
-    <table id="order-table" border="1">
+    <table id="order-table">
         <thead>
             <tr>
                 <th>Order ID</th>
@@ -28,10 +81,12 @@
                 <th>Product</th>
                 <th>Quantity</th>
                 <th>Contact</th>
+                <th>Delivery Status</th>
+                <th>Delivery Boy</th>
             </tr>
         </thead>
         <tbody>
-            {% for order in page_obj %}
+            {% for order in orders %}
             <tr>
                 <td>{{ order.id }}</td>
                 <td>{{ order.user }}</td>
@@ -53,32 +108,31 @@
                     </ul>
                 </td>
                 <td>{{ order.phone_number }}</td>
-
+                <td>{{ order.delivery_status }}</td>
+                <td>{{ order.delivery_boy.first_name }} {{ order.delivery_boy.last_name }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    <div id="pagination" class="dataTables_paginate paging_simple_numbers">
-        <ul class="pagination">
-            {% if page_obj.has_previous %}
-                <li class="paginate_button page-item previous">
-                    <a href="?page={{ page_obj.previous_page_number }}" class="page-link">Previous</a>
-                </li>
+    <div class="pagination">
+        <ul>
+            {% if orders.has_previous %}
+                <li><a href="?date={{ date_filter }}&page=1">First</a></li>
+                <li><a href="?date={{ date_filter }}&page={{ orders.previous_page_number }}">Previous</a></li>
             {% endif %}
-            {% for page in page_obj.paginator.page_range %}
-                <li class="paginate_button page-item{% if page == page_obj.number %} active{% endif %}">
-                    <a href="?page={{ page }}" class="page-link">{{ page }}</a>
-                </li>
+            {% for num in orders.paginator.page_range %}
+                {% if orders.number == num %}
+                    <li class="active"><span>{{ num }}</span></li>
+                {% else %}
+                    <li><a href="?date={{ date_filter }}&page={{ num }}">{{ num }}</a></li>
+                {% endif %}
             {% endfor %}
-            {% if page_obj.has_next %}
-                <li class="paginate_button page-item next">
-                    <a href="?page={{ page_obj.next_page_number }}" class="page-link">Next</a>
-                </li>
+            {% if orders.has_next %}
+                <li><a href="?date={{ date_filter }}&page={{ orders.next_page_number }}">Next</a></li>
+                <li><a href="?date={{ date_filter }}&page={{ orders.paginator.num_pages }}">Last</a></li>
             {% endif %}
         </ul>
     </div>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script>

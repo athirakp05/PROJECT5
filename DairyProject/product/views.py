@@ -10,9 +10,9 @@ from django.shortcuts import render, redirect, get_object_or_404  # Import get_o
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q,Sum,F
 from django.contrib.auth import get_user_model
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, JsonResponse
+from django.http import Http404, HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, JsonResponse
 from django.views.decorators.http import require_POST
-from farm.models import CustomerEditProfile, Seller  # Import the Seller model
+from farm.models import CustomerEditProfile, DeliveryBoy, Seller  # Import the Seller model
 from django.contrib import messages
 from django.db import transaction
 
@@ -100,7 +100,7 @@ def edit_milk_details(request, pk):
         form = MilkCollectionForm(instance=milk_detail)
     return render(request, 'admin/edit_milk_details.html', {'form': form})
 
-from datetime import date
+from datetime import date, timezone
 from datetime import datetime
 
 def all_milk_details(request):
@@ -283,11 +283,21 @@ def success(request, order_id):
     payments = order.payments.all()  # Retrieve all payments associated with the order
     return render(request, 'pay/success.html', {'order': order, 'payments': payments})
 
+def update_delivery_status(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    if request.method == 'POST':
+        new_status = request.POST.get('new_status') 
+        if request.user.is_authenticated and hasattr(request.user, 'deliveryboy'):
+            delivery_boy = request.user.deliveryboy
+            if order.delivery_boy == delivery_boy and new_status == 'Delivered':
+                order.delivery_status = new_status
+                order.delivery_boy_id = delivery_boy.id  # Save the delivery boy's ID to the order
+                order.save()
+                messages.success(request, 'Delivery status updated successfully.')
+    return redirect('order')
+
 def payment_history(request):
-    # Get orders placed by the current user
     orders = Order.objects.filter(user=request.user)
-    
-    # Collect payment history data
     payment_history = []
     for order in orders:
         for payment in order.payments.all():
@@ -296,46 +306,68 @@ def payment_history(request):
                 'payment': payment,
                 'products': order.cart.all()  # Retrieve products associated with the order
             })
-
     return render(request, 'pay/payment_history.html', {'payment_history': payment_history})
 
 def order_history(request):
-    today = datetime.today().date()
-    pin_code = request.GET.get('pin_code')
-    customer_name = request.GET.get('customer_name')
+    all_orders = Order.objects.all().order_by('-created_at')
     date_filter = request.GET.get('date')
-
-    orders = Order.objects.all()  # Fetch all orders initially
-
     if date_filter:
-        orders = orders.filter(created_at__date=date_filter)
-    else:
-        orders = orders.filter(created_at__date=today)
-
-    if pin_code:
-        orders = orders.filter(pin_code=pin_code)
-    if customer_name:
-        orders = orders.filter(user__username__icontains=customer_name)
-    orders = orders.order_by('-id')
-    paginator = Paginator(orders, 10)  # Display 10 orders per page
+        try:
+            date_filter = datetime.strptime(date_filter, '%Y-%m-%d').date()
+            all_orders = all_orders.filter(created_at__date=date_filter)
+        except ValueError:
+            pass
+    paginator = Paginator(all_orders, 10)
     page_number = request.GET.get('page')
     try:
-        page_obj = paginator.page(page_number)
+        orders = paginator.page(page_number)
     except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        page_obj = paginator.page(1)
+        orders = paginator.page(1)
     except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        page_obj = paginator.page(paginator.num_pages)
-
+        orders = paginator.page(paginator.num_pages)
     context = {
-        'page_obj': page_obj,
-        'pin_code': pin_code,
-        'customer_name': customer_name,
+        'orders': orders,
         'date_filter': date_filter,
     }
     return render(request, 'del/order_history.html', context)
+def order(request):
+    if request.user.is_authenticated and hasattr(request.user, 'deliveryboy'):
+        delivery_boy = request.user.deliveryboy
+        assigned_orders = Order.objects.filter(delivery_status='Pending').order_by('created_at')
+        delivery_boy_count = DeliveryBoy.objects.filter(is_approved=True).count()
+        total_orders = assigned_orders.count()
+        orders_per_delivery_boy = total_orders // delivery_boy_count
+        remainder_orders = total_orders % delivery_boy_count
+        if delivery_boy.id <= remainder_orders:
+            orders_to_take = orders_per_delivery_boy + 1
+        else:
+            orders_to_take = orders_per_delivery_boy
+        start_index = (delivery_boy.id - 1) * orders_per_delivery_boy + min(delivery_boy.id, remainder_orders)
+        end_index = start_index + orders_to_take
+        my_orders = assigned_orders[start_index:end_index]
+        
+        # Allocate orders to the delivery boy one by one
+        for order in my_orders:
+            order.delivery_boy = delivery_boy  # Save the delivery boy's ID to the order
+            order.save()
 
+        page = request.GET.get('page', 1)
+        paginator = Paginator(my_orders, 10)  # Show 10 orders per page
+
+        try:
+            my_orders = paginator.page(page)
+        except PageNotAnInteger:
+            my_orders = paginator.page(1)
+        except EmptyPage:
+            my_orders = paginator.page(paginator.num_pages)      
+        
+        context = {
+            'delivery_boy': delivery_boy,
+            'my_orders': my_orders,
+        }
+        return render(request, 'del/order.html', context)
+
+    
 def sample_report(request):
     return render(request, 'category/sample_report.html')
 
@@ -354,7 +386,6 @@ def addSample_test(request):
             messages.error(request, 'Error in the form submission. Please check the data.')
     else:
         form = SampleTestReportForm()
-
     context = {'form': form}
     return render(request, 'admin/addSample_test.html', context)
 

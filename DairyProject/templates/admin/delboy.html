@@ -1,0 +1,40 @@
+<!-- delboy.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Delivery Boys</title>
+    <!-- Add any CSS or styling if needed -->
+</head>
+<body>
+    <h1>List of Delivery Boys</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Mobile</th>
+                <th>Driving License</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for delivery_boy in delivery_boys %}
+            <tr>
+                <td>{{ delivery_boy.first_name }}</td>
+                <td>{{ delivery_boy.last_name }}</td>
+                <td>{{ delivery_boy.mobile }}</td>
+                <td>{% if delivery_boy.driving_license %}
+                    <img src="{{ delivery_boy.driving_license.url }}" alt="Driving License">
+                {% else %}
+                    No Image
+                {% endif %}</td>
+                <td>{% if delivery_boy.is_approved %}Approved{% else %}Pending{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -29,6 +29,7 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset/done/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('s_view/', views.s_view, name='s_view'),
+    path('delboy/', views.delboy, name='delboy'),
     path('c_view', views.c_view, name='c_view'),
     path('select', views.select, name='select'),
     path('profile', views.profile, name='profile'),
@@ -46,6 +47,7 @@ urlpatterns = [
     path('usercount/', views.usercount, name='usercount'),
     path('society-seller-count/', views.society_seller_count, name='society_seller_count'),
     path('team-list/', views.team, name='team'),
+    path('vet_list/', views.vet_list, name='vet_list'),
     path('message/', views.message, name='message'),
     path('get_new_messages/', views.get_new_messages, name='get_new_messages'),
     path('pending_sellers/', views.pending_sellers, name='pending_sellers'),
@@ -65,5 +67,8 @@ urlpatterns = [
     path('approve-delivery/<int:delivery_boy_id>/', views.admin_approve_delivery, name='admin_approve_delivery'),
     path('del_edit_profile', views.del_edit_profile, name='del_edit_profile'),
     path('delivery_profile', views.delivery_profile, name='delivery_profile'),
+    path('request_appointment/', views.request_appointment, name='request_appointment'),
+    path('appointment_list', views.appointment_list, name='appointment_list'),
+    path('update_appointment_status', views.update_appointment_status, name='update_appointment_status'),
 
 ]

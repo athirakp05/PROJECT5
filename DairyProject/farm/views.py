@@ -5,13 +5,13 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect,HttpResponse
 from product.models import Product
-from .models import  CustomUser, Customer, DeliveryBoy, DeliveryBoyEditProfile, Seller,CattleType
+from .models import  Appointment, CustomUser, Customer, DeliveryBoy, DeliveryBoyEditProfile, Seller,CattleType
 from django.http import JsonResponse
 from django.urls import reverse
 from django.db.models import Q  
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
-from .forms import  CustomerEditProfileForm, DeliveryBoyEditProfileForm, SellerEditProfileForm, SellerPasswordChangeForm
+from .forms import  AppointmentForm, CustomerEditProfileForm, DeliveryBoyEditProfileForm, SellerEditProfileForm, SellerPasswordChangeForm
 from .models import Cattle,Login_Details,SellerEditProfile,Breed,Insurance,Vaccination,ContactMessage,CustomerEditProfile,VetEditProfile,Veterinarian
 from .forms import CattleForm, VaccinationForm, InsuranceForm,SellerProfileForm,BreedForm,ContactForm,VetEditProfileForm
 from django.shortcuts import render, redirect, get_object_or_404  
@@ -734,3 +734,39 @@ def delivery_profile(request):
     if request.user.is_authenticated:
         delivery_boy = request.user.deliveryboy
         return render(request, 'del/delivery_profile.html', {'delivery_boy': delivery_boy})
+def delboy(request):
+    delivery_boys = DeliveryBoy.objects.all()
+    return render(request, 'admin/delboy.html', {'delivery_boys': delivery_boys})
+
+
+def vet_list(request):
+    veterinarians = Veterinarian.objects.all()
+    context = {'veterinarians': veterinarians}
+    return render(request, 'seller/vet_list.html', context)
+
+def request_appointment(request):
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.seller = request.user.seller
+            appointment.save()
+            messages.success(request, 'Appointment request submitted successfully!')
+            return redirect('appointment_list')  # Redirect to the list of appointments
+    else:
+        form = AppointmentForm()
+    return render(request, 'seller/request_appointment.html', {'form': form})
+
+def appointment_list(request):
+    appointments = Appointment.objects.filter(seller=request.user.seller)
+    return render(request, 'vet/appointment_list.html', {'appointments': appointments})
+
+def update_appointment_status(request, appointment_id):
+    appointment = Appointment.objects.get(id=appointment_id)
+    if request.method == 'POST':
+        appointment.status = request.POST.get('status')
+        appointment.save()
+        messages.success(request, 'Appointment status updated successfully!')
+        # Update delivery status here if needed
+        return redirect('appointment_list')
+    return render(request, 'vet/update_appointment_status.html', {'appointment': appointment})

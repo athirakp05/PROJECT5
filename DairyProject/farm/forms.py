@@ -129,3 +129,7 @@ class DeliveryBoyEditProfileForm(forms.ModelForm):
             'dob': forms.DateInput(attrs={'type': 'date'}),
             'gender': forms.Select(choices=[('---', '---'), ('Male', 'Male'), ('Female', 'Female'), ('Others', 'Others')]),
         }
+class AppointmentForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = ['date', 'description']  # Add other fields as needed

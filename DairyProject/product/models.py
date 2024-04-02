@@ -1,5 +1,5 @@
 from django.db import models
-from farm.models import Seller,CustomUser
+from farm.models import DeliveryBoy, Seller,CustomUser
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.utils import timezone
@@ -83,6 +83,7 @@ class Order(models.Model):
     delivery_status = models.CharField(max_length=20, choices=status_choices, default='Pending')
     created_at = models.DateTimeField(default=timezone.now)
     cart = models.ManyToManyField(Cart)  # Add this field
+    delivery_boy = models.ForeignKey(DeliveryBoy, on_delete=models.SET_NULL, null=True, blank=True)
 
 
 class Payment(models.Model):

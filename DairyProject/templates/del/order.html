@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+</head>
+<body>
+    <h1>Order History</h1>
+    <table id="order-table" border="1">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer Name</th>
+                <th>Pin Code</th>
+                <th>Total Price</th>
+                <th>Created At</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Contact</th>
+                <th>Delivery Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in my_orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.user }}</td>
+                <td>{{ order.pin_code }}</td>
+                <td>{{ order.total_price }}</td>
+                <td>{{ order.created_at }}</td>
+                <td>
+                    <ul>
+                        {% for item in order.cart.all %}
+                            <li>{{ item.product.p_name }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        {% for item in order.cart.all %}
+                            <li>{{ item.quantity }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>{{ order.phone_number }}</td>
+                <td>{{ order.delivery_status }}</td>
+                <td>
+                    <form method="post" action="{% url 'update_delivery_status' order.id %}">
+                        {% csrf_token %}
+                        <select name="new_status">
+                            <option value="Pending" {% if order.delivery_status == 'Pending' %} selected {% endif %}>Pending</option>
+                            <option value="Delivered" {% if order.delivery_status == 'Delivered' %} selected {% endif %}>Delivered</option>
+                            <option value="Cancelled" {% if order.delivery_status == 'Cancelled' %} selected {% endif %}>Cancelled</option>
+                        </select>
+                        <button type="submit">Update Status</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        <ul>
+            {% if my_orders.has_previous %}
+                <li><a href="?page=1">First</a></li>
+                <li><a href="?page={{ my_orders.previous_page_number }}">Previous</a></li>
+            {% endif %}
+            {% for num in my_orders.paginator.page_range %}
+                {% if my_orders.number == num %}
+                    <li class="active"><span>{{ num }}</span></li>
+                {% else %}
+                    <li><a href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if my_orders.has_next %}
+                <li><a href="?page={{ my_orders.next_page_number }}">Next</a></li>
+                <li><a href="?page={{ my_orders.paginator.num_pages }}">Last</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#order-table').DataTable();
+        });
+    </script>
+</body>
+</html>

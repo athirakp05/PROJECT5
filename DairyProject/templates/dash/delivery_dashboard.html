@@ -94,7 +94,7 @@
             <div class="user-name">{{ delivery_boy.first_name }}</div>
         </div>
         <ul>
-            <li><a href="#" class="dashboard-link" data-url="{% url 'order_history' %}">Todays Orders</a></li>
+            <li><a href="{% url 'order' %}" class="dashboard-link" data-url="{% url 'order' %}">Todays Orders</a></li>
             <li><a href="#" class="dashboard-link" data-url="{% url 'del_edit_profile' %}">Edit Profile</a></li>
             <li><a href="#" class="dashboard-link" data-url="{% url 'delivery_profile' %}">My Profile</a></li>
         </ul>
@@ -110,24 +110,39 @@
         </main>
     </div>
 
-    <!-- Bootstrap JS and jQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // JavaScript to handle sidebar link clicks
-        document.querySelectorAll('.dashboard-link').forEach(link => {
+<!-- Bootstrap JS and jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom JavaScript -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+        const dashboardContent = document.getElementById('dashboard-content');
+
+        sidebarLinks.forEach(function(link) {
             link.addEventListener('click', function(event) {
                 event.preventDefault();
-                const url = this.getAttribute('data-url');
-                fetch(url)
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('dashboard-content').innerHTML = data;
-                })
-                .catch(error => console.error('Error:', error));
+                const url = link.getAttribute('data-url');
+                if (url) {
+                    loadContent(url);
+                }
             });
         });
-    </script>
+        loadContent("{% url 'delivery_profile' %}");
+        function loadContent(url) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    dashboardContent.innerHTML = xhr.responseText;
+                }
+            };
+            xhr.open('GET', url, true);
+            xhr.send();
+        }
+    });
+</script>
 </body>
 
 </html>
