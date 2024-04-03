@@ -767,15 +767,37 @@ def request_appointment(request):
 @login_required
 def appointment_list(request):
     appointments = Appointment.objects.filter(seller=request.user.seller)
-    return render(request, 'vet/appointment_list.html', {'appointments': appointments})
+    return render(request, 'seller/appointment_list.html', {'appointments': appointments})
+
+def vet_appointment(request):
+    appointments = Appointment.objects.filter(veterinarian=request.user.veterinarian)
+    appointment_details = []
+    for appointment in appointments:
+        seller = appointment.seller
+        seller_user = seller.user  # Access the related CustomUser instance
+        seller_details = {
+            'seller_name': seller.first_name + ' ' + seller.last_name,
+            'seller_email': seller_user.email,
+            'seller_mobile': seller.mobile,
+            'appointment': appointment
+        }
+        appointment_details.append(seller_details)
+    return render(request, 'vet/vet_appointment.html', {'appointment_details': appointment_details})
+
 
 @login_required
-def update_appointment_status(request, appointment_id):
-    appointment = get_object_or_404(Appointment, id=appointment_id)
+def update_appointment(request, appointment_id):
+    veterinarian = Veterinarian.objects.get(user=request.user)
+    appointment = get_object_or_404(Appointment, id=appointment_id, veterinarian=veterinarian)
     if request.method == 'POST':
         appointment.status = request.POST.get('status')
         appointment.save()
         messages.success(request, 'Appointment status updated successfully!')
         # Update delivery status here if needed
-        return redirect('appointment_list')
-    return render(request, 'vet/update_appointment_status.html', {'appointment': appointment})
+        return redirect('vet_appointment')
+    return render(request, 'vet/vet_appointment.html', {'appointment': appointment})
+
+
+def vet_team(request):
+    veterinarians = Veterinarian.objects.all()
+    return render(request, 'other/vet_team.html', {'veterinarians': veterinarians})

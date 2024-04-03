@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Details List</title>
+</head>
+<body>
+    <h1>Meeting Table</h1>
+    <ul>
+        {% for meeting in meetings %}
+            <li>
+                Title: {{ meeting.title }}
+                Date: {{ meeting.date }}
+                Time: {{ meeting.time }}
+                Location: {{ meeting.location }}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h1>Meeting Details Table</h1>
+    <ul>
+        {% for meeting_detail in meeting_details %}
+            <li>
+                Meeting: {{ meeting_detail.meeting }}
+                Attendees: {{ meeting_detail.attendees }}
+                Agenda: {{ meeting_detail.agenda }}
+                Description: {{ meeting_detail.description }}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

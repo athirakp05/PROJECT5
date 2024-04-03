@@ -69,6 +69,8 @@ urlpatterns = [
     path('delivery_profile', views.delivery_profile, name='delivery_profile'),
     path('request_appointment/', views.request_appointment, name='request_appointment'),
     path('appointment_list', views.appointment_list, name='appointment_list'),
-    path('update_appointment_status', views.update_appointment_status, name='update_appointment_status'),
+    path('update_appointment/<int:appointment_id>/', views.update_appointment, name='update_appointment'),
+    path('vet_appointment', views.vet_appointment, name='vet_appointment'),
+    path('vet_team', views.vet_team, name='vet_team'),
 
 ]

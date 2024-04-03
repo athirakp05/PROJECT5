@@ -302,6 +302,7 @@ class Appointment(models.Model):
         ('Rejected', 'Rejected'),
     )
     date = models.DateField()
+    time = models.TimeField(null=True)
     description = models.TextField(default=True)
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
     veterinarian = models.ForeignKey(Veterinarian, on_delete=models.CASCADE)

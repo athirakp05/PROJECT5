@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'farm',
     'product',
+    'events',
     
 ]
 SITE_ID = 1

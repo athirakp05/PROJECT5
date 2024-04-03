@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from django.shortcuts import get_object_or_404, render, redirect
-from events.models import Meeting
-from .forms import MeetingForm
+from events.models import Meeting, MeetingDetails
+from .forms import MeetingDetailsForm, MeetingForm
 from django.contrib import messages
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
@@ -41,3 +41,31 @@ def generate_brochure(request, meeting_id):
     p.drawString(100, 680, f"Description: {meeting.description}")
     p.save()
     return response
+
+
+def meeting_details_list(request):
+    meetings = Meeting.objects.all()
+    meeting_details = MeetingDetails.objects.all()
+    return render(request, 'your_template.html', {'meetings': meetings, 'meeting_details': meeting_details})
+
+
+def add_meeting_details(request):
+    if request.method == 'POST':
+        form = MeetingDetailsForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('meeting_details_list')
+    else:
+        form = MeetingDetailsForm()
+    return render(request, 'add_meeting_details.html', {'form': form})
+
+def update_meeting_details(request, meeting_details_id):
+    meeting_details = MeetingDetails.objects.get(pk=meeting_details_id)
+    if request.method == 'POST':
+        form = MeetingDetailsForm(request.POST, instance=meeting_details)
+        if form.is_valid():
+            form.save()
+            return redirect('meeting_details_list')
+    else:
+        form = MeetingDetailsForm(instance=meeting_details)
+    return render(request, 'update_meeting_details.html', {'form': form})

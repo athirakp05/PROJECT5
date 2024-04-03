@@ -1,5 +1,5 @@
 from django import forms
-from .models import Meeting
+from .models import Meeting, MeetingDetails
 
 class MeetingForm(forms.ModelForm):
     class Meta:
@@ -9,3 +9,7 @@ class MeetingForm(forms.ModelForm):
             'date': forms.DateInput(attrs={'type': 'date'}),
             'time': forms.TimeInput(attrs={'type': 'time'}),
         }
+class MeetingDetailsForm(forms.ModelForm):
+    class Meta:
+        model = MeetingDetails
+        fields = ['meeting', 'attendees', 'agenda', 'description']

@@ -1,7 +1,10 @@
+from datetime import timezone
 from django.core.validators import RegexValidator
 from django import forms
 from django.forms.widgets import DateTimeInput
 from .models import Appointment, Cattle, CustomerEditProfile, DeliveryBoyEditProfile,Insurance,Vaccination,SellerEditProfile,Breed,CattleType,ContactMessage,VetEditProfile
+from django.core.exceptions import ValidationError
+
 class CustomerRegistrationForm(forms.Form):
     first_name = forms.CharField(max_length=50)
     last_name = forms.CharField(max_length=50)
@@ -133,10 +136,20 @@ class DeliveryBoyEditProfileForm(forms.ModelForm):
 class AppointmentForm(forms.ModelForm):
     class Meta:
         model = Appointment
-        fields = ['date', 'description', 'veterinarian']
+        fields = ['date','time',  'description', 'veterinarian']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
         }
+def clean(self):
+        cleaned_data = super(AppointmentForm, self).clean()
+        date = cleaned_data.get('date')
+        time = cleaned_data.get('time')
+        veterinarian = cleaned_data.get('veterinarian')
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        if date and time and veterinarian:
+            if date < timezone.now().date():
+                raise ValidationError("Appointment date must be in the future.")
+            if Appointment.objects.filter(date=date, time=time, veterinarian=veterinarian).exists():
+                raise ValidationError("Appointment time is already booked. Please choose a different time.")
+
+        return cleaned_data

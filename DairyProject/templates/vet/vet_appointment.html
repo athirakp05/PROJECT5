@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veterinarian Appointment List</title>
+    <style>
+        /* Style for the appointment list */
+        .appointment-box {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .seller-info {
+            margin-bottom: 10px;
+        }
+        .appointment-details {
+            margin-top: 10px;
+        }
+        label {
+            margin-right: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Veterinarian Appointment List</h1>
+    <ul>
+        {% for details in appointment_details %}
+            <li class="appointment-box">
+                <div class="seller-info">
+                    <h2>Seller Information:</h2>
+                    <p>Name: {{ details.seller_name }}</p>
+                    <p>Email: {{ details.seller_email }}</p>
+                    <p>Mobile: {{ details.seller_mobile }}</p>
+                </div>
+                <div class="appointment-details">
+                    <h2>Appointment Details:</h2>
+                    <p>Date: {{ details.appointment.date }}</p>
+                    <p>Time: {{ details.appointment.time }}</p>
+                    <p>Description: {{ details.appointment.description }}</p>
+                    <p>Status: {{ details.appointment.status }}</p>
+                    <!-- Form to update appointment status -->
+                    <form method="post" action="{% url 'update_appointment' details.appointment.id %}">
+                        {% csrf_token %}
+                        <label for="status">Update Status:</label>
+                        <select name="status" id="status" {% if details.appointment.status == 'Accepted' %}class="hidden"{% endif %}>
+                            <option value="Pending" {% if details.appointment.status == 'Pending' %}selected{% endif %}>Pending</option>
+                            <option value="Accepted" {% if details.appointment.status == 'Accepted' %}selected{% endif %}>Accepted</option>
+                            <option value="Rejected" {% if details.appointment.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                        </select>
+                        <button type="submit" {% if details.appointment.status == 'Accepted' %}disabled{% endif %}>Update</button>
+                    </form>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

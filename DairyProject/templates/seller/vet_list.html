@@ -79,6 +79,7 @@
     <h1>Veterinarians List</h1>
     <ul>
         <a href="{% url 'request_appointment' %}"><button>Request Appointment</button></a>
+        <a href="{% url 'appointment_list' %}"><button>View Appointment</button></a>
 
 {% for veterinarian in veterinarians %}
         <li>
