@@ -1,6 +1,6 @@
 # forms.py
 from django import forms
-from .models import Product,MilkCollection
+from .models import Product,MilkSample
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -10,24 +10,19 @@ class ProductForm(forms.ModelForm):
             'mfg_date': forms.DateInput(attrs={'type': 'date'}),
             'expiry_date': forms.DateInput(attrs={'type': 'date'}),
         }
-
-class MilkCollectionForm(forms.ModelForm):
-    class Meta:
-        model = MilkCollection
-        fields = ['seller','milk_type', 'collection_date', 'collection_time', 'quantity', 'quality_test_report', 'price', 'description']
-        widgets = {
-            'collection_date': forms.DateInput(attrs={'type': 'date'}),
-        }
 class ProductSearchForm(forms.Form):
     query = forms.CharField(label='Search', max_length=100)
 
-from .models import SampleTestReport
-# in forms.py
-from django import forms
-from .models import SampleTestReport
 
-class SampleTestReportForm(forms.ModelForm):
+class MilkCollectionForm(forms.ModelForm):
     class Meta:
-        model = SampleTestReport
-        fields = ['category', 'density', 'bacterial_content', 'turbidity', 'somatic_cell_count',
-                  'lactose_content', 'protein_content', 'fat_content', 'grade']
+        model = MilkSample
+        fields = ['seller', 'milk_type', 'collection_date', 'collection_time', 'quantity', 'description','pH', 'temperature', 'taste', 'odor', 'fat', 'turbidity', 'color', 'grade']
+        widgets = {
+            'collection_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+# class SampleTestReportForm(forms.ModelForm):
+#     class Meta:
+#         model = MilkSample
+#         fields = ['pH', 'temperature', 'taste', 'odor', 'fat', 'turbidity', 'color', 'grade']

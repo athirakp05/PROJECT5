@@ -22,9 +22,10 @@
   <a href="{% url 'add_milk_details' %}">
       <button>Add Milk Details</button>
   </a>
-  <a href="{% url 'milk_parameters' %}" style="float: right;">
-    <button>Normal Milk Parameters</button>
+  <a href="{% url 'export_milk_sample_to_csv' %}" style="float: right;">
+    <button>View Milk Details as CSV</button>
 </a>
+
   <table>
       <thead>
           <tr>
@@ -32,8 +33,6 @@
               <th>Cattle</th>
               <th>Collection Date</th>
               <th>Quantity</th>
-              <th>Density Level</th>
-              <th>Price</th>
               <th>Description</th>
               <th>Actions</th>
               <th>Sample test report</th>
@@ -46,8 +45,6 @@
               <td>{{ milk_detail.milk_type }}</td>
               <td>{{ milk_detail.collection_date }}</td>
               <td>{{ milk_detail.quantity }}</td>
-              <td>{{ milk_detail.quality_test_report }}</td>
-              <td>{{ milk_detail.price }}</td>
               <td>{{ milk_detail.description }}</td>
               <td>
                   <a href="{% url 'edit_milk_details' milk_detail.pk %}">
@@ -62,32 +59,74 @@
 </div>
 
 <style>
-  /* Add styling for the table */
-  table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-  }
-
-  th,
-  td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-  }
-
-  th {
-      background-color: #f2f2f2;
-  }
-  .milk-details-container {
-    max-width: 800px;
-    margin: 0 auto;
+  /* General styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Form styling */
+form {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="date"],
+select {
+    width: 200px;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button[type="submit"] {
+    padding: 8px 16px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+/* Action button styling */
 .action-button {
     margin-top: 10px;
     margin-right: 10px;
-    text-decoration: none;
 }
 
 .action-button button {
@@ -98,4 +137,5 @@
 .action-link {
     text-decoration: none;
 }
+
 </style>

@@ -29,31 +29,36 @@ class Product(models.Model):
     def __str__(self):
         return self.p_name
 
-class MilkCollection(models.Model):
-    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, default=1)
+from django.db import models
+from django.utils import timezone
+
+class MilkSample(models.Model):
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, related_name='milk_samples')
+    collection_date = models.DateField(default=timezone.now)
+    COLLECTION_CHOICES = [
+        ('ForeNoon', 'ForeNoon'),
+        ('AfterNoon', 'AfterNoon'),
+    ]
+    collection_time = models.CharField(max_length=50, choices=COLLECTION_CHOICES, default='ForeNoon')
     CATTLE_CHOICES = [
         ('Cow', 'Cow'),
         ('Buffalo', 'Buffalo'),
         ('Goat', 'Goat'),
-        # Add more cattle types as needed
     ]
     milk_type = models.CharField(max_length=10, choices=CATTLE_CHOICES, default='Cow')
-    collection_date = models.DateField()
-    COLLECTION_CHOICES = [
-        ('1', 'ForeNoon'),
-        ('2', 'AfterNoon'),
-]
-    collection_time = models.CharField(max_length=50,  choices=COLLECTION_CHOICES,default='1.027-1.03')
     quantity = models.PositiveIntegerField()
-    DENSITY_CHOICES = [
-        ('density-level above 1.03', 'density-level above 1.03'),
-        ('density-level between 1.027-1.03', 'density-level between 1.027-1.03'),
-        ('density-level below 1.03', 'density-level below 1.03'),
-]
-    quality_test_report= models.CharField(max_length=50, choices=DENSITY_CHOICES,default='1.027-1.03')
-    price = models.FloatField()
     description = models.TextField()
-    
+    pH = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    temperature = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    taste = models.CharField(max_length=50, null=True)
+    odor = models.CharField(max_length=50, null=True)
+    fat = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    turbidity = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    color = models.CharField(max_length=50, null=True)
+    grade = models.CharField(max_length=50, null=True)
+
+    def __str__(self):
+        return f"Milk Sample for {self.seller.user.email} collected on {self.collection_date}"
 
 class Cart(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -97,23 +102,4 @@ class Payment(models.Model):
     def __str__(self):
         return f"Payment of {self.amount} by {self.order.user.username} on {self.payment_date}"
 
-class SampleTestReport(models.Model):
-    CATEGORY_CHOICES = [
-        ('Cow', 'Cow Milk'),
-        ('Goat', 'Goat Milk'),
-        ('Buffalo', 'Buffalo Milk'),
-    ]
 
-    seller = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='sample_test_reports')
-    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
-    density = models.DecimalField(max_digits=5, decimal_places=2)
-    bacterial_content = models.DecimalField(max_digits=5, decimal_places=2)
-    turbidity = models.DecimalField(max_digits=5, decimal_places=2)
-    somatic_cell_count = models.PositiveIntegerField()
-    lactose_content = models.DecimalField(max_digits=5, decimal_places=2)
-    protein_content = models.DecimalField(max_digits=5, decimal_places=2)
-    fat_content = models.DecimalField(max_digits=5, decimal_places=2)
-    grade = models.CharField(max_length=50)
-
-    def __str__(self):
-        return f"{self.seller.username} - {self.category} Milk Test Report"

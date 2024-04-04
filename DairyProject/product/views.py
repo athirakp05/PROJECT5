@@ -1,18 +1,18 @@
 # views.py
+import csv
+import datetime
 import razorpay
 from .models import Order, Payment, Product
-from .forms import ProductForm, SampleTestReportForm
-from .models import MilkCollection,Cart
+from .forms import ProductForm
+from .models import MilkSample,Cart
 from .forms import MilkCollectionForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.urls import reverse
-from django.shortcuts import render, redirect, get_object_or_404  # Import get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q,Sum,F
-from django.contrib.auth import get_user_model
-from django.http import Http404, HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, JsonResponse
+from django.http import  HttpResponse, HttpResponseForbidden, JsonResponse
 from django.views.decorators.http import require_POST
-from farm.models import CustomerEditProfile, DeliveryBoy, Seller  # Import the Seller model
+from farm.models import DeliveryBoy, Seller 
 from django.contrib import messages
 from django.db import transaction
 
@@ -36,8 +36,6 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 def prod_view(request):
     seller = Seller.objects.get(user=request.user)
     products_list = Product.objects.filter(seller=seller)
-    
-    # Pagination
     page = request.GET.get('page', 1)
     paginator = Paginator(products_list, 10)  # Show 10 products per page
     try:
@@ -46,7 +44,6 @@ def prod_view(request):
         products = paginator.page(1)
     except EmptyPage:
         products = paginator.page(paginator.num_pages)
-    
     context = {'products': products}
     return render(request, 'category/prod_view.html', context)
 
@@ -79,6 +76,8 @@ def p_detail(request):
     except EmptyPage:
         products = paginator.page(paginator.num_pages)
     return render(request, 'category/p_detail.html', {'products': products})
+
+
 def add_milk_details(request):
     if request.method == 'POST':
         form = MilkCollectionForm(request.POST)
@@ -90,7 +89,7 @@ def add_milk_details(request):
     return render(request, 'admin/add_milk_detail.html', {'form': form})
 
 def edit_milk_details(request, pk):
-    milk_detail = MilkCollection.objects.get(pk=pk)
+    milk_detail = MilkSample.objects.get(pk=pk)
     if request.method == 'POST':
         form = MilkCollectionForm(request.POST, instance=milk_detail)
         if form.is_valid():
@@ -100,11 +99,9 @@ def edit_milk_details(request, pk):
         form = MilkCollectionForm(instance=milk_detail)
     return render(request, 'admin/edit_milk_details.html', {'form': form})
 
-from datetime import date, timezone
-from datetime import datetime
 
 def all_milk_details(request):
-    all_milk_details = MilkCollection.objects.all()
+    all_milk_details = MilkSample.objects.all()
     sellers = Seller.objects.all()  # Fetch all sellers for the filter dropdown
     date_filter = request.GET.get('date')
     seller_filter = request.GET.get('seller')
@@ -118,6 +115,45 @@ def all_milk_details(request):
 
     context = {'all_milk_details': all_milk_details, 'sellers': sellers}
     return render(request, 'admin/all_milk_details.html', context)
+
+    
+def sample_report(request):
+    return render(request, 'category/sample_report.html')
+
+@login_required
+def addSample_test(request):
+    if request.method == 'POST':
+        form = MilkCollectionForm(request.POST)
+        if form.is_valid():
+            sample_test = form.save(commit=False)
+            seller_instance = get_object_or_404(Seller, user=request.user)
+            sample_test.seller = seller_instance
+            sample_test.save()
+            messages.success(request, 'Sample test report added successfully.')
+            return redirect('all_milk_details')  
+        else:
+            messages.error(request, 'Error in the form submission. Please check the data.')
+    else:
+        form = MilkCollectionForm()
+    context = {'form': form}
+    return render(request, 'admin/addSample_test.html', context)
+
+def export_milk_sample_to_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="milk_samples.csv"'
+    milk_samples = MilkSample.objects.all()
+    writer = csv.writer(response)
+    writer.writerow(['ID', 'pH', 'temperature', 'taste', 'odor', 'fat', 'turbidity', 'color', 'grade'])
+    for sample in milk_samples:
+        writer.writerow([sample.id, sample.pH, sample.temperature, sample.taste, sample.odor, sample.fat, sample.turbidity, sample.color, sample.grade])
+
+    return response
+
+
+def milk_parameters(request):
+    return render(request, 'other/milk_parameters.html')
+
+
 
 @login_required
 def admin_cart(request):
@@ -163,7 +199,7 @@ def view_carts(request):
     return render(request, 'admin/view_carts.html', context)
 def own_milk_details(request):
     seller = request.user.seller  # Assuming the seller is linked to the user
-    seller_milk_details = MilkCollection.objects.filter(seller=seller)
+    seller_milk_details = MilkSample.objects.filter(seller=seller)
     context = {'seller_milk_details': seller_milk_details}
     return render(request, 'category/own_milk_details.html', context)
 
@@ -199,14 +235,14 @@ def update_quantity(request, cart_item_id, action):
         if cart_item.quantity > 1:
             cart_item.quantity -= 1
         else:
-            cart_item.delete()  # Remove the item if the quantity becomes zero
-    cart_item.total_price = cart_item.quantity * cart_item.product.price  # Update total price based on quantity and product price
+            cart_item.delete()  
+    cart_item.total_price = cart_item.quantity * cart_item.product.price  
     cart_item.save()    
-    return redirect('view_cart')  # Redirect to the cart page
+    return redirect('view_cart') 
 
 @login_required
 def view_cart(request):
-    cart_items = Cart.objects.filter(user=request.user)  # Change 'customer' to 'user'
+    cart_items = Cart.objects.filter(user=request.user)  
     total_quantity = cart_items.aggregate(Sum('quantity'))['quantity__sum'] or 0
     total_price = cart_items.annotate(item_total=F('quantity') * F('product__price')).aggregate(Sum('item_total'))['item_total__sum'] or 0
     data = {
@@ -248,14 +284,14 @@ def checkout(request):
                 order.cart.add(cart_item)
         return render(request, 'pay/payment.html', {'order': order})
     else:
-        order = None  # Initialize order variable if it's a GET request
+        order = None  
         return render(request, 'pay/checkout.html', {'order': order})
 
 def payment(request, order_id):
     order = Order.objects.get(id=order_id)
     if request.method == 'POST':
         client = razorpay.Client(auth=("rzp_test_VsNzgoQtqip5Wd", "rcn7optyjJTyzOsFlhJQ6GYX"))
-        total_price = int(order.total_price * 100)  # Convert total price to integer in paise
+        total_price = int(order.total_price * 100) 
         data = {
             "amount": total_price,
             "currency": "INR",
@@ -265,13 +301,13 @@ def payment(request, order_id):
         with transaction.atomic():
             payment_obj = Payment.objects.create(
                 order=order,
-                amount=order.total_price / 100,  # Convert back to rupees
+                amount=order.total_price / 100,  
                 razorpay_order_id=payment['id'],
-                transaction_id=payment['id'],  # Assuming transaction ID is same as razorpay order ID
-                is_successful=True  # Assuming payment is always successful if reached this point
+                transaction_id=payment['id'], 
+                is_successful=True 
             )
-            order.is_paid = True  # Mark the order as paid
-            order.payment = payment_obj  # Associate payment with the order
+            order.is_paid = True 
+            order.payment = payment_obj  
             order.save()
             payment_obj.save()
             return redirect('success', order_id=order.id)
@@ -280,7 +316,7 @@ def payment(request, order_id):
 
 def success(request, order_id):
     order = Order.objects.get(id=order_id)
-    payments = order.payments.all()  # Retrieve all payments associated with the order
+    payments = order.payments.all() 
     return render(request, 'pay/success.html', {'order': order, 'payments': payments})
 
 def update_delivery_status(request, order_id):
@@ -345,49 +381,19 @@ def order(request):
         start_index = (delivery_boy.id - 1) * orders_per_delivery_boy + min(delivery_boy.id, remainder_orders)
         end_index = start_index + orders_to_take
         my_orders = assigned_orders[start_index:end_index]
-        
-        # Allocate orders to the delivery boy one by one
         for order in my_orders:
-            order.delivery_boy = delivery_boy  # Save the delivery boy's ID to the order
+            order.delivery_boy = delivery_boy  
             order.save()
-
         page = request.GET.get('page', 1)
-        paginator = Paginator(my_orders, 10)  # Show 10 orders per page
-
+        paginator = Paginator(my_orders, 10)  
         try:
             my_orders = paginator.page(page)
         except PageNotAnInteger:
             my_orders = paginator.page(1)
         except EmptyPage:
-            my_orders = paginator.page(paginator.num_pages)      
-        
+            my_orders = paginator.page(paginator.num_pages)              
         context = {
             'delivery_boy': delivery_boy,
             'my_orders': my_orders,
         }
         return render(request, 'del/order.html', context)
-
-    
-def sample_report(request):
-    return render(request, 'category/sample_report.html')
-
-
-@login_required
-def addSample_test(request):
-    if request.method == 'POST':
-        form = SampleTestReportForm(request.POST)
-        if form.is_valid():
-            sample_test = form.save(commit=False)
-            sample_test.seller = request.user
-            sample_test.save()
-            messages.success(request, 'Sample test report added successfully.')
-            return redirect('all_milk_details')  # Redirect to the milk details page
-        else:
-            messages.error(request, 'Error in the form submission. Please check the data.')
-    else:
-        form = SampleTestReportForm()
-    context = {'form': form}
-    return render(request, 'admin/addSample_test.html', context)
-
-def milk_parameters(request):
-    return render(request, 'other/milk_parameters.html')

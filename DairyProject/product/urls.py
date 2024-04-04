@@ -30,5 +30,6 @@ urlpatterns = [
     path('addSample_test/', addSample_test, name='addSample_test'),
     path('milk_parameters/', milk_parameters, name='milk_parameters'),
     path('admin_cart/', views.admin_cart, name='admin_cart'),
+    path('all_milk_details/export-csv/', views.export_milk_sample_to_csv, name='export_milk_sample_to_csv'),
 
 ]
