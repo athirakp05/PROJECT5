@@ -1,29 +1,18 @@
 <!-- all_milk_details.html -->
+{%load static %}
 <div>
     <h1>All Milk Details</h1>
     <form method="get" action="{% url 'all_milk_details' %}">
         <label for="date">Select Date:</label>
         <input type="date" name="date" id="date" value="{{ request.GET.date }}">
-        <label for="seller">Select Seller:</label>
-        <select name="seller" id="seller">
-            <option value="">-- All Sellers --</option>
-            {% if sellers %}
-                {% for seller in sellers %}
-                    <option value="{{ seller.name }}" {% if request.GET.seller == seller.name %}selected{% endif %}>
-                        {{ seller.name }}
-                    </option>
-                {% endfor %}
-            {% else %}
-                <option value="" disabled>No data available</option>
-            {% endif %}
-        </select>
+       
         <button type="submit">Filter</button>
     </form>
   <a href="{% url 'add_milk_details' %}">
       <button>Add Milk Details</button>
   </a>
   <a href="{% url 'export_milk_sample_to_csv' %}" style="float: right;">
-    <button>View Milk Details as CSV</button>
+    <button>View Milk Details</button>
 </a>
 
   <table>
@@ -34,8 +23,8 @@
               <th>Collection Date</th>
               <th>Quantity</th>
               <th>Description</th>
-              <th>Actions</th>
-              <th>Sample test report</th>
+              <th>Edit Details</th>
+              <th>Grade</th>
           </tr>
       </thead>
       <tbody>
@@ -51,7 +40,7 @@
                       <button>Edit</button>
                   </a>
               </td>
-              <td><a href="{% url 'addSample_test' %}"><button>Click Here</button></a></td> <!-- Link to detailed view -->
+              <td></td> <!-- Link to detailed view -->
           </tr>
           {% endfor %}
       </tbody>

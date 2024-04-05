@@ -13,7 +13,8 @@
     "axe/forms": [
       "default",
       {
-        "select-name": "off"
+        "select-name": "off",
+        "label": "off"
       }
     ],
     "axe/structure": [
@@ -33,6 +34,12 @@
     "meta-charset-utf-8": "off",
     "no-inline-styles": "off",
     "button-type": "off",
-    "disown-opener": "off"
+    "disown-opener": "off",
+    "axe/language": [
+      "default",
+      {
+        "html-has-lang": "off"
+      }
+    ]
   }
 }

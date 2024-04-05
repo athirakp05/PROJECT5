@@ -46,16 +46,16 @@ class MilkSample(models.Model):
         ('Goat', 'Goat'),
     ]
     milk_type = models.CharField(max_length=10, choices=CATTLE_CHOICES, default='Cow')
-    quantity = models.PositiveIntegerField()
-    description = models.TextField()
-    pH = models.DecimalField(max_digits=5, decimal_places=2, null=True)
-    temperature = models.DecimalField(max_digits=5, decimal_places=2, null=True)
-    taste = models.CharField(max_length=50, null=True)
-    odor = models.CharField(max_length=50, null=True)
-    fat = models.DecimalField(max_digits=5, decimal_places=2, null=True)
-    turbidity = models.DecimalField(max_digits=5, decimal_places=2, null=True)
-    color = models.CharField(max_length=50, null=True)
-    grade = models.CharField(max_length=50, null=True)
+    quantity = models.PositiveIntegerField(help_text="Enter the quantity of milk in liters")
+    description = models.TextField(help_text="Enter the description")
+    pH = models.DecimalField(max_digits=5, decimal_places=2, null=True, help_text="<span style='color: green;'>This Column defines PH values of the milk which ranges from 3 to 9.5 max : 6.25 to 6.90</span>")
+    temperature = models.DecimalField(max_digits=5, decimal_places=2, null=True, help_text="<span style='color: green;'>This Column defines Temperature of the milk which ranges from 34'C to 90'C max : 34'C to 45.20'C</span>")
+    taste = models.CharField(max_length=50, null=True, help_text="<span style='color: green;'>This Column defines Taste of the milk which is categorical data 0 (Bad) or 1 (Good) max : 1 (Good)</span>")
+    odor = models.CharField(max_length=50, null=True, help_text="<span style='color: green;'>This Column defines Odor of the milk which is categorical data 0 (Bad) or 1 (Good) max : 0 (Bad)</span>")
+    fat = models.DecimalField(max_digits=5, decimal_places=2, null=True, help_text="<span style='color: green;'>This Column defines Fat of the milk which is categorical data 0 (Low) or 1 (High) max : 1 (High)</span>")
+    turbidity = models.DecimalField(max_digits=5, decimal_places=2, null=True, help_text="<span style='color: green;'>This Column defines Turbidity of the milk which is categorical data 0 (Low) or 1 (High) max : 1 (High)</span>")
+    color = models.CharField(max_length=50, null=True, help_text="<span style='color: green;'>This Column defines Color of the milk which ranges from 240 to 255 max : 255</span>")
+    grade = models.CharField(max_length=50, null=True, blank=True, help_text="<span style='color: green;'>This Column defines Grade (Target) of the milk which is categorical data Low (Bad) or Medium (Moderate) High</span>")
 
     def __str__(self):
         return f"Milk Sample for {self.seller.user.email} collected on {self.collection_date}"
@@ -89,7 +89,8 @@ class Order(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     cart = models.ManyToManyField(Cart)  # Add this field
     delivery_boy = models.ForeignKey(DeliveryBoy, on_delete=models.SET_NULL, null=True, blank=True)
-
+    feedback = models.TextField(blank=True, null=True)
+    rating = models.PositiveIntegerField(blank=True, null=True)
 
 class Payment(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='payments')

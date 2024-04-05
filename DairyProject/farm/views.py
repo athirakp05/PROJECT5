@@ -22,6 +22,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.views import PasswordChangeView
 from django.urls import reverse_lazy
 from .forms import SellerPasswordChangeForm
+from googletrans import Translator
 
 def index(request):
     return render(request, 'index.html')

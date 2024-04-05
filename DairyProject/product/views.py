@@ -1,6 +1,6 @@
 # views.py
 import csv
-import datetime
+from datetime import datetime  
 import razorpay
 from .models import Order, Payment, Product
 from .forms import ProductForm
@@ -102,18 +102,15 @@ def edit_milk_details(request, pk):
 
 def all_milk_details(request):
     all_milk_details = MilkSample.objects.all()
-    sellers = Seller.objects.all()  # Fetch all sellers for the filter dropdown
+    seller = Seller.objects.all()
     date_filter = request.GET.get('date')
     seller_filter = request.GET.get('seller')
-
     if date_filter:
         date_filter = datetime.strptime(date_filter, '%Y-%m-%d').date()
         all_milk_details = all_milk_details.filter(collection_date=date_filter)
-
     if seller_filter:
         all_milk_details = all_milk_details.filter(seller__name=seller_filter)
-
-    context = {'all_milk_details': all_milk_details, 'sellers': sellers}
+    context = {'all_milk_details': all_milk_details, 'sellers': seller}
     return render(request, 'admin/all_milk_details.html', context)
 
     
@@ -397,3 +394,45 @@ def order(request):
             'my_orders': my_orders,
         }
         return render(request, 'del/order.html', context)
+def cust_order(request):
+    user = request.user
+    orders = Order.objects.filter(user=user).order_by('-created_at')
+    
+    for order in orders:
+        order.products = order.cart.all()
+        
+    paginator = Paginator(orders, 10)
+    page_number = request.GET.get('page')
+    
+    try:
+        orders = paginator.page(page_number)
+    except PageNotAnInteger:
+        orders = paginator.page(1)
+    except EmptyPage:
+        orders = paginator.page(paginator.num_pages)
+        
+    context = {
+        'orders': orders,
+    }
+    return render(request, 'customer/cust_order.html', context)
+
+def feedback_submit(request):
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        feedback = request.POST.get('feedback')
+        order = Order.objects.get(id=order_id)
+        order.feedback = feedback
+        order.save()
+        messages.success(request, 'Feedback submitted successfully.')
+    return redirect('cust_order')
+
+
+def rating_submit(request):
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        rating = request.POST.get('rating')
+        order = Order.objects.get(id=order_id)
+        order.rating = rating
+        order.save()
+        messages.success(request, 'Rating submitted successfully.')
+    return redirect('cust_order')

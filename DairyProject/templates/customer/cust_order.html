@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order History</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        /* Add your existing styles here */
+
+        /* Modal styles */
+        .modal-feedback {
+            display: none;
+            position: fixed;
+            z-index: 2;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content-feedback {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Order History</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Products</th>
+                <th>Total Amount</th>
+                <th>Quantity</th>
+                <th>Contact</th>
+                <th>Delivery Status</th>
+                <th>Feedback</th>
+                <th>Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.created_at }}</td>
+                <td>
+                    <ul>
+                        {% for product in order.products %}
+                        <li>{{ product.p_name }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>{{ order.total_price }}</td>
+                <td>{{ order.cart.count }}</td>
+                <td>{{ order.house_name }}, {{ order.city }}, {{ order.pin_code }},{{ order.phone_number }}</td>
+                <td>{{ order.delivery_status }}</td>
+                <td>
+                    <a href="#" onclick="openFeedbackModal('{{ order.id }}')">Submit Feedback</a>
+                </td>
+                <td>
+                    {% if order.delivery_status == 'Delivered' %}
+                    <a href="#" onclick="openRatingModal('{{ order.id }}')">Submit Rating</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div id="feedbackModal" class="modal-feedback">
+        <div class="modal-content-feedback">
+            <span class="close-feedback">&times;</span>
+            <h2>Submit Feedback</h2>
+            <form method="POST" action="{% url 'feedback_submit' %}">
+                {% csrf_token %}
+                <textarea name="feedback" rows="4" cols="50"></textarea><br>
+                <input type="hidden" name="order_id" value="">
+                <input type="submit" value="Submit Feedback">
+            </form>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div id="ratingModal" class="modal-feedback">
+        <div class="modal-content-feedback">
+            <span class="close-rating">&times;</span>
+            <h2>Submit Rating</h2>
+            <form id="ratingForm" method="POST" action="{% url 'rating_submit' %}">
+                {% csrf_token %}
+                <select name="rating">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select><br>
+                <input type="hidden" name="order_id" value="">
+                <input type="submit" value="Submit Rating">
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript for modal functionality -->
+    <script>
+        // Get the modal elements
+        var feedbackModal = document.getElementById("feedbackModal");
+        var ratingModal = document.getElementById("ratingModal");
+
+        // Get the <span> elements that close the modals
+        var closeFeedback = document.getElementsByClassName("close-feedback")[0];
+        var closeRating = document.getElementsByClassName("close-rating")[0];
+
+        // When the user clicks on the close buttons, close the modals
+        closeFeedback.onclick = function() {
+            feedbackModal.style.display = "none";
+        }
+
+        closeRating.onclick = function() {
+            ratingModal.style.display = "none";
+        }
+
+        // Function to open the feedback modal
+        function openFeedbackModal(orderId) {
+            var feedbackForm = document.querySelector("#feedbackModal form");
+            feedbackForm.querySelector("input[name='order_id']").value = orderId;
+            feedbackModal.style.display = "block";
+        }
+
+        // Function to open the rating modal
+        function openRatingModal(orderId) {
+            var ratingForm = document.querySelector("#ratingModal form");
+            ratingForm.querySelector("input[name='order_id']").value = orderId;
+            ratingModal.style.display = "block";
+        }
+
+        // Automatically close the rating modal after submission
+        var ratingForm = document.getElementById("ratingForm");
+        ratingForm.addEventListener("submit", function() {
+            ratingModal.style.display = "none";
+        });
+    </script>
+</body>
+</html>

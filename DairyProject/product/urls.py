@@ -31,5 +31,7 @@ urlpatterns = [
     path('milk_parameters/', milk_parameters, name='milk_parameters'),
     path('admin_cart/', views.admin_cart, name='admin_cart'),
     path('all_milk_details/export-csv/', views.export_milk_sample_to_csv, name='export_milk_sample_to_csv'),
-
+    path('feedback_submit/', views.feedback_submit, name='feedback_submit'),
+    path('cust_order/', views.cust_order, name='cust_order'),
+    path('rating_submit/', views.rating_submit, name='rating_submit'),
 ]

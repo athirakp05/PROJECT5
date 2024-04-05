@@ -21,8 +21,3 @@ class MilkCollectionForm(forms.ModelForm):
         widgets = {
             'collection_date': forms.DateInput(attrs={'type': 'date'}),
         }
-
-# class SampleTestReportForm(forms.ModelForm):
-#     class Meta:
-#         model = MilkSample
-#         fields = ['pH', 'temperature', 'taste', 'odor', 'fat', 'turbidity', 'color', 'grade']
