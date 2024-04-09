@@ -1,8 +1,11 @@
+{% load static%}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Order History</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Font Awesome Icon Library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         /* Add your existing styles here */
 
@@ -26,6 +29,11 @@
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
+        }
+
+        /* Star rating styles */
+        .checked {
+            color: orange;
         }
     </style>
 </head>
@@ -62,17 +70,19 @@
                 <td>{{ order.house_name }}, {{ order.city }}, {{ order.pin_code }},{{ order.phone_number }}</td>
                 <td>{{ order.delivery_status }}</td>
                 <td>
-                    <a href="#" onclick="openFeedbackModal('{{ order.id }}')">Submit Feedback</a>
+                    <a href="{% url 'feedback_submit' %}" onclick="openFeedbackModal('{{ order.id }}'); return false;">Submit Feedback</a>
                 </td>
                 <td>
                     {% if order.delivery_status == 'Delivered' %}
-                    <a href="#" onclick="openRatingModal('{{ order.id }}')">Submit Rating</a>
+                    <a href="{% url 'rating_submit' %}" onclick="openRatingModal('{{ order.id }}'); return false;">Submit Rating</a>
                     {% endif %}
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- Feedback Modal -->
     <div id="feedbackModal" class="modal-feedback">
         <div class="modal-content-feedback">
             <span class="close-feedback">&times;</span>
@@ -91,18 +101,16 @@
         <div class="modal-content-feedback">
             <span class="close-rating">&times;</span>
             <h2>Submit Rating</h2>
-            <form id="ratingForm" method="POST" action="{% url 'rating_submit' %}">
-                {% csrf_token %}
-                <select name="rating">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select><br>
-                <input type="hidden" name="order_id" value="">
-                <input type="submit" value="Submit Rating">
-            </form>
+            <div id="starRating">
+                <span class="fa fa-star" onclick="setRating(1)"></span>
+                <span class="fa fa-star" onclick="setRating(2)"></span>
+                <span class="fa fa-star" onclick="setRating(3)"></span>
+                <span class="fa fa-star" onclick="setRating(4)"></span>
+                <span class="fa fa-star" onclick="setRating(5)"></span>
+            </div>
+            <input type="hidden" id="selectedRating" name="rating" value="">
+            <input type="hidden" name="order_id" value="">
+            <input type="submit" value="Submit Rating" onclick="submitRating()">
         </div>
     </div>
 
@@ -132,18 +140,37 @@
             feedbackModal.style.display = "block";
         }
 
-        // Function to open the rating modal
+        var ratingForm = document.querySelector("#ratingModal form");
         function openRatingModal(orderId) {
-            var ratingForm = document.querySelector("#ratingModal form");
-            ratingForm.querySelector("input[name='order_id']").value = orderId;
             ratingModal.style.display = "block";
         }
-
-        // Automatically close the rating modal after submission
-        var ratingForm = document.getElementById("ratingForm");
-        ratingForm.addEventListener("submit", function() {
+        function closeRatingModal() {
             ratingModal.style.display = "none";
-        });
+        }
+        // Function to set the rating based on the clicked star
+        function setRating(rating) {
+            document.getElementById("selectedRating").value = rating;
+            highlightStars(rating);
+        }
+
+        // Function to highlight stars up to the selected rating
+        function highlightStars(rating) {
+            var stars = document.querySelectorAll("#starRating .fa-star");
+            stars.forEach(function(star, index) {
+                if (index < rating) {
+                    star.classList.add("checked");
+                } else {
+                    star.classList.remove("checked");
+                }
+            });
+        }
+
+        // Function to submit the rating
+        function submitRating() {
+            var selectedRating = document.getElementById("selectedRating").value;
+            console.log("Submitting rating: " + selectedRating);
+            closeRatingModal(); // Close the modal after submission
+        }
     </script>
 </body>
 </html>

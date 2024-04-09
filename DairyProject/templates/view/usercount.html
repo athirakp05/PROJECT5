@@ -18,49 +18,41 @@
         .card-light-blue {
             background-color: #a8d0e6; /* Light Blue */
             border: 1px solid #4682b4;
-            width: 120px;
-            height: 70px;
-            margin: 20px;
+            width: 150px;
+            height: 100px;
+            margin: 1px;
         }
 
         .card-light-purple {
             background-color: #c3a1e6; /* Light Purple */
             border: 1px solid #8661a8;
-            width: 120px;
-            height: 70px;
-            margin: 20px;
+            width: 150px;
+            height: 100px;
+            margin: 10px;
         }
 
         .card-light-green {
             background-color: #a2e8a2; /* Light Green */
             border: 1px solid #4caf50;
-            width: 120px;
-            height: 70px;
-            margin: 20px;
+            width: 150px;
+            height: 100px;
+            margin: 10px;
         }
 
         .card-light-yellow {
             background-color: #fff2a8; /* Light Yellow */
             border: 1px solid #ffd700;
-            width: 120px;
-            height: 70px;
-            margin: 20px;
-        }
-
-        .card-light-yellow {
-            background-color: #d4e67d; /* Light Purple */
-            border: 1px solid #b6db66;
-            width: 125px;
-            height: 70px;
-            margin: 20px;
+            width: 150px;
+            height: 100px;
+            margin: 10px;
         }
 
         .card-light-orange {
             background-color: #ffc79e; /* Light Orange */
             border: 1px solid #ff8c00;
             width: 150px;
-            height: 70px;
-            margin: 20px;
+            height: 100px;
+            margin: 10px;
         }
 
         /* Add text color for card titles */
@@ -76,8 +68,8 @@
         /* Add custom flexbox styles */
         .row-md-12 {
             display: flex;
-            flex-wrap: nowrap;
-            overflow-x: auto;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .card {
@@ -97,43 +89,39 @@
 <body>
     <div class="container">
         <h1 class="mt-4">Users</h1>
-        <div class="col">
-            <div class="row-md-12">
-                <div class="card card-light-blue">
-                    <div class="card-body">
-                        <p class="mb-2">Customers</p>
-                        <p class="fs-24 mb-2" id="totalCustomers">{{ customer_count}}</p>
-                    </div>
+        <div class="row-md-12">
+            <div class="card card-light-blue">
+                <div class="card-body">
+                    <p class="card-title mb-2">Customers</p>
+                    <p class="card-content fs-24 mb-2" id="totalCustomers">{{ customer_count }}</p>
                 </div>
-                <div class="card card-light-purple">
-                    <div class="card-body">
-                        <p class="mb-2">Sellers</p>
-                        <p class="fs-24 mb-2" id="totalSellers">{{ seller_count }}</p>
-                    </div>
+            </div>
+            <div class="card card-light-purple">
+                <div class="card-body">
+                    <p class="card-title mb-2">Sellers</p>
+                    <p class="card-content fs-24 mb-2" id="totalSellers">{{ seller_count }}</p>
                 </div>
-                <div class="card card-light-green">
-                    <div class="card-body">
-                        <p class="mb-2">Products</p>
-                        <p class="fs-24 mb-2" id="totalProducts">{{ product_count }}</p>
-                    </div>
+            </div>
+            <div class="card card-light-green">
+                <div class="card-body">
+                    <p class="card-title mb-2">Products</p>
+                    <p class="card-content fs-24 mb-2" id="totalProducts">{{ product_count }}</p>
                 </div>
-                <div class="card card-light-yellow">
-                    <div class="card-body">
-                        <p class="mb-2">Veterinarians</p>
-                        <p class="fs-24 mb-2" id="totalVeterinarians">{{ veterinarian_count }}</p>
-                    </div>
+            </div>
+            <div class="card card-light-yellow">
+                <div class="card-body">
+                    <p class="card-title mb-2">Veterinarians</p>
+                    <p class="card-content fs-24 mb-2" id="totalVeterinarians">{{ veterinarian_count }}</p>
                 </div>
-    
-                <!-- Card for Delivery Boys -->
-                <div class="card card-light-orange">
-                    <div class="card-body">
-                        <p class="mb-2">Delivery Boys</p>
-                        <p class="fs-24 mb-2" id="totalDeliveryBoys">{{ delivery_boy_count }}</p>
-                    </div>
+            </div>
+            <div class="card card-light-orange">
+                <div class="card-body">
+                    <p class="card-title mb-2">Delivery Boys</p>
+                    <p class="card-content fs-24 mb-2" id="totalDeliveryBoys">{{ delivery_boy_count }}</p>
                 </div>
-                <canvas id="userDistributionChart"></canvas>
             </div>
         </div>
+        <canvas id="userDistributionChart"></canvas>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
@@ -212,6 +200,5 @@
             }, 10000); // 10 seconds
         });
     </script>
-    
 </body>
 </html>

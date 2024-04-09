@@ -8,6 +8,7 @@ urlpatterns = [
     path('',include('farm.urls')),
     path('',include('product.urls')),
     path('',include('events.urls')),
+    path('',include('milkquality.urls')),
 
 ]
 if settings.DEBUG:
