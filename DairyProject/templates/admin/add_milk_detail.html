@@ -50,9 +50,10 @@
   </style>
 <h1>Add Milk Detail</h1>
 <form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Add Milk Detail</button>
+    {% csrf_token %}
+    {{ collection_form.as_p }}
+    {{ features_form.as_p }}
+    <button type="submit">Submit</button>
 </form>
 <script>document.addEventListener('DOMContentLoaded', function () {
   var today = new Date().toISOString().split('T')[0]; // Get today's date in ISO format

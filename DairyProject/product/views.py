@@ -3,7 +3,7 @@ import csv
 from datetime import datetime  
 import razorpay
 from .models import Order, Payment, Product
-from .forms import ProductForm
+from .forms import MilkFeaturesForm, ProductForm
 from .models import MilkSample,Cart
 from .forms import MilkCollectionForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -78,15 +78,21 @@ def p_detail(request):
     return render(request, 'category/p_detail.html', {'products': products})
 
 
+
 def add_milk_details(request):
     if request.method == 'POST':
-        form = MilkCollectionForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('all_milk_details')  # Redirect to the view all milk details page
+        collection_form = MilkCollectionForm(request.POST)
+        features_form = MilkFeaturesForm(request.POST)
+        if collection_form.is_valid() and features_form.is_valid():
+            milk_sample = collection_form.save(commit=False)
+            milk_sample.save()
+            features_form.instance = milk_sample
+            features_form.save()
+            return redirect('success')  # Redirect to success page
     else:
-        form = MilkCollectionForm()
-    return render(request, 'admin/add_milk_detail.html', {'form': form})
+        collection_form = MilkCollectionForm()
+        features_form = MilkFeaturesForm()
+    return render(request, 'admin/add_milk_detail.html', {'collection_form': collection_form, 'features_form': features_form})
 
 def edit_milk_details(request, pk):
     milk_detail = MilkSample.objects.get(pk=pk)

@@ -17,7 +17,12 @@ class ProductSearchForm(forms.Form):
 class MilkCollectionForm(forms.ModelForm):
     class Meta:
         model = MilkSample
-        fields = ['seller', 'milk_type', 'collection_date', 'collection_time', 'quantity', 'description','pH', 'temperature', 'taste', 'odor', 'fat', 'turbidity', 'color', 'grade']
+        fields = ['seller', 'milk_type', 'collection_date', 'collection_time', 'quantity', 'description']
         widgets = {
             'collection_date': forms.DateInput(attrs={'type': 'date'}),
         }
+
+class MilkFeaturesForm(forms.ModelForm):
+    class Meta:
+        model = MilkSample
+        fields = ['pH', 'temperature', 'taste', 'odor', 'fat', 'turbidity', 'color']

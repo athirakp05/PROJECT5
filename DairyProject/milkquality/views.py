@@ -1,5 +1,7 @@
+#views.py
 import tkinter as tk
 from tkinter import ttk, messagebox
+from django.shortcuts import render
 import pandas as pd
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import preprocessing
@@ -140,3 +142,6 @@ errors_button.grid(row=len(milk_features) + 2, columnspan=2, pady=10)
 
 # Run the Tkinter event loop
 window.mainloop()
+
+def milk_quality_prediction(request):
+    return render(request, 'Milk/milk_quality_prediction.html')
