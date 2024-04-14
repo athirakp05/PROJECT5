@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'farm',
     'product',
     'events',
-    'milkquality',
 ]
 SITE_ID = 1
 
