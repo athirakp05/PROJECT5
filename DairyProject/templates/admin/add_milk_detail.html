@@ -1,71 +1,102 @@
+{% extends 'dash/admindash.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Add Milk Detail</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header Styles */
+        header h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        /* Form Styles */
+        form {
+            width: 100%;
+        }
+        
+        form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        form input[type="text"],
+        form input[type="date"],
+        form select {
+            width: calc(100% - 12px);
+            padding: 6px;
+            margin-bottom: 10px;
+        }
+        
+        form button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        form button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        
+        /* Bootstrap Classes Overwrite */
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Content -->
+    <div class="content">
+        <header>
+            <h1>Add Milk Detail</h1>
+        </header>
+        <main>
+            <form method="post" accept="{% url 'all_milk_details' %}">
+                {% csrf_token %}
+                {{ collection_form.as_p }}
+                {{ features_form.as_p }}
+                <button type="submit">Submit</button>
+            </form>
+        </main>
+    </div>
 
-<style>/* Basic reset and styles */
-  body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-  }
-  
-  h1 {
-      text-align: center;
-  }
-  
-  form {
-      max-width: 500px;
-      margin: 0 auto;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-  }
-  
-  label {
-      display: block;
-      margin-bottom: 5px;
-  }
-  
-  input[type="date"],
-  input[type="number"],
-  select,
-  textarea {
-      width: calc(100% - 12px);
-      padding: 8px;
-      margin-bottom: 10px;
-      border-radius: 3px;
-      border: 1px solid #ccc;
-  }
-  
-  button {
-      padding: 10px;
-      border-radius: 3px;
-      border: none;
-      background-color: #007bff;
-      color: white;
-      cursor: pointer;
-      width: 100%;
-  }
-  
-  button:hover {
-      background-color: #0056b3;
-  }
-  </style>
-<h1>Add Milk Detail</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ collection_form.as_p }}
-    {{ features_form.as_p }}
-    <button type="submit">Submit</button>
-</form>
-<script>document.addEventListener('DOMContentLoaded', function () {
-  var today = new Date().toISOString().split('T')[0]; // Get today's date in ISO format
+   
+    <!-- Your custom script if any -->
+    <script>
+        // Add your custom scripts here
+        document.addEventListener('DOMContentLoaded', function () {
+            var today = new Date().toISOString().split('T')[0]; // Get today's date in ISO format
+            var collectionDateInput = document.getElementById('id_collection_date'); // Change 'id_collection_date' to your field's ID
+            collectionDateInput.setAttribute('max', today); // Set the maximum date
+            collectionDateInput.addEventListener('input', function () {
+                if (this.value > today) {
+                    this.value = today;
+                }
+            });
+        });
+    </script>
+</body>
 
-  var collectionDateInput = document.getElementById('id_collection_date'); // Change 'id_collection_date' to your field's ID
-  collectionDateInput.setAttribute('max', today); // Set the maximum date
-
-  collectionDateInput.addEventListener('input', function () {
-      if (this.value > today) {
-          this.value = today;
-      }
-  });
-});</script>
-</div>
-
+{% endblock %}
+</html>

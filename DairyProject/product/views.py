@@ -55,7 +55,7 @@ def product_detail(request):
         products = Product.objects.all()
     context = {'products': products}
     return render(request, 'category/product_detail.html', context)
-
+@login_required
 def p_detail(request):
     products = Product.objects.all()
     date_filter = request.GET.get('date_filter')
@@ -78,7 +78,7 @@ def p_detail(request):
     return render(request, 'category/p_detail.html', {'products': products})
 
 
-
+@login_required
 def add_milk_details(request):
     if request.method == 'POST':
         collection_form = MilkCollectionForm(request.POST)
@@ -88,12 +88,12 @@ def add_milk_details(request):
             milk_sample.save()
             features_form.instance = milk_sample
             features_form.save()
-            return redirect('success')  # Redirect to success page
+            return redirect('all_milk_details')  # Pass the order_id parameter
     else:
         collection_form = MilkCollectionForm()
         features_form = MilkFeaturesForm()
     return render(request, 'admin/add_milk_detail.html', {'collection_form': collection_form, 'features_form': features_form})
-
+@login_required
 def edit_milk_details(request, pk):
     milk_detail = MilkSample.objects.get(pk=pk)
     if request.method == 'POST':
@@ -105,7 +105,7 @@ def edit_milk_details(request, pk):
         form = MilkCollectionForm(instance=milk_detail)
     return render(request, 'admin/edit_milk_details.html', {'form': form})
 
-
+@login_required
 def all_milk_details(request):
     all_milk_details = MilkSample.objects.all()
     seller = Seller.objects.all()
@@ -347,6 +347,7 @@ def payment_history(request):
             })
     return render(request, 'pay/payment_history.html', {'payment_history': payment_history})
 
+@login_required
 def order_history(request):
     all_orders = Order.objects.all().order_by('-created_at')
     date_filter = request.GET.get('date')

@@ -21,7 +21,8 @@ urlpatterns = [
     path('fetch_breeds/', views.fetch_breeds, name='fetch_breeds'),
     path('view_cattle/', views.view_cattle, name='view_cattle'),
     path('edit_cattle/<int:cattle_id>/', views.edit_cattle, name='edit_cattle'),
-    path('delete_cattle/<int:cattle_id>/', views.delete_cattle, name='delete_cattle'),    path('add_breed', views.add_breed, name='add_breed'),
+    path('delete_breed/<int:breed_id>/', views.delete_breed, name='delete_breed'),
+    path('add_breed', views.add_breed, name='add_breed'),
     path('view_breed/', views.view_breed, name='view_breed'),  # Define URL for view_breed
     path('delete_breed/<int:breed_id>/', views.delete_breed, name='delete_breed'),
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),

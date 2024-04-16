@@ -6,7 +6,9 @@ from .forms import MeetingDetailsForm, MeetingForm
 from django.contrib import messages
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def meeting(request):
     if request.method == 'POST':
         form = MeetingForm(request.POST)
@@ -48,7 +50,7 @@ def meeting_details_list(request):
     meeting_details = MeetingDetails.objects.all()
     return render(request, 'your_template.html', {'meetings': meetings, 'meeting_details': meeting_details})
 
-
+@login_required
 def add_meeting_details(request):
     if request.method == 'POST':
         form = MeetingDetailsForm(request.POST)
@@ -59,6 +61,7 @@ def add_meeting_details(request):
         form = MeetingDetailsForm()
     return render(request, 'add_meeting_details.html', {'form': form})
 
+@login_required
 def update_meeting_details(request, meeting_details_id):
     meeting_details = MeetingDetails.objects.get(pk=meeting_details_id)
     if request.method == 'POST':

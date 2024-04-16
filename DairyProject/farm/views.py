@@ -349,7 +349,7 @@ def delivery_dashboard(request):
         return redirect('home')
     
 
-
+@login_required
 def s_view(request):
     sellers_list = SellerEditProfile.objects.all()
     paginator = Paginator(sellers_list, 10)  # Show 10 sellers per page
@@ -552,11 +552,13 @@ def view_breed(request):
     breeds = Breed.objects.all()
     return render(request, 'cattle/view_breed.html', {'breeds': breeds})
 
+@login_required
 def delete_breed(request, breed_id):
     breed = get_object_or_404(Breed, id=breed_id)
     if request.method == 'POST':
         breed.delete()
-        return redirect('view_breed')  # Redirect to view breed page
+        messages.success(request, 'Breed deleted successfully.')
+    return redirect('view_breed')
     
 def fetch_breeds(request):
     cattle_type = request.GET.get('cattleType')
@@ -625,6 +627,7 @@ def contact(request):
         form = ContactForm()
     return render(request, 'contact.html', {'form': form})
 
+@login_required
 def message(request):
     messages = ContactMessage.objects.all().order_by('-created_at')
     return render(request, 'admin/message.html', {'messages': messages})
@@ -643,7 +646,6 @@ def get_new_messages(request):
     ]
     new_messages.update(is_read=True)
     return JsonResponse({'messages': serialized_messages})
-
 
 class s_change_password(PasswordChangeView):
     form_class = SellerPasswordChangeForm

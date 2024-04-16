@@ -1,3 +1,5 @@
+{% extends 'dash/admindash.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,27 +13,54 @@
             padding: 10px;
             margin-bottom: 10px;
         }
+
+        /* CSS for message box */
+        .message-box {
+            border: 1px solid #ccc;
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* CSS for reply button */
+        .reply-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .reply-button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
     <!-- Display Contact Messages -->
     <div id="container">
         <h1>Contact Messages</h1>
-        <ul>
-            {% for message in messages %}
-                <li>
-                    <strong>Name:</strong> {{ message.name }} <br>
-                    <strong>Email:</strong> {{ message.email }} <br>
-                    <strong>Subject:</strong> {{ message.subject }} <br>
-                    <strong>Message:</strong> {{ message.message }} <br>
-                    <strong>Sent at:</strong> {{ message.created_at }} <br>
-                    --------------------------------------------------------------
-                    <!-- Other message details -->
-                </li>
-            {% empty %}
-                <li>No messages</li>
-            {% endfor %}
-        </ul>
+        {% for message in messages %}
+            <div class="message-box">
+                <strong>Name:</strong> {{ message.name }} <br>
+                <strong>Email:</strong> {{ message.email }} <br>
+                <strong>Subject:</strong> {{ message.subject }} <br>
+                <strong>Message:</strong> {{ message.message }} <br>
+                <strong>Sent at:</strong> {{ message.created_at }} <br>
+                <!-- Other message details -->
+                <button class="reply-button">Reply</button>
+            </div>
+        {% empty %}
+            <div class="notification">
+                No messages
+            </div>
+        {% endfor %}
     </div>
 
     <!-- JavaScript for displaying incoming messages as notifications -->
@@ -61,4 +90,5 @@
         });
     </script>
 </body>
+{% endblock %}
 </html>

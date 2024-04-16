@@ -109,7 +109,6 @@ body {
 
 </style>
 {% include 'inc/adminnav.html' %}
-
 <body>
 
 <!-- Sidebar -->
@@ -118,6 +117,7 @@ body {
     <div>{{ seller_profile.email }}</div>
 
     <div class="user-name"></div>
+    <a href="{% url 'admindash' %}" data-url="{% url 'admindash' %}"><i class="fas fa-user-edit"></i> Dashboard</a>
     <a href="{% url 'view_breed' %}" data-url="{% url 'view_breed' %}"><i class="fas fa-user-edit"></i> Breed</a>
     <a href="{% url 'message' %}" data-url="{% url 'message' %}">
         <i class="fas fa-user-edit"></i> Messages
@@ -177,7 +177,7 @@ body {
                 }
             });
         });
-        loadContent("{% url 'usercount' %}");
+        // Removed the initial loading call here
         function loadContent(url) {
             console.log('Loading content from:', url);
             var xhr = new XMLHttpRequest();

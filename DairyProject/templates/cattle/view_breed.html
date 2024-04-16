@@ -1,58 +1,78 @@
+{% extends 'dash/admindash.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Breeds</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
+/* Reset default browser styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
 
-        .container {
-            border: 1px solid #ccc;
-            padding: 20px;
-            border-radius: 5px;
-        }
+/* Container styles */
+.container {
+    padding: 20px;
+}
 
-        ul {
-            list-style: none;
-            padding: 0;
-        }
+/* Table styles */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
 
-        li {
-            margin-bottom: 10px;
-        }
+th, td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
 
-        .add-breed-link {
-            display: block;
-            margin-top: 15px;
-            text-decoration: none;
-            color: blue;
-        }
+th {
+    background-color: #f2f2f2;
+}
 
-        .add-breed-link:hover {
-            text-decoration: underline;
-        }
+/* Add Breed link styles */
+.add-breed-link {
+    display: block;
+    margin-top: 15px;
+    text-decoration: none;
+    color: blue;
+}
+
+.add-breed-link:hover {
+    text-decoration: underline;
+}
+
     </style>
 </head>
 <body>
     <h3>Breed List</h3>
     <div class="container">
         {% if breeds %}
-            <ul>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Cattle Type</th>
+                    <th>Action</th>
+                </tr>
                 {% for breed in breeds %}
-                    <li>
-                        {{ breed.name }} - {{ breed.cattle_type }}
-                        <a href="{% if breed.id %}{% url 'delete_breed' breed.id %}{% endif %}">Delete</a>
-                    </li>
+                    <tr>
+                        <td>{{ breed.name }}</td>
+                        <td>{{ breed.cattle_type }}</td>
+                        <td>
+                            <a href="{% if breed.id %}{% url 'delete_breed' breed.id %}{% endif %}">Delete</a>
+                        </td>
+                    </tr>
                 {% endfor %}
-                <a class="add-breed-link" href="{% url 'add_breed' %}">Add Breed</a>
-            </ul>
+            </table>
+            <a class="add-breed-link" href="{% url 'add_breed' %}">Add Breed</a>
         {% else %}
             <p>No breeds available.</p>
         {% endif %}
     </div>
 </body>
+{% endblock %}
 </html>
